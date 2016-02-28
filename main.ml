@@ -142,7 +142,6 @@ let emachine_to_string = function
 
 module File_header (A : Addr) = struct
   type t = {
-    ei_class : eclass;
     ei_data : edata;
     ei_version : int;
     ei_osabi : int; (* ignored *)
@@ -160,9 +159,8 @@ module File_header (A : Addr) = struct
     ei_shstrndx : int;
   };;
 
-  let make eclass edata version osabi abiversion etype emachine entry phoff
+  let make edata version osabi abiversion etype emachine entry phoff
       shoff ehsize phentsize phnum shentsize shnum shstrndx = {
-    ei_class = eclass;
     ei_data = edata;
     ei_version = version;
     ei_osabi = osabi;
@@ -185,7 +183,7 @@ module File_header (A : Addr) = struct
       "class: %s bits\ndata: %s\nversion: %i\netype: %s\nmachine: %s\n\
 entry: %s\nphoff: %s\nshoff: %s\nehsize: %i\nphentsize: %i\nphnum: %i\n\
 shentsize: %i\nshnum: %i\nshstrndx: %i\n"
-      (eclass_to_string e.ei_class)
+      (eclass_to_string A.eclass)
       (edata_to_string e.ei_data)
       e.ei_version
       (etype_to_string e.ei_type)
@@ -233,7 +231,7 @@ shentsize: %i\nshnum: %i\nshstrndx: %i\n"
       assert (int_of_char (Buffer.nth buf (24+A.size*3+13)) = 0);
       let shstrndx = int_of_char (Buffer.nth buf (24+A.size*3+14)) in
       assert (int_of_char (Buffer.nth buf (24+A.size*3+15)) = 0);
-      let fh = make A.eclass edata version osabi abiversion etype emachine
+      let fh = make edata version osabi abiversion etype emachine
 	entry phoff shoff ehsize phentsize phnum shentsize shnum shstrndx in
       print fh;
       close_in chan
