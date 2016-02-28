@@ -220,6 +220,7 @@ shentsize: %i\nshnum: %i\nshstrndx: %i\n"
       let phoff = A.from_buffer buf (24+A.size) in
       let shoff = A.from_buffer buf (24+A.size*2) in
       let ehsize = int_of_char (Buffer.nth buf (24+A.size*3+4)) in
+      assert (ehsize = header_size);
       assert (int_of_char (Buffer.nth buf (24+A.size*3+5)) = 0);
       let phentsize = int_of_char (Buffer.nth buf (24+A.size*3+6)) in
       assert (int_of_char (Buffer.nth buf (24+A.size*3+7)) = 0);
