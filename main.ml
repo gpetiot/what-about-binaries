@@ -132,7 +132,7 @@ let emachine_to_string = function
 ;;
 
 
-module Elf (A : Addr) = struct
+module File_header (A : Addr) = struct
   type t = {
     ei_class : eclass;
     ei_data : edata;
@@ -154,25 +154,25 @@ module Elf (A : Addr) = struct
 
   let make eclass edata version osabi abiversion etype emachine entry phoff
       shoff ehsize phentsize phnum shentsize shnum shstrndx = {
-    ei_class=eclass;
-    ei_data=edata;
-    ei_version=version;
-    ei_osabi=osabi;
-    ei_abiversion=abiversion;
-    ei_type=etype;
-    ei_machine=emachine;
-    ei_entry=entry;
-    ei_phoff=phoff;
-    ei_shoff=shoff;
-    ei_ehsize=ehsize;
-    ei_phentsize=phentsize;
-    ei_phnum=phnum;
-    ei_shentsize=shentsize;
-    ei_shnum=shnum;
-    ei_shstrndx=shstrndx;
+    ei_class = eclass;
+    ei_data = edata;
+    ei_version = version;
+    ei_osabi = osabi;
+    ei_abiversion = abiversion;
+    ei_type = etype;
+    ei_machine = emachine;
+    ei_entry = entry;
+    ei_phoff = phoff;
+    ei_shoff = shoff;
+    ei_ehsize = ehsize;
+    ei_phentsize = phentsize;
+    ei_phnum = phnum;
+    ei_shentsize = shentsize;
+    ei_shnum = shnum; 
+    ei_shstrndx = shstrndx;
   };;
 
-  let print_elf e =
+  let print e =
     Printf.printf
       "class: %s bits\ndata: %s\nversion: %i\netype: %s\nmachine: %s\n\
 entry: %s\nphoff: %s\nshoff: %s\nehsize: %i\nphentsize: %i\nphnum: %i\n\
@@ -195,7 +195,8 @@ shentsize: %i\nshnum: %i\nshstrndx: %i\n"
 end;;
 
 
-let process chan =
+let parse filename =
+  let chan = open_in_bin filename in
   let buf = Buffer.create 24 in
   try
     Buffer.add_channel buf chan 24;
@@ -219,7 +220,7 @@ let process chan =
     Buffer.reset buf;
     begin
       match eclass with
-      | C32 -> print_string "32bit architecture unsupported !"
+      | C32 -> failwith "32bit architecture unsupported !"
       | C64 ->
 	 begin
 	   Buffer.add_channel buf chan 40;
@@ -239,51 +240,26 @@ let process chan =
 	   let shstrndx = int_of_char (Buffer.nth buf 38) in
 	   assert (int_of_char (Buffer.nth buf 39) = 0);
 	   Buffer.reset buf;
-	   let module E = Elf(Addr64) in
-	   let elf = E.make eclass edata version osabi abiversion etype emachine
+	   let module FH = File_header(Addr64) in
+	   let fh = FH.make eclass edata version osabi abiversion etype emachine
 	     entry phoff shoff ehsize phentsize phnum shentsize shnum shstrndx
 	   in
-	   E.print_elf elf
+	   FH.print fh
 	 end
     end;
     close_in chan
-  with
-    End_of_file ->
-      close_in chan;
-      failwith "invalid file !"
-  
-    
-
-  
-  (* let elf = ref dummy_elf in *)
-  (* let rec aux chan i = *)
-  (*   try *)
-  (*     let bint = input_byte chan in *)
-  (*     begin *)
-  (* 	match i with *)
-  (* 	| _ -> *)
-  (* 	   begin *)
-  (* 	     if i = 64 then *)
-  (* 	       print_endline "---------------------------\nend of header"; *)
-  (* 	     if i < 100 then *)
-  (* 	       Printf.printf "%i: \t %s\n" i (Hexa.to_string bint) *)
-  (* 	   end *)
-  (*     end; *)
-  (*     aux chan (i+1) *)
-  (*   with *)
-  (*   | End_of_file -> () *)
-  (* in *)
-  (* aux chan 0; *)
-  (* print_elf !elf *)
+  with _ ->
+    close_in chan;
+    failwith "invalid file header !"
 ;;
+
 
 let () =
   let argc = Array.length Sys.argv in
   if argc > 1 then
     let filename = Sys.argv.(1) in
     if Sys.file_exists filename then
-      let chan = open_in_bin filename in
-      process chan
+      parse filename
     else
       Printf.printf "%s does not exist !\n" filename
   else
