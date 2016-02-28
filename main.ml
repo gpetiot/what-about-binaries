@@ -16,6 +16,8 @@
 (*                                                                        *)
 (**************************************************************************)
 
+exception Invalid_Elf
+
 type eclass = C32 | C64;;
 
 let int_to_eclass = function
@@ -250,7 +252,7 @@ let parse filename =
     close_in chan
   with _ ->
     close_in chan;
-    failwith "invalid file header !"
+    raise Invalid_Elf
 ;;
 
 
@@ -259,7 +261,10 @@ let () =
   if argc > 1 then
     let filename = Sys.argv.(1) in
     if Sys.file_exists filename then
-      parse filename
+      try
+	parse filename
+      with
+	Invalid_Elf -> Printf.printf "invalid ELF file !\n"
     else
       Printf.printf "%s does not exist !\n" filename
   else
