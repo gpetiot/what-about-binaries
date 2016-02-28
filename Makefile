@@ -20,7 +20,7 @@ LIBS= #$(WITHGRAPHICS)
 # or if any C code have to be linked with your program
 # (irrelevant for ocamlopt)
 
-CUSTOM=-annot
+CUSTOM=
 
 WITHGRAPHICS =graphics.cma -cclib -lgraphics -cclib -L/usr/X11R6/lib -cclib -lX11
 WITHUNIX =unix.cma -cclib -lunix
@@ -57,13 +57,13 @@ $(EXEC).opt: $(OPTOBJS)
 .SUFFIXES: .ml .mli .cmo .cmi .cmx .mll .mly
 
 .ml.cmo:
-	$(CAMLC) -c $<
+	$(CAMLC) -c -annot $<
 
 .mli.cmi:
-	$(CAMLC) -c $<
+	$(CAMLC) -c -annot $<
 
 .ml.cmx:
-	$(CAMLOPT) -c $<
+	$(CAMLOPT) -c -annot $<
 
 .mll.cmo:
 	$(CAMLLEX) $<
