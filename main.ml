@@ -34,6 +34,8 @@ let eclass_to_string = function
 module type Addr =
 sig
   type t
+  val eclass : eclass
+  val size : int
   val to_string : t -> string
   val from_buffer : Buffer.t -> int -> t
 end;;
@@ -41,6 +43,8 @@ end;;
 module Addr32 : Addr =
 struct
   type t = int * int * int * int
+  let eclass = C32
+  let size = 4
   let to_string (a,b,c,d) =
     Printf.sprintf "0x%s%s%s%s"
       (Hexa.to_string a) (Hexa.to_string b) (Hexa.to_string c)(Hexa.to_string d)
@@ -52,6 +56,8 @@ end;;
 module Addr64 =
 struct
   type t = int * int * int * int * int * int * int * int
+  let eclass = C64
+  let size = 8
   let to_string (a,b,c,d,e,f,g,h) =
     Printf.sprintf "0x%s%s%s%s%s%s%s%s"
       (Hexa.to_string a) (Hexa.to_string b) (Hexa.to_string c)(Hexa.to_string d)
@@ -194,62 +200,60 @@ shentsize: %i\nshnum: %i\nshstrndx: %i\n"
       e.ei_shnum
       e.ei_shstrndx
   ;;
+
+  let parse header_size filename =
+    let chan = open_in_bin filename in
+    let buf = Buffer.create header_size in
+    try
+      Buffer.add_channel buf chan header_size;
+      let edata = int_to_edata (int_of_char (Buffer.nth buf 5)) in
+      let version = int_of_char (Buffer.nth buf 6) in
+      let osabi = int_of_char (Buffer.nth buf 7) in
+      let abiversion = int_of_char (Buffer.nth buf 8) in
+      let etype = int_to_etype (int_of_char (Buffer.nth buf 16)) in
+      assert (int_of_char (Buffer.nth buf 17) = 0);
+      let emachine = int_to_emachine (int_of_char (Buffer.nth buf 18)) in
+      assert (int_of_char (Buffer.nth buf 19) = 0);
+      assert (int_of_char (Buffer.nth buf 20) = version);
+      assert (int_of_char (Buffer.nth buf 21) = 0);
+      assert (int_of_char (Buffer.nth buf 22) = 0);
+      assert (int_of_char (Buffer.nth buf 23) = 0);
+      let entry = A.from_buffer buf 24 in
+      let phoff = A.from_buffer buf (24+A.size) in
+      let shoff = A.from_buffer buf (24+A.size*2) in
+      let ehsize = int_of_char (Buffer.nth buf (24+A.size*3+4)) in
+      assert (int_of_char (Buffer.nth buf (24+A.size*3+5)) = 0);
+      let phentsize = int_of_char (Buffer.nth buf (24+A.size*3+6)) in
+      assert (int_of_char (Buffer.nth buf (24+A.size*3+7)) = 0);
+      let phnum = int_of_char (Buffer.nth buf (24+A.size*3+8)) in
+      assert (int_of_char (Buffer.nth buf (24+A.size*3+9)) = 0);
+      let shentsize = int_of_char (Buffer.nth buf (24+A.size*3+10)) in
+      assert (int_of_char (Buffer.nth buf (24+A.size*3+11)) = 0);
+      let shnum = int_of_char (Buffer.nth buf (24+A.size*3+12)) in
+      assert (int_of_char (Buffer.nth buf (24+A.size*3+13)) = 0);
+      let shstrndx = int_of_char (Buffer.nth buf (24+A.size*3+14)) in
+      assert (int_of_char (Buffer.nth buf (24+A.size*3+15)) = 0);
+      let fh = make A.eclass edata version osabi abiversion etype emachine
+	entry phoff shoff ehsize phentsize phnum shentsize shnum shstrndx in
+      print fh;
+      close_in chan
+    with _ ->
+      close_in chan;
+      raise Invalid_Elf
+  ;;
 end;;
 
 
-let parse filename =
+let parse_class filename =
   let chan = open_in_bin filename in
-  let buf = Buffer.create 24 in
+  let buf = Buffer.create 5 in
   try
-    Buffer.add_channel buf chan 24;
+    Buffer.add_channel buf chan 5;
     assert (Buffer.nth buf 0 = '\x7F');
     assert (Buffer.nth buf 1 = '\x45');
     assert (Buffer.nth buf 2 = '\x4c');
     assert (Buffer.nth buf 3 = '\x46');
-    let eclass = int_to_eclass (int_of_char (Buffer.nth buf 4)) in
-    let edata = int_to_edata (int_of_char (Buffer.nth buf 5)) in
-    let version = int_of_char (Buffer.nth buf 6) in
-    let osabi = int_of_char (Buffer.nth buf 7) in
-    let abiversion = int_of_char (Buffer.nth buf 8) in
-    let etype = int_to_etype (int_of_char (Buffer.nth buf 16)) in
-    assert (int_of_char (Buffer.nth buf 17) = 0);
-    let emachine = int_to_emachine (int_of_char (Buffer.nth buf 18)) in
-    assert (int_of_char (Buffer.nth buf 19) = 0);
-    assert (int_of_char (Buffer.nth buf 20) = version);
-    assert (int_of_char (Buffer.nth buf 21) = 0);
-    assert (int_of_char (Buffer.nth buf 22) = 0);
-    assert (int_of_char (Buffer.nth buf 23) = 0);
-    Buffer.reset buf;
-    begin
-      match eclass with
-      | C32 -> failwith "32bit architecture unsupported !"
-      | C64 ->
-	 begin
-	   Buffer.add_channel buf chan 40;
-	   let entry = Addr64.from_buffer buf 0 in
-	   let phoff = Addr64.from_buffer buf 8 in
-	   let shoff = Addr64.from_buffer buf 16 in
-	   let ehsize = int_of_char (Buffer.nth buf 28) in
-	   assert (int_of_char (Buffer.nth buf 29) = 0);
-	   let phentsize = int_of_char (Buffer.nth buf 30) in
-	   assert (int_of_char (Buffer.nth buf 31) = 0);
-	   let phnum = int_of_char (Buffer.nth buf 32) in
-	   assert (int_of_char (Buffer.nth buf 33) = 0);
-	   let shentsize = int_of_char (Buffer.nth buf 34) in
-	   assert (int_of_char (Buffer.nth buf 35) = 0);
-	   let shnum = int_of_char (Buffer.nth buf 36) in
-	   assert (int_of_char (Buffer.nth buf 37) = 0);
-	   let shstrndx = int_of_char (Buffer.nth buf 38) in
-	   assert (int_of_char (Buffer.nth buf 39) = 0);
-	   Buffer.reset buf;
-	   let module FH = File_header(Addr64) in
-	   let fh = FH.make eclass edata version osabi abiversion etype emachine
-	     entry phoff shoff ehsize phentsize phnum shentsize shnum shstrndx
-	   in
-	   FH.print fh
-	 end
-    end;
-    close_in chan
+    int_to_eclass (int_of_char (Buffer.nth buf 4))
   with _ ->
     close_in chan;
     raise Invalid_Elf
@@ -262,7 +266,14 @@ let () =
     let filename = Sys.argv.(1) in
     if Sys.file_exists filename then
       try
-	parse filename
+	let eclass = parse_class filename in
+	match eclass with
+	| C32 ->
+	   let module FH = File_header(Addr32) in
+	   FH.parse 52 filename
+	| C64 ->
+	   let module FH = File_header(Addr64) in
+	   FH.parse 64 filename
       with
 	Invalid_Elf -> Printf.printf "invalid ELF file !\n"
     else
