@@ -1,5 +1,0 @@
-hexa.cmi :
-hexa.cmo : hexa.cmi
-hexa.cmx : hexa.cmi
-main.cmo : hexa.cmi
-main.cmx : hexa.cmx
