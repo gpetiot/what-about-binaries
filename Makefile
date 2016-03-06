@@ -31,7 +31,7 @@ WITHDBM =dbm.cma -cclib -lmldbm -cclib -lndbm
 
 
 
-all: depend $(EXEC)
+all: .depend $(EXEC)
 
 opt : $(EXEC).opt
 
@@ -98,7 +98,7 @@ clean:
 	rm -f $(EXEC)
 	rm -f $(EXEC).opt
 
-depend: $(SOURCES2)
+.depend: $(SOURCES2)
 	$(CAMLDEP) *.mli *.ml > .depend
 
 include .depend
