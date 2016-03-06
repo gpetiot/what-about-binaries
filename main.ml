@@ -36,6 +36,7 @@ sig
   type t
   val eclass : eclass
   val size : int
+  val header_size : int
   val inc : t -> t
   val to_string : t -> string
   val from_list : int list -> t
@@ -46,6 +47,7 @@ struct
   type t = int * int * int * int
   let eclass = C32
   let size = 4
+  let header_size = 52
   let inc (e,f,g,h) =
     if h < 255 then e,f,g,h+1
     else if g < 255 then e,f,g+1,0
@@ -65,6 +67,7 @@ struct
   type t = int * int * int * int * int * int * int * int
   let eclass = C64
   let size = 8
+  let header_size = 64
   let inc (a,b,c,d,e,f,g,h) =
     if h < 255 then a,b,c,d,e,f,g,h+1
     else if g < 255 then a,b,c,d,e,f,g+1,0
@@ -248,11 +251,11 @@ shentsize: %i\nshnum: %i\nshstrndx: %i\n"
     A.from_list (multi_bytes buf off nb)
   ;;
   
-  let parse_header header_size filename =
+  let parse_header filename =
     let chan = open_in_bin filename in
-    let buf = Buffer.create header_size in
+    let buf = Buffer.create A.header_size in
     try
-      Buffer.add_channel buf chan header_size;
+      Buffer.add_channel buf chan A.header_size;
       let version = int_of_char (Buffer.nth buf 6) in
       let osabi = int_of_char (Buffer.nth buf 7) in
       let abiversion = int_of_char (Buffer.nth buf 8) in
@@ -264,7 +267,7 @@ shentsize: %i\nshnum: %i\nshstrndx: %i\n"
       let phoff = multi_bytes_int buf (24+A.size) A.size in
       let shoff = multi_bytes_int buf (24+A.size*2) A.size in
       let ehsize = multi_bytes_int buf (24+A.size*3+4) 2 in
-      assert (ehsize = header_size);
+      assert (ehsize = A.header_size);
       let phentsize = multi_bytes_int buf (24+A.size*3+6) 2 in
       let phnum = multi_bytes_int buf (24+A.size*3+8) 2 in
       let shentsize = multi_bytes_int buf (24+A.size*3+10) 2 in
@@ -302,6 +305,11 @@ shentsize: %i\nshnum: %i\nshstrndx: %i\n"
     aux chan 0 header.ei_entry;
     print header
   ;;
+
+  let start filename =
+    let fh = parse_header filename in
+    parse fh filename
+  ;;
 end;;
 
 
@@ -330,23 +338,18 @@ let () =
     if Sys.file_exists filename then
       try
 	let eclass, edata = parse_class_endianness filename in
-	match eclass, edata with
-	| C32, LittleEndian ->
-	   let module FH = File_header(Addr32)(LittleEndianness) in
-	   let fh = FH.parse_header 52 filename in
-	   FH.parse fh filename
-	| C64, LittleEndian ->
-	   let module FH = File_header(Addr64)(LittleEndianness) in
-	   let fh = FH.parse_header 64 filename in
-	   FH.parse fh filename
-	| C32, BigEndian ->
-	   let module FH = File_header(Addr32)(BigEndianness) in
-	   let fh = FH.parse_header 52 filename in
-	   FH.parse fh filename
-	| C64, BigEndian ->
-	   let module FH = File_header(Addr64)(BigEndianness) in
-	   let fh = FH.parse_header 64 filename in
-	   FH.parse fh filename
+	let addr = match eclass with
+	  | C32 -> (module Addr32 : Addr)
+	  | C64 -> (module Addr64 : Addr)
+	in
+	let endianness = match edata with
+	  | LittleEndian -> (module LittleEndianness : Endianness)
+	  | BigEndian -> (module BigEndianness : Endianness)
+	in
+	let module A = (val addr) in
+	let module E = (val endianness) in
+	let module FH = File_header(A)(E) in
+	FH.start filename
       with
 	Invalid_Elf -> Printf.printf "invalid ELF file !\n"
     else
