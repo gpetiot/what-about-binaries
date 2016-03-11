@@ -186,6 +186,7 @@ module File_header (A : Addr) (E : Endianness) = struct
     ei_entry : A.t;
     ei_phoff : int;
     ei_shoff : int;
+    ei_flags : int;
     ei_ehsize : int;
     ei_phentsize : int;
     ei_phnum : int;
@@ -195,7 +196,7 @@ module File_header (A : Addr) (E : Endianness) = struct
   };;
 
   let make version osabi abiversion etype emachine entry phoff
-      shoff ehsize phentsize phnum shentsize shnum shstrndx = {
+      shoff flags ehsize phentsize phnum shentsize shnum shstrndx = {
     ei_version = version;
     ei_osabi = osabi;
     ei_abiversion = abiversion;
@@ -204,6 +205,7 @@ module File_header (A : Addr) (E : Endianness) = struct
     ei_entry = entry;
     ei_phoff = phoff;
     ei_shoff = shoff;
+    ei_flags = flags;
     ei_ehsize = ehsize;
     ei_phentsize = phentsize;
     ei_phnum = phnum;
@@ -215,8 +217,8 @@ module File_header (A : Addr) (E : Endianness) = struct
   let print e =
     Printf.printf
       "class: %s bits\ndata: %s\nversion: %i\netype: %s\nmachine: %s\n\
-entry: %s\nphoff: %i\nshoff: %i\nehsize: %i\nphentsize: %i\nphnum: %i\n\
-shentsize: %i\nshnum: %i\nshstrndx: %i\n"
+       entry: %s\nphoff: %i\nshoff: %i\nflags: %i\nehsize: %i\nphentsize: %i\n\
+       phnum: %i\nshentsize: %i\nshnum: %i\nshstrndx: %i\n"
       (eclass_to_string A.eclass)
       (edata_to_string E.edata)
       e.ei_version
@@ -225,6 +227,7 @@ shentsize: %i\nshnum: %i\nshstrndx: %i\n"
       (A.to_string e.ei_entry)
       e.ei_phoff
       e.ei_shoff
+      e.ei_flags
       e.ei_ehsize
       e.ei_phentsize
       e.ei_phnum
@@ -266,16 +269,17 @@ shentsize: %i\nshnum: %i\nshstrndx: %i\n"
       let entry = multi_bytes_addr buf 24 A.size in
       let phoff = multi_bytes_int buf (24+A.size) A.size in
       let shoff = multi_bytes_int buf (24+A.size*2) A.size in
-      let ehsize = multi_bytes_int buf (24+A.size*3+4) 2 in
+      let flags = multi_bytes_int buf (24+A.size*3) 4 in
+      let ehsize = multi_bytes_int buf (28+A.size*3) 2 in
       assert (ehsize = A.header_size);
-      let phentsize = multi_bytes_int buf (24+A.size*3+6) 2 in
-      let phnum = multi_bytes_int buf (24+A.size*3+8) 2 in
-      let shentsize = multi_bytes_int buf (24+A.size*3+10) 2 in
-      let shnum = multi_bytes_int buf (24+A.size*3+12) 2 in
-      let shstrndx = multi_bytes_int buf (24+A.size*3+14) 2 in
+      let phentsize = multi_bytes_int buf (30+A.size*3) 2 in
+      let phnum = multi_bytes_int buf (32+A.size*3) 2 in
+      let shentsize = multi_bytes_int buf (34+A.size*3) 2 in
+      let shnum = multi_bytes_int buf (36+A.size*3) 2 in
+      let shstrndx = multi_bytes_int buf (38+A.size*3) 2 in
       close_in chan;
-      make version osabi abiversion etype emachine
-	entry phoff shoff ehsize phentsize phnum shentsize shnum shstrndx
+      make version osabi abiversion etype emachine entry phoff shoff flags
+	   ehsize phentsize phnum shentsize shnum shstrndx
     with exn ->
       close_in chan;
       Printf.printf "%s" (Printexc.to_string exn);
