@@ -311,12 +311,18 @@ module File_header (A : Addr) (E : Endianness) = struct
     let rec aux chan i addr =
       try
 	let bint = input_byte chan in
-	if i >= header.ei_ehsize + header.ei_phentsize * header.ei_phnum
-	  && i < header.ei_shoff
-	then
-	  (Printf.printf
-	    "%i: %s: \t %s\n" i (A.to_string addr) (Hexa.to_string bint);
-	   aux chan (i+1) (A.inc addr))
+	let sbeg = header.ei_phoff + header.ei_phentsize * header.ei_phnum in
+	let send = header.ei_shoff in
+	if i >= sbeg && i < send then
+	  begin
+	    let rank = (i-sbeg) mod 16 in
+	    if rank = 0 then
+	      Printf.printf "%i: %s: \t" i (A.to_string addr);
+	    Printf.printf " %s" (Hexa.to_string bint);
+	    if rank = 15 then
+	      Printf.printf "\n";
+	    aux chan (i+1) (A.inc addr)
+	  end
 	else
 	  aux chan (i+1) addr
       with
@@ -327,6 +333,7 @@ module File_header (A : Addr) (E : Endianness) = struct
 	raise Invalid_Elf
     in
     aux chan 0 header.ei_entry;
+    Printf.printf "\n";
     print header
   ;;
 
