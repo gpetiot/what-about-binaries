@@ -306,40 +306,42 @@ module File_header (A : Addr) (E : Endianness) = struct
       raise Invalid_Elf
   ;;
 
-  let parse header filename =
+  let parse_section_headers header filename =
     let chan = open_in_bin filename in
-    let rec aux chan i addr =
+    let rec aux chan i =
       try
-	let bint = input_byte chan in
-	let sbeg = header.ei_phoff + header.ei_phentsize * header.ei_phnum in
-	let send = header.ei_shoff in
-	if i >= sbeg && i < send then
-	  begin
-	    let rank = (i-sbeg) mod 16 in
-	    if rank = 0 then
-	      Printf.printf "%i: %s: \t" i (A.to_string addr);
-	    Printf.printf " %s" (Hexa.to_string bint);
-	    if rank = 15 then
-	      Printf.printf "\n";
-	    aux chan (i+1) (A.inc addr)
-	  end
+	let sbeg = header.ei_shoff in
+	let send = header.ei_shoff + header.ei_shentsize * header.ei_shnum in
+	if i < sbeg then
+	  let _ = input_byte chan in
+	  aux chan (i+1)
 	else
-	  aux chan (i+1) addr
-      with
-      | End_of_file -> close_in chan
-      | exn ->
-	 close_in chan;
+	  if i < send then
+	    begin
+	      let bint = input_byte chan in
+	      let rank = (i-sbeg) mod header.ei_shentsize in
+	      if rank = 0 then
+		Printf.printf "%i: \t" i;
+	      Printf.printf " %s" (Hexa.to_string bint);
+	      if rank = header.ei_shentsize - 1 then
+		Printf.printf "\n";
+	      aux chan (i+1)
+	    end
+	  else
+	    close_in chan
+      with exn ->
+	close_in chan;
 	Printf.printf "%s" (Printexc.to_string exn);
 	raise Invalid_Elf
     in
-    aux chan 0 header.ei_entry;
+    aux chan 0;
     Printf.printf "\n";
     print header
   ;;
 
   let start filename =
     let fh = parse_header filename in
-    parse fh filename
+    parse_section_headers fh filename
   ;;
 end;;
 
