@@ -34,17 +34,23 @@ let eclass_to_string = function
 module type Addr =
 sig
   type t
+  type int_t
   val eclass : eclass
   val size : int
   val header_size : int
   val inc : t -> t
   val to_string : t -> string
   val from_list : int list -> t
+  val logor : int_t -> int_t -> int_t
+  val shift_left : int_t -> int -> int_t
+  val of_int : int -> int_t
+  val to_int : int_t -> int
 end;;
 
 module Addr32 : Addr =
 struct
   type t = int * int * int * int
+  type int_t = Int32.t
   let eclass = C32
   let size = 4
   let header_size = 52
@@ -60,11 +66,16 @@ struct
   let from_list = function
     | [a;b;c;d] -> a,b,c,d
     | _ -> failwith "from_list"
+  let logor = Int32.logor
+  let shift_left = Int32.shift_left
+  let of_int = Int32.of_int
+  let to_int = Int32.to_int
 end;;
 
 module Addr64 =
 struct
   type t = int * int * int * int * int * int * int * int
+  type int_t = Int64.t
   let eclass = C64
   let size = 8
   let header_size = 64
@@ -85,6 +96,10 @@ struct
   let from_list = function
     | [a;b;c;d;e;f;g;h] -> a,b,c,d,e,f,g,h
     | _ -> failwith "from_list"
+  let logor = Int64.logor
+  let shift_left = Int64.shift_left
+  let of_int = Int64.of_int
+  let to_int = Int64.to_int
 end;;
 
 type edata = LittleEndian | BigEndian;;
@@ -247,7 +262,12 @@ module File_header (A : Addr) (E : Endianness) = struct
   ;;
 
   let multi_bytes_int buf off nb  =
-    List.fold_left (fun x y -> x*255+y) 0 (multi_bytes buf off nb)
+    let rec aux ret i = function
+      | [] -> ret
+      | h :: t ->
+	 aux (A.logor ret (A.shift_left (A.of_int h) (8*(nb-i-1)))) (i+1) t
+    in
+    A.to_int (aux (A.of_int 0) 0 (multi_bytes buf off nb))
   ;;
 
   let multi_bytes_addr buf off nb =
