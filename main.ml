@@ -23,7 +23,7 @@ type eclass = C32 | C64;;
 let int_to_eclass = function
   | 1 -> C32
   | 2 -> C64
-  | _ -> failwith "int_to_eclass"
+  | x -> failwith (Printf.sprintf "int_to_eclass %i" x)
 ;;
 
 let eclass_to_string = function
@@ -107,7 +107,7 @@ type edata = LittleEndian | BigEndian;;
 let int_to_edata = function
   | 1 -> LittleEndian
   | 2 -> BigEndian
-  | _ -> failwith "int_to_edata"
+  | x -> failwith (Printf.sprintf "int_to_edata %i" x)
 ;;
 
 let edata_to_string = function
@@ -140,7 +140,7 @@ let int_to_etype = function
   | 2 -> Executable
   | 3 -> Shared
   | 4 -> Core
-  | _ -> failwith "int_to_etype"
+  | x -> failwith (Printf.sprintf "int_to_etype %i" x)
 ;;
 
 let etype_to_string = function
@@ -174,7 +174,7 @@ let int_to_emachine i =
   else if i = int_of_string "0x32" then IA64
   else if i = int_of_string "0x3E" then X86_64
   else if i = int_of_string "0xB7" then AArch64
-  else failwith "int_to_emachine"
+  else failwith (Printf.sprintf "int_to_emachine %i" i)
 ;;
 
 let emachine_to_string = function
@@ -188,6 +188,67 @@ let emachine_to_string = function
   | IA64 -> "ia64"
   | X86_64 -> "x86_64"
   | AArch64 -> "aarch64"
+;;
+
+type shtype =
+  | Null
+  | Progbits
+  | Symtab
+  | Strtab
+  | Rela
+  | Dynamic
+  | Note
+  | Nobits
+  | Rel
+  | Dynsym
+  | Init_array
+  | Fini_array
+  | Gnu_hash
+  | Verneed
+  | Versym
+  | Arm_exidx
+  | Arm_attributes
+;;
+
+let int_to_shtype = function
+  | 0 -> Null
+  | 1 -> Progbits
+  | 2 -> Symtab
+  | 3 -> Strtab
+  | 4 -> Rela
+  | 6 -> Dynamic
+  | 7 -> Note
+  | 8 -> Nobits
+  | 9 -> Rel
+  | 11 -> Dynsym
+  | 14 -> Init_array
+  | 15 -> Fini_array
+  | 1879048182 -> Gnu_hash
+  | 1879048190 -> Verneed
+  | 1879048191 -> Versym
+  | 1879048193 -> Arm_exidx
+  | 1879048195 -> Arm_attributes
+  | x -> failwith (Printf.sprintf "int_to_shtype %i" x)
+;;
+
+let shtype_to_string = function
+  | Null -> "null"
+  | Progbits -> "progbits"
+  | Symtab -> "symtab"
+  | Strtab -> "strtab"
+  | Rela -> "rela"
+  | Dynamic -> "dynamic"
+  | Note -> "note"
+  | Nobits -> "nobits"
+  | Rel -> "rel"
+  | Dynsym -> "dynsym"
+  | Init_array -> "init_array"
+  | Fini_array -> "fini_array"
+  | Gnu_hash -> "gnu_hash"
+  | Verneed -> "verneed"
+  | Versym -> "versym"
+  | Arm_exidx -> "arm_exidx"
+  | Arm_attributes -> "arm_attributes"
 ;;
 
 
@@ -209,6 +270,21 @@ module File_header (A : Addr) (E : Endianness) = struct
     ei_shnum : int;
     ei_shstrndx : int;
   };;
+
+  type sh_entry = {
+    sh_name : int;
+    sh_type : shtype;
+    sh_flags : int;
+    sh_addr : A.t;
+    sh_off : int;
+    sh_size : int;
+  };;
+
+  let print_sh_entry e =
+    Printf.printf "name: %i; type: %s; flags: %i; addr: %s; off: %i; size: %i\n"
+      e.sh_name (shtype_to_string e.sh_type) e.sh_flags (A.to_string e.sh_addr)
+      e.sh_off e.sh_size
+  ;;
 
   let make version osabi abiversion etype emachine entry phoff
       shoff flags ehsize phentsize phnum shentsize shnum shstrndx = {
@@ -252,16 +328,15 @@ module File_header (A : Addr) (E : Endianness) = struct
   ;;
 
   let multi_bytes buf off nb =
-    let rec aux ret soff =
-      match soff with
+    let rec aux ret = function
       | x when x = nb -> ret
-      | x -> aux ((Buffer.nth buf (off+x))::ret) (soff+1)
+      | x -> aux ((Buffer.nth buf (off+x))::ret) (x+1)
     in
     let l = List.rev_map int_of_char (aux [] 0) in
     E.order l
   ;;
 
-  let multi_bytes_int buf off nb  =
+  let multi_bytes_int buf off nb =
     let rec aux ret i = function
       | [] -> ret
       | h :: t ->
@@ -306,42 +381,79 @@ module File_header (A : Addr) (E : Endianness) = struct
       raise Invalid_Elf
   ;;
 
-  let parse_section_headers header filename =
+  let parse_section_header header filename =
     let chan = open_in_bin filename in
-    let rec aux chan i =
-      try
-	let sbeg = header.ei_shoff in
-	let send = header.ei_shoff + header.ei_shentsize * header.ei_shnum in
-	if i < sbeg then
-	  let _ = input_byte chan in
-	  aux chan (i+1)
+    let rec aux chan i ret =
+      let sbeg = header.ei_shoff in
+      let send = header.ei_shoff + header.ei_shentsize * header.ei_shnum in
+      if i < sbeg then
+	let _ = input_byte chan in
+	aux chan (i+1) ret
+      else
+	if i < send then
+	  begin
+	    let buf = Buffer.create header.ei_shentsize in
+	    Buffer.add_channel buf chan header.ei_shentsize;
+	    let sh_name = multi_bytes_int buf 0 4 in
+	    let sh_type = int_to_shtype (multi_bytes_int buf 4 4) in
+	    let sh_flags = multi_bytes_int buf 8 A.size in
+	    let sh_addr = multi_bytes_addr buf (8+A.size) A.size in
+	    let sh_off = multi_bytes_int buf (8+A.size*2) A.size in
+	    let sh_size = multi_bytes_int buf (8+A.size*3) A.size in
+	    let sh = {sh_name; sh_type; sh_flags; sh_addr; sh_off; sh_size} in
+	    aux chan (i+header.ei_shentsize) (sh::ret)
+	  end
 	else
-	  if i < send then
-	    begin
-	      let bint = input_byte chan in
-	      let rank = (i-sbeg) mod header.ei_shentsize in
-	      if rank = 0 then
-		Printf.printf "%i: \t" i;
-	      Printf.printf " %s" (Hexa.to_string bint);
-	      if rank = header.ei_shentsize - 1 then
-		Printf.printf "\n";
-	      aux chan (i+1)
-	    end
-	  else
-	    close_in chan
-      with exn ->
-	close_in chan;
-	Printf.printf "%s" (Printexc.to_string exn);
-	raise Invalid_Elf
+	  ret
     in
-    aux chan 0;
-    Printf.printf "\n";
-    print header
+    try
+      let r = aux chan 0 [] in
+      close_in chan;
+      List.rev r
+    with exn ->
+      close_in chan;
+      Printf.printf "%s" (Printexc.to_string exn);
+      raise Invalid_Elf
   ;;
 
+  let parse_section_names shstrtab filename =
+    let chan = open_in_bin filename in
+    let rec aux chan i =
+      if i < shstrtab.sh_off then
+	let _ = input_byte chan in
+	aux chan (i+1)
+      else
+	let buf = Buffer.create shstrtab.sh_size in
+	Buffer.add_channel buf chan shstrtab.sh_size;
+	Buffer.contents buf
+    in
+    try
+      let r = aux chan 0 in
+      close_in chan;
+      r
+    with exn ->
+      close_in chan;
+      Printf.printf "%s" (Printexc.to_string exn);
+      raise Invalid_Elf
+  ;;
+
+  let get_section_name snames index =
+    let end_index = String.index_from snames index (char_of_int 0) in
+    String.sub snames index (end_index - index)
+  ;;
+  
   let start filename =
     let fh = parse_header filename in
-    parse_section_headers fh filename
+    let shl = parse_section_header fh filename in
+    print fh;
+    let shstrtab = List.nth shl fh.ei_shstrndx in
+    let shnames = parse_section_names shstrtab filename in
+    List.iter (fun entry ->
+      let i = entry.sh_name in
+      let name = get_section_name shnames i in
+      Printf.printf "section %s:\n" name;
+      print_sh_entry entry
+    ) shl;
   ;;
 end;;
 
