@@ -18,121 +18,6 @@
 
 exception Invalid_Elf
 
-type eclass = C32 | C64;;
-
-let int_to_eclass = function
-  | 1 -> C32
-  | 2 -> C64
-  | x -> failwith (Printf.sprintf "int_to_eclass %i" x)
-;;
-
-let eclass_to_string = function
-  | C32 -> "32"
-  | C64 -> "64"
-;;
-
-module type Addr =
-sig
-  type t
-  type int_t
-  val eclass : eclass
-  val size : int
-  val header_size : int
-  val inc : t -> t
-  val to_string : t -> string
-  val from_list : int list -> t
-  val logor : int_t -> int_t -> int_t
-  val shift_left : int_t -> int -> int_t
-  val of_int : int -> int_t
-  val to_int : int_t -> int
-end;;
-
-module Addr32 : Addr =
-struct
-  type t = int * int * int * int
-  type int_t = Int32.t
-  let eclass = C32
-  let size = 4
-  let header_size = 52
-  let inc (e,f,g,h) =
-    if h < 255 then e,f,g,h+1
-    else if g < 255 then e,f,g+1,0
-    else if f < 255 then e,f+1,0,0
-    else if e < 255 then e+1,0,0,0
-    else assert false
-  let to_string (a,b,c,d) =
-    Printf.sprintf "0x%s%s%s%s"
-      (Hexa.to_string a) (Hexa.to_string b) (Hexa.to_string c)(Hexa.to_string d)
-  let from_list = function
-    | [a;b;c;d] -> a,b,c,d
-    | _ -> failwith "from_list"
-  let logor = Int32.logor
-  let shift_left = Int32.shift_left
-  let of_int = Int32.of_int
-  let to_int = Int32.to_int
-end;;
-
-module Addr64 =
-struct
-  type t = int * int * int * int * int * int * int * int
-  type int_t = Int64.t
-  let eclass = C64
-  let size = 8
-  let header_size = 64
-  let inc (a,b,c,d,e,f,g,h) =
-    if h < 255 then a,b,c,d,e,f,g,h+1
-    else if g < 255 then a,b,c,d,e,f,g+1,0
-    else if f < 255 then a,b,c,d,e,f+1,0,0
-    else if e < 255 then a,b,c,d,e+1,0,0,0
-    else if d < 255 then a,b,c,d+1,0,0,0,0
-    else if c < 255 then a,b,c+1,0,0,0,0,0
-    else if b < 255 then a,b+1,0,0,0,0,0,0
-    else if a < 255 then a+1,0,0,0,0,0,0,0
-    else assert false
-  let to_string (a,b,c,d,e,f,g,h) =
-    Printf.sprintf "0x%s%s%s%s%s%s%s%s"
-      (Hexa.to_string a) (Hexa.to_string b) (Hexa.to_string c)(Hexa.to_string d)
-      (Hexa.to_string e) (Hexa.to_string f) (Hexa.to_string g)(Hexa.to_string h)
-  let from_list = function
-    | [a;b;c;d;e;f;g;h] -> a,b,c,d,e,f,g,h
-    | _ -> failwith "from_list"
-  let logor = Int64.logor
-  let shift_left = Int64.shift_left
-  let of_int = Int64.of_int
-  let to_int = Int64.to_int
-end;;
-
-type edata = LittleEndian | BigEndian;;
-
-let int_to_edata = function
-  | 1 -> LittleEndian
-  | 2 -> BigEndian
-  | x -> failwith (Printf.sprintf "int_to_edata %i" x)
-;;
-
-let edata_to_string = function
-  | LittleEndian -> "little-endian"
-  | BigEndian -> "big-endian"
-;;
-
-module type Endianness =
-sig
-  val edata : edata
-  val order : 'a list -> 'a list
-end;;
-
-module BigEndianness =
-struct
-  let edata = BigEndian
-  let order x = x
-end;;
-
-module LittleEndianness =
-struct
-  let edata = LittleEndian
-  let order x = List.rev x
-end;;
-
 type etype = Relocatable | Executable | Shared | Core;;
 
 let int_to_etype = function
@@ -252,7 +137,7 @@ let shtype_to_string = function
 ;;
 
 
-module File_header (A : Addr) (E : Endianness) = struct
+module File_header (A : Archi.Addr) (E : Endian.T) = struct
   type t = {
     ei_version : int;
     ei_osabi : int; (* ignored *)
@@ -310,8 +195,8 @@ module File_header (A : Addr) (E : Endianness) = struct
       "class: %s bits\ndata: %s\nversion: %i\netype: %s\nmachine: %s\n\
        entry: %s\nphoff: %i\nshoff: %i\nflags: %i\nehsize: %i\nphentsize: %i\n\
        phnum: %i\nshentsize: %i\nshnum: %i\nshstrndx: %i\n"
-      (eclass_to_string A.eclass)
-      (edata_to_string E.edata)
+      (Archi.to_string A.eclass)
+      (Endian.to_string E.edata)
       e.ei_version
       (etype_to_string e.ei_type)
       (emachine_to_string e.ei_machine)
@@ -467,8 +352,8 @@ let parse_class_endianness filename =
     assert (Buffer.nth buf 1 = '\x45');
     assert (Buffer.nth buf 2 = '\x4c');
     assert (Buffer.nth buf 3 = '\x46');
-    int_to_eclass (int_of_char (Buffer.nth buf 4)),
-    int_to_edata (int_of_char (Buffer.nth buf 5))
+    Archi.from_int (int_of_char (Buffer.nth buf 4)),
+    Endian.from_int (int_of_char (Buffer.nth buf 5))
   with exn ->
     close_in chan;
     Printf.printf "%s" (Printexc.to_string exn);
@@ -483,16 +368,8 @@ let () =
     if Sys.file_exists filename then
       try
 	let eclass, edata = parse_class_endianness filename in
-	let addr = match eclass with
-	  | C32 -> (module Addr32 : Addr)
-	  | C64 -> (module Addr64 : Addr)
-	in
-	let endianness = match edata with
-	  | LittleEndian -> (module LittleEndianness : Endianness)
-	  | BigEndian -> (module BigEndianness : Endianness)
-	in
-	let module A = (val addr) in
-	let module E = (val endianness) in
+	let module A = (val (Archi.addr eclass)) in
+	let module E = (val (Endian.endianness edata)) in
 	let module FH = File_header(A)(E) in
 	FH.start filename
       with

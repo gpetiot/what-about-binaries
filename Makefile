@@ -1,5 +1,8 @@
 
-SOURCES = hexa.mli hexa.ml main.ml
+SOURCES = hexa.mli hexa.ml \
+	archi.mli archi.ml \
+	endian.mli endian.ml \
+	main.ml
 
 EXEC = testelf
 
