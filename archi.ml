@@ -21,12 +21,12 @@ type eclass = C32 | C64;;
 let from_int = function
   | 1 -> C32
   | 2 -> C64
-  | x -> failwith (Printf.sprintf "from_int %i" x)
+  | x -> failwith (Format.sprintf "from_int %i" x)
 ;;
 
-let to_string = function
-  | C32 -> "32"
-  | C64 -> "64"
+let pretty fmt = function
+  | C32 -> Format.fprintf fmt "32"
+  | C64 -> Format.fprintf fmt "64"
 ;;
   
 module type Addr =
@@ -37,7 +37,7 @@ sig
   val size : int
   val header_size : int
   val inc : t -> t
-  val to_string : t -> string
+  val pretty : Format.formatter -> t -> unit
   val from_list : int list -> t
   val logor : int_t -> int_t -> int_t
   val shift_left : int_t -> int -> int_t
@@ -58,9 +58,9 @@ struct
     else if f < 255 then e,f+1,0,0
     else if e < 255 then e+1,0,0,0
     else assert false
-  let to_string (a,b,c,d) =
-    Printf.sprintf "0x%s%s%s%s"
-      (Hexa.to_string a) (Hexa.to_string b) (Hexa.to_string c)(Hexa.to_string d)
+  let pretty fmt (a,b,c,d) =
+    Format.fprintf fmt "0x%a%a%a%a"
+      Hexa.pretty a Hexa.pretty b Hexa.pretty c Hexa.pretty d
   let from_list = function
     | [a;b;c;d] -> a,b,c,d
     | _ -> failwith "from_list"
@@ -87,10 +87,10 @@ struct
     else if b < 255 then a,b+1,0,0,0,0,0,0
     else if a < 255 then a+1,0,0,0,0,0,0,0
     else assert false
-  let to_string (a,b,c,d,e,f,g,h) =
-    Printf.sprintf "0x%s%s%s%s%s%s%s%s"
-      (Hexa.to_string a) (Hexa.to_string b) (Hexa.to_string c)(Hexa.to_string d)
-      (Hexa.to_string e) (Hexa.to_string f) (Hexa.to_string g)(Hexa.to_string h)
+  let pretty fmt (a,b,c,d,e,f,g,h) =
+    Format.fprintf fmt "0x%a%a%a%a%a%a%a%a"
+      Hexa.pretty a Hexa.pretty b Hexa.pretty c Hexa.pretty d
+      Hexa.pretty e Hexa.pretty f Hexa.pretty g Hexa.pretty h
   let from_list = function
     | [a;b;c;d;e;f;g;h] -> a,b,c,d,e,f,g,h
     | _ -> failwith "from_list"

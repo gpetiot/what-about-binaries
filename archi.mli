@@ -18,8 +18,8 @@
 
 type eclass;;
 
-val from_int : int -> eclass;;
-val to_string : eclass -> string;;
+val from_int: int -> eclass;;
+val pretty: Format.formatter -> eclass -> unit;;
   
 module type Addr =
 sig
@@ -29,7 +29,7 @@ sig
   val size : int
   val header_size : int
   val inc : t -> t
-  val to_string : t -> string
+  val pretty : Format.formatter -> t -> unit
   val from_list : int list -> t
   val logor : int_t -> int_t -> int_t
   val shift_left : int_t -> int -> int_t

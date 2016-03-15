@@ -19,7 +19,7 @@
 type t;;
 
 val from_int: int -> t;;
-val to_string: t -> string;;
+val pretty: Format.formatter -> t -> unit;;
 
 module type T =
 sig

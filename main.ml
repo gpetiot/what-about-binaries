@@ -25,7 +25,7 @@ let int_to_etype = function
   | 2 -> Executable
   | 3 -> Shared
   | 4 -> Core
-  | x -> failwith (Printf.sprintf "int_to_etype %i" x)
+  | x -> failwith (Format.sprintf "int_to_etype %i" x)
 ;;
 
 let etype_to_string = function
@@ -59,7 +59,7 @@ let int_to_emachine i =
   else if i = int_of_string "0x32" then IA64
   else if i = int_of_string "0x3E" then X86_64
   else if i = int_of_string "0xB7" then AArch64
-  else failwith (Printf.sprintf "int_to_emachine %i" i)
+  else failwith (Format.sprintf "int_to_emachine %i" i)
 ;;
 
 let emachine_to_string = function
@@ -113,7 +113,7 @@ let int_to_shtype = function
   | 1879048191 -> Versym
   | 1879048193 -> Arm_exidx
   | 1879048195 -> Arm_attributes
-  | x -> failwith (Printf.sprintf "int_to_shtype %i" x)
+  | x -> failwith (Format.sprintf "int_to_shtype %i" x)
 ;;
 
 let shtype_to_string = function
@@ -166,8 +166,8 @@ module File_header (A : Archi.Addr) (E : Endian.T) = struct
   };;
 
   let print_sh_entry e =
-    Printf.printf "name: %i; type: %s; flags: %i; addr: %s; off: %i; size: %i\n"
-      e.sh_name (shtype_to_string e.sh_type) e.sh_flags (A.to_string e.sh_addr)
+    Format.printf "name: %i; type: %s; flags: %i; addr: %a; off: %i; size: %i\n"
+      e.sh_name (shtype_to_string e.sh_type) e.sh_flags A.pretty e.sh_addr
       e.sh_off e.sh_size
   ;;
 
@@ -191,16 +191,16 @@ module File_header (A : Archi.Addr) (E : Endian.T) = struct
   };;
 
   let print e =
-    Printf.printf
-      "class: %s bits\ndata: %s\nversion: %i\netype: %s\nmachine: %s\n\
-       entry: %s\nphoff: %i\nshoff: %i\nflags: %i\nehsize: %i\nphentsize: %i\n\
+    Format.printf
+      "class: %a bits\ndata: %a\nversion: %i\netype: %s\nmachine: %s\n\
+       entry: %a\nphoff: %i\nshoff: %i\nflags: %i\nehsize: %i\nphentsize: %i\n\
        phnum: %i\nshentsize: %i\nshnum: %i\nshstrndx: %i\n"
-      (Archi.to_string A.eclass)
-      (Endian.to_string E.edata)
+      Archi.pretty A.eclass
+      Endian.pretty E.edata
       e.ei_version
       (etype_to_string e.ei_type)
       (emachine_to_string e.ei_machine)
-      (A.to_string e.ei_entry)
+      A.pretty e.ei_entry
       e.ei_phoff
       e.ei_shoff
       e.ei_flags
@@ -262,7 +262,7 @@ module File_header (A : Archi.Addr) (E : Endian.T) = struct
 	   ehsize phentsize phnum shentsize shnum shstrndx
     with exn ->
       close_in chan;
-      Printf.printf "%s" (Printexc.to_string exn);
+      Format.printf "%s" (Printexc.to_string exn);
       raise Invalid_Elf
   ;;
 
@@ -297,7 +297,7 @@ module File_header (A : Archi.Addr) (E : Endian.T) = struct
       List.rev r
     with exn ->
       close_in chan;
-      Printf.printf "%s" (Printexc.to_string exn);
+      Format.printf "%s" (Printexc.to_string exn);
       raise Invalid_Elf
   ;;
 
@@ -318,7 +318,7 @@ module File_header (A : Archi.Addr) (E : Endian.T) = struct
       r
     with exn ->
       close_in chan;
-      Printf.printf "%s" (Printexc.to_string exn);
+      Format.printf "%s" (Printexc.to_string exn);
       raise Invalid_Elf
   ;;
 
@@ -336,7 +336,7 @@ module File_header (A : Archi.Addr) (E : Endian.T) = struct
     List.iter (fun entry ->
       let i = entry.sh_name in
       let name = get_section_name shnames i in
-      Printf.printf "section %s:\n" name;
+      Format.printf "section %s:\n" name;
       print_sh_entry entry
     ) shl;
   ;;
@@ -356,7 +356,7 @@ let parse_class_endianness filename =
     Endian.from_int (int_of_char (Buffer.nth buf 5))
   with exn ->
     close_in chan;
-    Printf.printf "%s" (Printexc.to_string exn);
+    Format.printf "%s" (Printexc.to_string exn);
     raise Invalid_Elf
 ;;
 
@@ -373,9 +373,9 @@ let () =
 	let module FH = File_header(A)(E) in
 	FH.start filename
       with
-	Invalid_Elf -> Printf.printf "invalid ELF file !\n"
+	Invalid_Elf -> Format.printf "invalid ELF file !\n"
     else
-      Printf.printf "%s does not exist !\n" filename
+      Format.printf "%s does not exist !\n" filename
   else
-    Printf.printf "Usage: %s binary_file\n" Sys.argv.(0)
+    Format.printf "Usage: %s binary_file\n" Sys.argv.(0)
 ;;

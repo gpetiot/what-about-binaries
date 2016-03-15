@@ -21,12 +21,12 @@ type t = LittleEndian | BigEndian;;
 let from_int = function
   | 1 -> LittleEndian
   | 2 -> BigEndian
-  | x -> failwith (Printf.sprintf "int_to_edata %i" x)
+  | x -> failwith (Format.sprintf "from_int %i" x)
 ;;
 
-let to_string = function
-  | LittleEndian -> "little-endian"
-  | BigEndian -> "big-endian"
+let pretty fmt = function
+  | LittleEndian -> Format.fprintf fmt "little-endian"
+  | BigEndian -> Format.fprintf fmt "big-endian"
 ;;
 
 module type T =

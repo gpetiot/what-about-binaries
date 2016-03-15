@@ -23,7 +23,7 @@ let char_hexa = function
   | _ -> failwith "char_hexa"
 ;;
 
-let to_string i =
+let pretty fmt i =
   let rec aux n p inc = function
     | [] -> n, p
     | pow2 :: t ->
@@ -31,5 +31,5 @@ let to_string i =
   in
   let j, p1 = aux i 0 8 [128; 64; 32; 16] in
   let _, p2 = aux j 0 8 [8; 4; 2; 1] in
-  Printf.sprintf "%c%c" (char_hexa p1) (char_hexa p2)
+  Format.fprintf fmt "%c%c" (char_hexa p1) (char_hexa p2)
 ;;

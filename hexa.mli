@@ -16,4 +16,4 @@
 (*                                                                        *)
 (**************************************************************************)
 
-val to_string: int -> string;;
+val pretty: Format.formatter -> int -> unit;;
