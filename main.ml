@@ -157,7 +157,7 @@ module File_header (A : Archi.Addr) (E : Endian.T) = struct
   };;
 
   type sh_entry = {
-    sh_name : int;
+    sh_name : string;
     sh_type : shtype;
     sh_flags : int;
     sh_addr : A.t;
@@ -166,7 +166,7 @@ module File_header (A : Archi.Addr) (E : Endian.T) = struct
   };;
 
   let print_sh_entry e =
-    Format.printf "name: %i; type: %s; flags: %i; addr: %a; off: %i; size: %i\n"
+    Format.printf "name: %s; type: %s; flags: %i; addr: %a; off: %i; size: %i\n"
       e.sh_name (shtype_to_string e.sh_type) e.sh_flags A.pretty e.sh_addr
       e.sh_off e.sh_size
   ;;
@@ -266,6 +266,32 @@ module File_header (A : Archi.Addr) (E : Endian.T) = struct
       raise Invalid_Elf
   ;;
 
+  let parse_section_names off size filename =
+    let chan = open_in_bin filename in
+    let rec aux chan i =
+      if i < off then
+	let _ = input_byte chan in
+	aux chan (i+1)
+      else
+	let buf = Buffer.create size in
+	Buffer.add_channel buf chan size;
+	Buffer.contents buf
+    in
+    try
+      let r = aux chan 0 in
+      close_in chan;
+      r
+    with exn ->
+      close_in chan;
+      Format.printf "%s" (Printexc.to_string exn);
+      raise Invalid_Elf
+  ;;
+
+  let get_section_name snames index =
+    let end_index = String.index_from snames index (char_of_int 0) in
+    String.sub snames index (end_index - index)
+  ;;
+
   let parse_section_header header filename =
     let chan = open_in_bin filename in
     let rec aux chan i ret =
@@ -285,60 +311,33 @@ module File_header (A : Archi.Addr) (E : Endian.T) = struct
 	    let sh_addr = multi_bytes_addr buf (8+A.size) A.size in
 	    let sh_off = multi_bytes_int buf (8+A.size*2) A.size in
 	    let sh_size = multi_bytes_int buf (8+A.size*3) A.size in
-	    let sh = {sh_name; sh_type; sh_flags; sh_addr; sh_off; sh_size} in
+	    let sh = sh_name, sh_type, sh_flags, sh_addr, sh_off, sh_size in
 	    aux chan (i+header.ei_shentsize) (sh::ret)
 	  end
 	else
 	  ret
     in
     try
-      let r = aux chan 0 [] in
+      let r = List.rev (aux chan 0 []) in
       close_in chan;
-      List.rev r
+      let _,_,_,_,off,size = List.nth r header.ei_shstrndx in
+      let shnames = parse_section_names off size filename in
+      let name_section (id,sh_type,sh_flags,sh_addr,sh_off,sh_size) =
+	let sh_name = get_section_name shnames id in
+	{ sh_name; sh_type; sh_flags; sh_addr; sh_off; sh_size }
+      in
+      List.map name_section r
     with exn ->
       close_in chan;
       Format.printf "%s" (Printexc.to_string exn);
       raise Invalid_Elf
-  ;;
-
-  let parse_section_names shstrtab filename =
-    let chan = open_in_bin filename in
-    let rec aux chan i =
-      if i < shstrtab.sh_off then
-	let _ = input_byte chan in
-	aux chan (i+1)
-      else
-	let buf = Buffer.create shstrtab.sh_size in
-	Buffer.add_channel buf chan shstrtab.sh_size;
-	Buffer.contents buf
-    in
-    try
-      let r = aux chan 0 in
-      close_in chan;
-      r
-    with exn ->
-      close_in chan;
-      Format.printf "%s" (Printexc.to_string exn);
-      raise Invalid_Elf
-  ;;
-
-  let get_section_name snames index =
-    let end_index = String.index_from snames index (char_of_int 0) in
-    String.sub snames index (end_index - index)
   ;;
   
   let start filename =
     let fh = parse_header filename in
     let shl = parse_section_header fh filename in
     print fh;
-    let shstrtab = List.nth shl fh.ei_shstrndx in
-    let shnames = parse_section_names shstrtab filename in
-    List.iter (fun entry ->
-      let i = entry.sh_name in
-      let name = get_section_name shnames i in
-      Format.printf "section %s:\n" name;
-      print_sh_entry entry
-    ) shl;
+    List.iter print_sh_entry shl
   ;;
 end;;
 
