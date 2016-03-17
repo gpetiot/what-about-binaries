@@ -35,6 +35,8 @@ sig
   val shift_left : int_t -> int -> int_t
   val of_int : int -> int_t
   val to_int : int_t -> int
+  val ph_offsets : int * int * int * int * int * int * int * int
+  val ph_sizes : int * int * int * int * int * int * int * int
 end;;
 
 module Addr32 : Addr;;

@@ -43,6 +43,8 @@ sig
   val shift_left : int_t -> int -> int_t
   val of_int : int -> int_t
   val to_int : int_t -> int
+  val ph_offsets : int * int * int * int * int * int * int * int
+  val ph_sizes : int * int * int * int * int * int * int * int
 end;;
     
 module Addr32 =
@@ -68,6 +70,8 @@ struct
   let shift_left = Int32.shift_left
   let of_int = Int32.of_int
   let to_int = Int32.to_int
+  let ph_offsets = 0,4,8,12,16,20,24,28
+  let ph_sizes = 4,4,4,4,4,4,4,4
 end;;
 
 module Addr64 =
@@ -98,6 +102,8 @@ struct
   let shift_left = Int64.shift_left
   let of_int = Int64.of_int
   let to_int = Int64.to_int
+  let ph_offsets = 0,8,16,24,32,40,4,48
+  let ph_sizes = 4,8,8,8,8,8,4,8
 end;;
 
 let addr = function
