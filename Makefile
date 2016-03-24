@@ -4,7 +4,7 @@ SOURCES = hexa.mli hexa.ml \
 	endian.mli endian.ml \
 	main.ml
 
-EXEC = testelf
+EXEC = obaf
 
 CAMLC = ocamlc
 CAMLOPT = ocamlopt
