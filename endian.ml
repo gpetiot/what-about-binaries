@@ -51,4 +51,3 @@ let endianness = function
   | LittleEndian -> (module Little : T)
   | BigEndian -> (module Big : T)
 ;;
-

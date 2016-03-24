@@ -27,7 +27,4 @@ sig
   val order : 'a list -> 'a list
 end;;
 
-module Big : T;;
-module Little : T;;
-
 val endianness: t -> (module T);;

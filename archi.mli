@@ -39,7 +39,4 @@ sig
   val ph_sizes : int * int * int * int * int * int * int * int
 end;;
 
-module Addr32 : Addr;;
-module Addr64 : Addr;;
-
 val addr: eclass -> (module Addr);;
