@@ -42,3 +42,12 @@ clean:
 	rm -f *.cm[iox] *.annot *~ .*~ #*#
 	rm -f $(EXEC)
 	rm -f $(EXEC).opt
+	rm -f webgui.byte webgui/webgui.js
+
+webgui: webgui/webgui.js
+
+webgui.byte: $(OBJS) webgui.ml
+	ocamlfind ocamlc -annot -package js_of_ocaml -syntax camlp4o -package js_of_ocaml.syntax -linkpkg -o $@ $(OBJS) $<
+
+webgui/webgui.js: webgui.byte
+	js_of_ocaml $< -o $@
