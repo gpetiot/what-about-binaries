@@ -42,6 +42,7 @@ clean:
 	rm -f *.cm[iox] *.annot *~ .*~ #*#
 	rm -f $(EXEC)
 	rm -f $(EXEC).opt
+	rm -f configure
 	rm -f webgui.byte webgui/webgui.js
 
 webgui: webgui/webgui.js
