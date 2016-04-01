@@ -39,10 +39,11 @@ $(EXEC).opt: $(SOURCES:.mli=.cmi) $(OPTOBJS)
 
 .PHONY: clean
 clean:
-	rm -f *.cm[iox] *.annot *~ .*~ #*#
+	rm -f *.cm[iox] *.o *.annot *~ .*~ #*#
 	rm -f $(EXEC)
 	rm -f $(EXEC).opt
-	rm -f configure
+	rm -f configure config.log
+	rm -rf autom4te.cache
 	rm -f webgui.byte webgui/webgui.js
 
 webgui: webgui/webgui.js
