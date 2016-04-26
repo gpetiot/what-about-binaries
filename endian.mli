@@ -18,7 +18,7 @@
 
 type t;;
 
-val from_int: int -> t;;
+val of_int: int -> t;;
 val pretty: Format.formatter -> t -> unit;;
 
 module type T =

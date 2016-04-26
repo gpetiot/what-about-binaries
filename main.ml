@@ -184,7 +184,7 @@ module File_header (A : Archi.Addr) (E : Endian.T) = struct
   ;;
 
   let multi_bytes_addr buf off nb =
-    A.from_list (multi_bytes buf off nb)
+    A.of_list (multi_bytes buf off nb)
   ;;
   
   let parse_header filename =
@@ -358,8 +358,8 @@ let parse_class_endianness filename =
     assert (Buffer.nth buf 1 = '\x45');
     assert (Buffer.nth buf 2 = '\x4c');
     assert (Buffer.nth buf 3 = '\x46');
-    Archi.from_int (int_of_char (Buffer.nth buf 4)),
-    Endian.from_int (int_of_char (Buffer.nth buf 5))
+    Archi.of_int (int_of_char (Buffer.nth buf 4)),
+    Endian.of_int (int_of_char (Buffer.nth buf 5))
   with exn ->
     close_in chan;
     Format.printf "%s" (Printexc.to_string exn);
