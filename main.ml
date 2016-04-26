@@ -80,121 +80,6 @@ let emachine_to_string = function
   | X86_64 -> "x86_64"
   | AArch64 -> "aarch64"
 ;;
-
-type shtype =
-  | Null
-  | Progbits
-  | Symtab
-  | Strtab
-  | Rela
-  | Hash
-  | Dynamic
-  | Note
-  | Nobits
-  | Rel
-  | Shlib
-  | Dynsym
-  | Init_array
-  | Fini_array
-  | Preinit_array
-  | Group
-  | Symtab_shndx
-  | Loos
-  | Gnu_attributes
-  | Gnu_hash
-  | Gnu_verdef
-  | Gnu_verneed
-  | Gnu_versym (* or Hios *)
-  | Loproc (* or Hex_ordered *)
-  | Arm_exidx (* or X86_64_unwind *)
-  | Arm_preemptmap
-  | Arm_attributes
-  | Arm_debugoverlay
-  | Arm_overlaysection
-  | Mips_reginfo
-  | Mips_options
-  | Mips_abiflags
-  | Hiproc
-  | Louser
-  | Hiuser
-;;
-
-let int_to_shtype = function
-  | 0 -> Null
-  | 1 -> Progbits
-  | 2 -> Symtab
-  | 3 -> Strtab
-  | 4 -> Rela
-  | 5 -> Hash
-  | 6 -> Dynamic
-  | 7 -> Note
-  | 8 -> Nobits
-  | 9 -> Rel
-  | 10 -> Shlib
-  | 11 -> Dynsym
-  | 14 -> Init_array
-  | 15 -> Fini_array
-  | 16 -> Preinit_array
-  | 17 -> Group
-  | 18 -> Symtab_shndx
-  | 1610612736 -> Loos
-  | 1879048181 -> Gnu_attributes
-  | 1879048182 -> Gnu_hash
-  | 1879048189 -> Gnu_verdef
-  | 1879048190 -> Gnu_verneed
-  | 1879048191 -> Gnu_versym
-  | 1879048192 -> Loproc
-  | 1879048193 -> Arm_exidx
-  | 1879048194 -> Arm_preemptmap
-  | 1879048195 -> Arm_attributes
-  | 1879048196 -> Arm_debugoverlay
-  | 1879048197 -> Arm_overlaysection
-  | 1879048198 -> Mips_reginfo
-  | 1879048205 -> Mips_options
-  | 1879048234 -> Mips_abiflags
-  | 2147483647 -> Hiproc
-  | 2147483648 -> Louser
-  | 4294967295 -> Hiuser
-  | x -> failwith (Format.sprintf "int_to_shtype %i" x)
-;;
-
-let shtype_to_string = function
-  | Null -> "null"
-  | Progbits -> "progbits"
-  | Symtab -> "symtab"
-  | Strtab -> "strtab"
-  | Rela -> "rela"
-  | Hash -> "hash"
-  | Dynamic -> "dynamic"
-  | Note -> "note"
-  | Nobits -> "nobits"
-  | Rel -> "rel"
-  | Shlib -> "shlib"
-  | Dynsym -> "dynsym"
-  | Init_array -> "init_array"
-  | Fini_array -> "fini_array"
-  | Preinit_array -> "preinit_array"
-  | Group -> "group"
-  | Symtab_shndx -> "symtab_shndx"
-  | Loos -> "loos"
-  | Gnu_attributes -> "gnu_attributes"
-  | Gnu_hash -> "gnu_hash"
-  | Gnu_verdef -> "gnu_verdef"
-  | Gnu_verneed -> "gnu_verneed"
-  | Gnu_versym -> "gnu_versym"
-  | Loproc -> "loproc"
-  | Arm_exidx -> "arm_exidx"
-  | Arm_preemptmap -> "arm_preemptmap"
-  | Arm_attributes -> "arm_attributes"
-  | Arm_debugoverlay -> "arm_debugoverlay"
-  | Arm_overlaysection -> "arm_overlaysection"
-  | Mips_reginfo -> "mips_reginfo"
-  | Mips_options -> "mips_options"
-  | Mips_abiflags -> "mips_abiflags"
-  | Hiproc -> "hiproc"
-  | Louser -> "louser"
-  | Hiuser -> "hiuser"
-;;
   
 
 module File_header (A : Archi.Addr) (E : Endian.T) = struct
@@ -218,7 +103,7 @@ module File_header (A : Archi.Addr) (E : Endian.T) = struct
 
   type sh_entry = {
     sh_name : string;
-    sh_type : shtype;
+    sh_type : Section_header_type.t;
     sh_flags : int;
     sh_addr : A.t;
     sh_off : int;
@@ -242,9 +127,10 @@ module File_header (A : Archi.Addr) (E : Endian.T) = struct
 
   let print_sh_entry e =
     Format.printf
-      "name: %s; type: %s; flags: %i; addr: %a; off: %i; size: %i; \
+      "name: %s; type: %a; flags: %i; addr: %a; off: %i; size: %i; \
        link: %i; info: %i; align: %i; entsize: %i\n"
-      e.sh_name (shtype_to_string e.sh_type) e.sh_flags A.pretty e.sh_addr
+      e.sh_name Section_header_type.pretty e.sh_type e.sh_flags
+      A.pretty e.sh_addr
       e.sh_off e.sh_size e.sh_link e.sh_info e.sh_addralign e.sh_entsize
   ;;
 
@@ -374,7 +260,7 @@ module File_header (A : Archi.Addr) (E : Endian.T) = struct
 	    let buf = Buffer.create header.ei_shentsize in
 	    Buffer.add_channel buf chan header.ei_shentsize;
 	    let sh_name = multi_bytes_int buf 0 4 in
-	    let sh_type = int_to_shtype (multi_bytes_int buf 4 4) in
+	    let sh_type = Section_header_type.of_int(multi_bytes_int buf 4 4) in
 	    let sh_flags = multi_bytes_int buf 8 A.size in
 	    let sh_addr = multi_bytes_addr buf (8+A.size) A.size in
 	    let sh_off = multi_bytes_int buf (8+A.size*2) A.size in
