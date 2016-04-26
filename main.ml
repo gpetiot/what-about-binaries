@@ -195,83 +195,7 @@ let shtype_to_string = function
   | Louser -> "louser"
   | Hiuser -> "hiuser"
 ;;
-
-type phtype =
-  | Null
-  | Load
-  | Dynamic
-  | Interp
-  | Note
-  | Shlib
-  | Phdr
-  | Tls
-  | Loos (* or Amdgpu_hsa_load_global_program *)
-  | Amdgpu_hsa_load_global_agent
-  | Amdgpu_hsa_load_readonly_agent
-  | Amdgpu_hsa_load_code_agent
-  | Sunw_unwind
-  | Gnu_eh_frame (* or Sunw_eh_frame *)
-  | Gnu_stack
-  | Gnu_relro
-  | Hios
-  | Loproc (* or Arm_archext or Mips_reginfo *)
-  | Arm_exidx (* or Arm_unwind or Mips_rtproc *)
-  | Mips_options
-  | Mips_abiflags
-  | Hiproc
-;;
-
-let int_to_phtype = function
-  | 0 -> Null
-  | 1 -> Load
-  | 2 -> Dynamic
-  | 3 -> Interp
-  | 4 -> Note
-  | 5 -> Shlib
-  | 6 -> Phdr
-  | 7 -> Tls
-  | 1610612736 -> Loos
-  | 1610612737 -> Amdgpu_hsa_load_global_agent
-  | 1610612738 -> Amdgpu_hsa_load_readonly_agent
-  | 1610612739 -> Amdgpu_hsa_load_code_agent
-  | 1684333904 -> Sunw_unwind
-  | 1685382480 -> Gnu_eh_frame
-  | 1685382481 -> Gnu_stack
-  | 1685382482 -> Gnu_relro
-  | 1879048191 -> Hios
-  | 1879048192 -> Loproc
-  | 1879048193 -> Arm_exidx
-  | 1879048194 -> Mips_options
-  | 1879048195 -> Mips_abiflags
-  | 2147483647 -> Hiproc
-  | x -> failwith (Format.sprintf "int_to_phtype %i" x)
-;;
-
-let phtype_to_string = function
-  | Null -> "null"
-  | Load -> "load"
-  | Dynamic -> "dynamic"
-  | Interp -> "interp"
-  | Note -> "note"
-  | Shlib -> "shlib"
-  | Phdr -> "phdr"
-  | Tls -> "tls"
-  | Loos -> "loos"
-  | Amdgpu_hsa_load_global_agent -> "amdgpu_hsa_load_global_agent"
-  | Amdgpu_hsa_load_readonly_agent -> "amdgpu_hsa_load_readonly_agent"
-  | Amdgpu_hsa_load_code_agent -> "amdgpu_hsa_load_code_agent"
-  | Sunw_unwind -> "sunw_unwind"
-  | Gnu_eh_frame -> "gnu_eh_frame"
-  | Gnu_stack -> "gnu_stack"
-  | Gnu_relro -> "gnu_relro"
-  | Hios -> "hios"
-  | Loproc -> "loproc"
-  | Arm_exidx -> "arm_exidx"
-  | Mips_options -> "mips_options"
-  | Mips_abiflags -> "mips_abiflags"
-  | Hiproc -> "hiproc"
-;;
-
+  
 
 module File_header (A : Archi.Addr) (E : Endian.T) = struct
   type t = {
@@ -306,7 +230,7 @@ module File_header (A : Archi.Addr) (E : Endian.T) = struct
   };;
 
   type ph_entry = {
-    ph_type : phtype;
+    ph_type : Program_header_type.t;
     ph_off : int;
     ph_vaddr : A.t;
     ph_addr : A.t;
@@ -326,9 +250,9 @@ module File_header (A : Archi.Addr) (E : Endian.T) = struct
 
   let print_ph_entry e =
     Format.printf
-      "type: %s; off: %i; vaddr: %a; addr: %a; filesz: %i; memsz: %i; \
+      "type: %a; off: %i; vaddr: %a; addr: %a; filesz: %i; memsz: %i; \
        flags: %i; align: %i\n"
-      (phtype_to_string e.ph_type) e.ph_off A.pretty e.ph_vaddr
+      Program_header_type.pretty e.ph_type e.ph_off A.pretty e.ph_vaddr
       A.pretty e.ph_addr e.ph_filesz e.ph_memsz e.ph_flags
       e.ph_align
   ;;
@@ -499,7 +423,8 @@ module File_header (A : Archi.Addr) (E : Endian.T) = struct
 	    Buffer.add_channel buf chan header.ei_phentsize;
 	    let o1,o2,o3,o4,o5,o6,o7,o8 = A.ph_offsets in
 	    let s1,s2,s3,s4,s5,s6,s7,s8 = A.ph_sizes in
-	    let ph_type = int_to_phtype (multi_bytes_int buf o1 s1) in
+	    let ph_type =
+	      Program_header_type.of_int (multi_bytes_int buf o1 s1) in
 	    let ph_off = multi_bytes_int buf o2 s2 in
 	    let ph_vaddr = multi_bytes_addr buf o3 s3 in
 	    let ph_addr = multi_bytes_addr buf o4 s4 in

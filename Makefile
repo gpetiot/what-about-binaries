@@ -2,6 +2,7 @@
 SOURCES = hexa.mli hexa.ml \
 	archi.mli archi.ml \
 	endian.mli endian.ml \
+	program_header_type.mli program_header_type.ml \
 	main.ml
 
 EXEC = obaf
