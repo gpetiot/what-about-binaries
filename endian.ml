@@ -21,7 +21,7 @@ type t = LittleEndian | BigEndian;;
 let from_int = function
   | 1 -> LittleEndian
   | 2 -> BigEndian
-  | x -> failwith (Format.sprintf "from_int %i" x)
+  | x -> failwith (Format.sprintf "Endian.from_int %i" x)
 ;;
 
 let pretty fmt = function

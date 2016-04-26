@@ -21,7 +21,7 @@ type eclass = C32 | C64;;
 let from_int = function
   | 1 -> C32
   | 2 -> C64
-  | x -> failwith (Format.sprintf "from_int %i" x)
+  | x -> failwith (Format.sprintf "Archi.from_int %i" x)
 ;;
 
 let pretty fmt = function
@@ -65,7 +65,7 @@ struct
       Hexa.pretty a Hexa.pretty b Hexa.pretty c Hexa.pretty d
   let from_list = function
     | [a;b;c;d] -> a,b,c,d
-    | _ -> failwith "from_list"
+    | _ -> failwith "Archi.Addr32.from_list"
   let logor = Int32.logor
   let shift_left = Int32.shift_left
   let of_int = Int32.of_int
@@ -97,7 +97,7 @@ struct
       Hexa.pretty e Hexa.pretty f Hexa.pretty g Hexa.pretty h
   let from_list = function
     | [a;b;c;d;e;f;g;h] -> a,b,c,d,e,f,g,h
-    | _ -> failwith "from_list"
+    | _ -> failwith "Archi.Addr64.from_list"
   let logor = Int64.logor
   let shift_left = Int64.shift_left
   let of_int = Int64.of_int
