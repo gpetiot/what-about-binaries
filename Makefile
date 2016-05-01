@@ -47,6 +47,7 @@ clean:
 	rm -f configure config.log
 	rm -rf autom4te.cache
 	rm -f webgui.byte webgui/webgui.js
+	make clean -C tests
 
 webgui: webgui/webgui.js
 
@@ -55,3 +56,7 @@ webgui.byte: $(OBJS) webgui.ml
 
 webgui/webgui.js: webgui.byte
 	js_of_ocaml $< -o $@
+
+.PHONY: tests
+tests:
+	make -C tests
