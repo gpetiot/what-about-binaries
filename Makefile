@@ -2,6 +2,7 @@
 SOURCES = hexa.mli hexa.ml \
 	archi.mli archi.ml \
 	endian.mli endian.ml \
+	machine.mli machine.ml \
 	program_header_type.mli program_header_type.ml \
 	section_header_type.mli section_header_type.ml \
 	main.ml

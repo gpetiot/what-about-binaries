@@ -40,46 +40,6 @@ let etype_to_string = function
   | Loproc -> "loproc"
   | Hiproc -> "hiproc"
 ;;
-
-type emachine =
-  | None
-  | SPARC
-  | X86
-  | MIPS
-  | PowerPC
-  | ARM
-  | SuperH
-  | IA64
-  | X86_64
-  | AArch64
-;;
-
-let int_to_emachine i =
-  if i = int_of_string "0x00" then None
-  else if i = int_of_string "0x02" then SPARC
-  else if i = int_of_string "0x03" then X86
-  else if i = int_of_string "0x08" then MIPS
-  else if i = int_of_string "0x14" then PowerPC
-  else if i = int_of_string "0x28" then ARM
-  else if i = int_of_string "0x2A" then SuperH
-  else if i = int_of_string "0x32" then IA64
-  else if i = int_of_string "0x3E" then X86_64
-  else if i = int_of_string "0xB7" then AArch64
-  else failwith (Format.sprintf "int_to_emachine %i" i)
-;;
-
-let emachine_to_string = function
-  | None -> "none"
-  | SPARC -> "sparc"
-  | X86 -> "x86"
-  | MIPS -> "mips"
-  | PowerPC -> "powerpc"
-  | ARM -> "arm"
-  | SuperH -> "superh"
-  | IA64 -> "ia64"
-  | X86_64 -> "x86_64"
-  | AArch64 -> "aarch64"
-;;
   
 
 module File_header (A : Archi.Addr) (E : Endian.T) = struct
@@ -88,7 +48,7 @@ module File_header (A : Archi.Addr) (E : Endian.T) = struct
     ei_osabi : int;
     ei_abiversion : int;
     ei_type : etype;
-    ei_machine : emachine;
+    ei_machine : Machine.t;
     ei_entry : A.t;
     ei_phoff : int;
     ei_shoff : int;
@@ -145,14 +105,14 @@ module File_header (A : Archi.Addr) (E : Endian.T) = struct
 
   let print e =
     Format.printf
-      "class: %a bits\ndata: %a\nversion: %i\netype: %s\nmachine: %s\n\
+      "class: %a bits\ndata: %a\nversion: %i\netype: %s\nmachine: %a\n\
        entry: %a\nphoff: %i\nshoff: %i\nflags: %i\nehsize: %i\nphentsize: %i\n\
        phnum: %i\nshentsize: %i\nshnum: %i\nshstrndx: %i\n"
       Archi.pretty A.eclass
       Endian.pretty E.edata
       e.ei_version
       (etype_to_string e.ei_type)
-      (emachine_to_string e.ei_machine)
+      Machine.pretty e.ei_machine
       A.pretty e.ei_entry
       e.ei_phoff
       e.ei_shoff
@@ -196,7 +156,7 @@ module File_header (A : Archi.Addr) (E : Endian.T) = struct
       let ei_osabi = int_of_char (Buffer.nth buf 7) in
       let ei_abiversion = int_of_char (Buffer.nth buf 8) in
       let ei_type = int_to_etype (multi_bytes_int buf 16 2) in
-      let ei_machine = int_to_emachine (multi_bytes_int buf 18 2) in
+      let ei_machine = Machine.of_int (multi_bytes_int buf 18 2) in
       let version' = multi_bytes_int buf 20 4 in
       assert (ei_version = version');
       let ei_entry = multi_bytes_addr buf 24 A.size in
