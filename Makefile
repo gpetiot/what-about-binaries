@@ -50,6 +50,7 @@ clean:
 	rm -f webgui.byte webgui/webgui.js
 	make clean -C tests
 
+.PHONY: webgui
 webgui: webgui/webgui.js
 
 webgui.byte: $(OBJS) webgui.ml
