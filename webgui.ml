@@ -1,14 +1,37 @@
 
 let onload _ =
-  let main =
-    Js.Opt.get (Dom_html.window##document##getElementById(Js.string "main"))
-      (fun () -> assert false)
-  in
-  let filename = "/home/gp/obaf/tests/hello.arm" in
-  let _ = Main.parse_class_endianness filename in
+  let document = Dom_html.window##document in
+  let err () = assert false in
+  let main = Js.Opt.get (document##getElementById (Js.string "main")) err in
+  let div = Dom_html.createDiv document in
+  Dom.appendChild main div;
+  let filename = "../tests/hello.arm" in
+  if Sys.file_exists filename then
+    try
+      let eclass, edata = Elf_header.parse_class_endianness filename in
+      let module A = (val (Archi.addr eclass)) in
+      let module E = (val (Endian.endianness edata)) in
+      let module FH = Elf_header.Make(A)(E) in
+      let fh = FH.parse_header filename in
+      let shl = FH.parse_section_header fh filename in
+      let phl = FH.parse_program_header fh filename in
+      begin
+  	let buf = document##createDocumentFragment() in
+  	Dom.appendChild
+	  buf (document##createTextNode (Js.string "file header:\n"));
+  	FH.print fh;
+  	Format.printf "\nsection header:\n";
+  	List.iter FH.print_sh_entry shl;
+  	Format.printf "\nprogram header:\n";
+  	List.iter FH.print_ph_entry phl;
+  	Dom.appendChild div buf
+      end
+    with
+      Elf_header.Invalid_Elf ->
+	Dom_html.window##alert (Js.string "invalid ELF file !")
+  else
+    Dom_html.window##alert (Js.string (filename ^ " does not exist !"));
   Js._false
 ;;
 
-let _ =
-  Dom_html.window##onload <- Dom_html.handler onload
-;;
+let _ = Dom_html.window##onload <- Dom_html.handler onload;;

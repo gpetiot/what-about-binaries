@@ -5,7 +5,7 @@ SOURCES = hexa.mli hexa.ml \
 	machine.mli machine.ml \
 	program_header_type.mli program_header_type.ml \
 	section_header_type.mli section_header_type.ml \
-	main.ml
+	elf_header.mli elf_header.ml
 
 EXEC = obaf
 CAMLC = ocamlc
@@ -25,11 +25,11 @@ all: $(EXEC)
 
 opt: $(EXEC).opt
 
-$(EXEC): $(SOURCES:.mli=.cmi) $(OBJS)
-	$(CAMLC) -o $@ $(LIBS) $(OBJS)
+$(EXEC): $(SOURCES:.mli=.cmi) $(OBJS) main.cmo
+	$(CAMLC) -o $@ $(LIBS) $(OBJS) main.cmo
 
-$(EXEC).opt: $(SOURCES:.mli=.cmi) $(OPTOBJS)
-	$(CAMLOPT) -o $@ $(LIBS:.cma=.cmxa) $(OPTOBJS)
+$(EXEC).opt: $(SOURCES:.mli=.cmi) $(OPTOBJS) main.cmx
+	$(CAMLOPT) -o $@ $(LIBS:.cma=.cmxa) $(OPTOBJS) main.cmx
 
 %.cmo: %.ml
 	$(CAMLC) -c -annot $<
@@ -53,7 +53,7 @@ clean:
 webgui: webgui/webgui.js
 
 webgui.byte: $(OBJS) webgui.ml
-	ocamlfind ocamlc -annot -package js_of_ocaml -syntax camlp4o -package js_of_ocaml.syntax -linkpkg -o $@ $(OBJS) $<
+	ocamlfind ocamlc -annot -package js_of_ocaml -syntax camlp4o -package js_of_ocaml.syntax -linkpkg -o $@ $(OBJS) $< webgui.ml
 
 webgui/webgui.js: webgui.byte
 	js_of_ocaml $< -o $@
