@@ -28,7 +28,7 @@ let int_to_etype = function
   | 4 -> Core
   | 65280 -> Loproc
   | 65535 -> Hiproc
-  | x -> failwith (Format.sprintf "int_to_etype %i" x)
+  | x -> failwith (Format.sprintf "Elf_header.int_to_etype %i" x)
 ;;
 
 let etype_to_string = function
