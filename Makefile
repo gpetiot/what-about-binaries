@@ -63,10 +63,10 @@ $(EXECGUI).opt: $(SOURCES:.mli=.cmi) $(OPTOBJS) src/gui/main.ml
 .PHONY: webgui
 webgui: src/webgui/webgui.js
 
-webgui.byte: $(OBJS) src/webgui.ml
+src/webgui.byte: $(OBJS) src/webgui.ml
 	ocamlfind $(CAMLC) -I src -annot -package js_of_ocaml -syntax camlp4o -package js_of_ocaml.syntax -linkpkg -o $@ $(OBJS) $< src/webgui.ml
 
-src/webgui/webgui.js: webgui.byte
+src/webgui/webgui.js: src/webgui.byte
 	js_of_ocaml $< -o $@
 
 .PHONY: tests
