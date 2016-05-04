@@ -29,18 +29,13 @@ let onload _ =
       let module A = (val (Archi.addr eclass)) in
       let module E = (val (Endian.endianness edata)) in
       let module FH = Elf_header.Make(A)(E) in
-      let fh = FH.parse_header filename in
-      let shl = FH.parse_section_header fh filename in
-      let phl = FH.parse_program_header fh filename in
+      let fh = FH.parse filename in
+      let _shl = FH.Sh.parse fh filename in
+      let _phl = FH.Ph.parse fh filename in
       begin
   	let buf = document##createDocumentFragment() in
   	Dom.appendChild
 	  buf (document##createTextNode (Js.string "file header:\n"));
-  	FH.print fh;
-  	Format.printf "\nsection header:\n";
-  	List.iter FH.print_sh_entry shl;
-  	Format.printf "\nprogram header:\n";
-  	List.iter FH.print_ph_entry phl;
   	Dom.appendChild div buf
       end
     with

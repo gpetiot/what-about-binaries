@@ -20,14 +20,19 @@ exception Invalid_Elf;;
 
 val parse_class_endianness : string -> Archi.eclass * Endian.t;;
 
-module Make (A : Archi.Addr) (E : Endian.T) : (sig
-  type t
-  type sh_entry
-  type ph_entry
-  val print_sh_entry : sh_entry -> unit
-  val print_ph_entry : ph_entry -> unit
-  val print : t -> unit
-  val parse_header : string -> t
-  val parse_section_header : t -> string -> sh_entry list
-  val parse_program_header : t -> string -> ph_entry list
+module Make (A : Archi.Addr) (E : Endian.T) :
+(sig
+    type t
+    val pretty : Format.formatter -> t -> unit
+    val parse : string -> t
+    module Sh : sig
+      type entry
+      val pretty : Format.formatter -> entry -> unit
+      val parse : t -> string -> entry list
+    end
+    module Ph : sig
+      type entry
+      val pretty : Format.formatter -> entry -> unit
+      val parse : t -> string -> entry list
+    end
 end);;

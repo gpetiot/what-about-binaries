@@ -26,16 +26,16 @@ let () =
 	let module A = (val (Archi.addr eclass)) in
 	let module E = (val (Endian.endianness edata)) in
 	let module FH = Elf_header.Make(A)(E) in
-	let fh = FH.parse_header filename in
-	let shl = FH.parse_section_header fh filename in
-	let phl = FH.parse_program_header fh filename in
+	let fh = FH.parse filename in
+	let shl = FH.Sh.parse fh filename in
+	let phl = FH.Ph.parse fh filename in
 	begin
-	  Format.printf "file header:\n";
-	  FH.print fh;
-	  Format.printf "\nsection header:\n";
-	  List.iter FH.print_sh_entry shl;
-	  Format.printf "\nprogram header:\n";
-	  List.iter FH.print_ph_entry phl
+	  Format.printf "file header:\n%a" FH.pretty fh;
+	  let pp_sep fmt () = Format.fprintf fmt "" in
+	  Format.printf "\nsection header:\n%a"
+			(Format.pp_print_list ~pp_sep FH.Sh.pretty) shl;
+	  Format.printf "\nprogram header:\n%a"
+			(Format.pp_print_list ~pp_sep FH.Ph.pretty) phl
 	end
       with
 	Elf_header.Invalid_Elf -> Format.printf "invalid ELF file !\n"
