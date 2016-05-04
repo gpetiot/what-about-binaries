@@ -1,11 +1,11 @@
 
-SOURCES = hexa.mli hexa.ml \
-	archi.mli archi.ml \
-	endian.mli endian.ml \
-	machine.mli machine.ml \
-	program_header_type.mli program_header_type.ml \
-	section_header_type.mli section_header_type.ml \
-	elf_header.mli elf_header.ml
+SOURCES = src/hexa.mli src/hexa.ml \
+	src/archi.mli src/archi.ml \
+	src/endian.mli src/endian.ml \
+	src/machine.mli src/machine.ml \
+	src/program_header_type.mli src/program_header_type.ml \
+	src/section_header_type.mli src/section_header_type.ml \
+	src/elf_header.mli src/elf_header.ml
 
 EXEC = obaf
 EXECGUI = $(EXEC)_gui
@@ -26,47 +26,47 @@ all: $(EXEC)
 
 opt: $(EXEC).opt
 
-$(EXEC): $(SOURCES:.mli=.cmi) $(OBJS) main.cmo
-	$(CAMLC) -o $@ $(LIBS) $(OBJS) main.cmo
+$(EXEC): $(SOURCES:.mli=.cmi) $(OBJS) src/main.cmo
+	$(CAMLC) -I src -o $@ $(LIBS) $(OBJS) src/main.cmo
 
-$(EXEC).opt: $(SOURCES:.mli=.cmi) $(OPTOBJS) main.cmx
-	$(CAMLOPT) -o $@ $(LIBS:.cma=.cmxa) $(OPTOBJS) main.cmx
+$(EXEC).opt: $(SOURCES:.mli=.cmi) $(OPTOBJS) src/main.cmx
+	$(CAMLOPT) -I src -o $@ $(LIBS:.cma=.cmxa) $(OPTOBJS) src/main.cmx
 
 %.cmo: %.ml
-	$(CAMLC) -c -annot $<
+	$(CAMLC) -I src -c -annot $<
 
 %.cmi: %.mli
-	$(CAMLC) -c -annot $<
+	$(CAMLC) -I src -c -annot $<
 
 %.cmx: %.ml
-	$(CAMLOPT) -c -annot $<
+	$(CAMLOPT) -I src -c -annot $<
 
 .PHONY: clean
 clean:
-	@rm -f *.cm[iox] *.o *.annot *~ .*~ #*#
+	@rm -f src/*.cm[iox] src/*.o src/*.annot src/*~ *~ .*~ #*#
 	@rm -f $(EXEC)
 	@rm -f $(EXEC).opt
 	@rm -f configure config.log
 	@rm -rf autom4te.cache
-	@rm -f webgui.byte webgui/webgui.js
+	@rm -f src/webgui.byte src/webgui/webgui.js
 	make clean -C tests
 
 .PHONY: gui
 gui: $(EXECGUI)
 
-$(EXECGUI): $(SOURCES:.mli=.cmi) $(OBJS) gui/main.ml
-	ocamlfind $(CAMLC) -annot -g -package lablgtk2 -linkpkg $(LIBS) $(OBJS) gui/main.ml -o $@
+$(EXECGUI): $(SOURCES:.mli=.cmi) $(OBJS) src/gui/main.ml
+	ocamlfind $(CAMLC) -I src -annot -g -package lablgtk2 -linkpkg $(LIBS) $(OBJS) src/gui/main.ml -o $@
 
-$(EXECGUI).opt: $(SOURCES:.mli=.cmi) $(OPTOBJS) gui/main.ml
-	ocamlfind $(CAMLOPT) -annot -g -package lablgtk2 -linkpkg $(LIBS:.cma=.cmxa) $(OPTOBJS) gui/main.ml -o $@
+$(EXECGUI).opt: $(SOURCES:.mli=.cmi) $(OPTOBJS) src/gui/main.ml
+	ocamlfind $(CAMLOPT) -I src -annot -g -package lablgtk2 -linkpkg $(LIBS:.cma=.cmxa) $(OPTOBJS) src/gui/main.ml -o $@
 
 .PHONY: webgui
-webgui: webgui/webgui.js
+webgui: src/webgui/webgui.js
 
-webgui.byte: $(OBJS) webgui.ml
-	ocamlfind $(CAMLC) -annot -package js_of_ocaml -syntax camlp4o -package js_of_ocaml.syntax -linkpkg -o $@ $(OBJS) $< webgui.ml
+webgui.byte: $(OBJS) src/webgui.ml
+	ocamlfind $(CAMLC) -I src -annot -package js_of_ocaml -syntax camlp4o -package js_of_ocaml.syntax -linkpkg -o $@ $(OBJS) $< src/webgui.ml
 
-webgui/webgui.js: webgui.byte
+src/webgui/webgui.js: webgui.byte
 	js_of_ocaml $< -o $@
 
 .PHONY: tests
