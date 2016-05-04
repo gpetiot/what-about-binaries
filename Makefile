@@ -44,8 +44,7 @@ $(EXEC).opt: $(SOURCES:.mli=.cmi) $(OPTOBJS) src/main.cmx
 .PHONY: clean
 clean:
 	@rm -f src/*.cm[iox] src/*.o src/*.annot src/*~ *~ .*~ #*#
-	@rm -f $(EXEC)
-	@rm -f $(EXEC).opt
+	@rm -f $(EXEC) $(EXEC).opt $(EXECGUI) $(EXECGUI).opt
 	@rm -f configure config.log
 	@rm -rf autom4te.cache
 	@rm -f src/webgui.byte src/webgui/webgui.js
