@@ -317,5 +317,38 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
 	Format.printf "%s" (Printexc.to_string exn);
 	raise Invalid_Elf
     ;;
+
+    let get name = List.find (fun x -> x.sh_name = name);;
+    let offset s = s.sh_off;;
+    let size s = s.sh_size;;
+  end;;
+    
+  module Symtbl = struct
+    type sym_t = Notype | Func | Secction | File | Object
+    type bind_t = Local | Global | Weak
+    type vis_t = Default | Hidden
+    type ndx_t = Abs | Und | Int of int
+    
+    type entry = {
+      value : int;
+      size : int;
+      symtype : sym_t;
+      bind : bind_t;
+      vis : vis_t;
+      ndx : ndx_t;
+      name : string;
+    };;
+      
+    let pretty fmt x =
+      Format.fprintf
+	fmt "value: %i; size: %i; name: %s\n" x.value x.size x.name
+    ;;
+      
+    let parse ~filename ~tablename sections =
+      let section = Sh.get tablename sections in
+      let offset = Sh.offset section in
+      let size = Sh.size section in
+      assert false
+    ;;
   end;;
 end;;

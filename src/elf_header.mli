@@ -29,10 +29,19 @@ module Make (A : Archi.Addr) (E : Endian.T) :
       type entry
       val pretty : Format.formatter -> entry -> unit
       val parse : t -> string -> entry list
+      val get : string -> entry list -> entry
+      val offset : entry -> int
+      val size : entry -> int
     end
     module Ph : sig
       type entry
       val pretty : Format.formatter -> entry -> unit
       val parse : t -> string -> entry list
+    end
+    module Symtbl : sig
+      type entry
+      val pretty : Format.formatter -> entry -> unit
+      val parse : filename:string -> tablename:string -> Sh.entry list
+		  -> entry list
     end
 end);;
