@@ -18,10 +18,10 @@
 
 type t = LittleEndian | BigEndian;;
 
-let from_int = function
+let of_int = function
   | 1 -> LittleEndian
   | 2 -> BigEndian
-  | x -> failwith (Format.sprintf "from_int %i" x)
+  | x -> failwith (Format.sprintf "Endian.of_int %i" x)
 ;;
 
 let pretty fmt = function

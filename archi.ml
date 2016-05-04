@@ -18,10 +18,10 @@
 
 type eclass = C32 | C64;;
 
-let from_int = function
+let of_int = function
   | 1 -> C32
   | 2 -> C64
-  | x -> failwith (Format.sprintf "from_int %i" x)
+  | x -> failwith (Format.sprintf "Archi.of_int %i" x)
 ;;
 
 let pretty fmt = function
@@ -38,7 +38,7 @@ sig
   val header_size : int
   val inc : t -> t
   val pretty : Format.formatter -> t -> unit
-  val from_list : int list -> t
+  val of_list : int list -> t
   val logor : int_t -> int_t -> int_t
   val shift_left : int_t -> int -> int_t
   val of_int : int -> int_t
@@ -63,9 +63,9 @@ struct
   let pretty fmt (a,b,c,d) =
     Format.fprintf fmt "0x%a%a%a%a"
       Hexa.pretty a Hexa.pretty b Hexa.pretty c Hexa.pretty d
-  let from_list = function
+  let of_list = function
     | [a;b;c;d] -> a,b,c,d
-    | _ -> failwith "from_list"
+    | _ -> failwith "Archi.Addr32.of_list"
   let logor = Int32.logor
   let shift_left = Int32.shift_left
   let of_int = Int32.of_int
@@ -95,9 +95,9 @@ struct
     Format.fprintf fmt "0x%a%a%a%a%a%a%a%a"
       Hexa.pretty a Hexa.pretty b Hexa.pretty c Hexa.pretty d
       Hexa.pretty e Hexa.pretty f Hexa.pretty g Hexa.pretty h
-  let from_list = function
+  let of_list = function
     | [a;b;c;d;e;f;g;h] -> a,b,c,d,e,f,g,h
-    | _ -> failwith "from_list"
+    | _ -> failwith "Archi.Addr64.of_list"
   let logor = Int64.logor
   let shift_left = Int64.shift_left
   let of_int = Int64.of_int

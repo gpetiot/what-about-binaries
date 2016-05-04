@@ -16,31 +16,46 @@
 (*                                                                        *)
 (**************************************************************************)
 
-let () =
-  let argc = Array.length Sys.argv in
-  if argc > 1 then
-    let filename = Sys.argv.(1) in
-    if Sys.file_exists filename then
-      try
-	let eclass, edata = Elf_header.parse_class_endianness filename in
-	let module A = (val (Archi.addr eclass)) in
-	let module E = (val (Endian.endianness edata)) in
-	let module FH = Elf_header.Make(A)(E) in
-	let fh = FH.parse_header filename in
-	let shl = FH.parse_section_header fh filename in
-	let phl = FH.parse_program_header fh filename in
-	begin
-	  Format.printf "file header:\n";
-	  FH.print fh;
-	  Format.printf "\nsection header:\n";
-	  List.iter FH.print_sh_entry shl;
-	  Format.printf "\nprogram header:\n";
-	  List.iter FH.print_ph_entry phl
-	end
-      with
-	Elf_header.Invalid_Elf -> Format.printf "invalid ELF file !\n"
-    else
-      Format.printf "%s does not exist !\n" filename
-  else
-    Format.printf "Usage: %s binary_file\n" Sys.argv.(0)
+type emachine =
+  | None
+  | SPARC
+  | X86
+  | MIPS
+  | PowerPC
+  | ARM
+  | SuperH
+  | IA64
+  | X86_64
+  | AArch64
 ;;
+
+type t = emachine;;
+
+let of_int i =
+  if i = int_of_string "0x00" then None
+  else if i = int_of_string "0x02" then SPARC
+  else if i = int_of_string "0x03" then X86
+  else if i = int_of_string "0x08" then MIPS
+  else if i = int_of_string "0x14" then PowerPC
+  else if i = int_of_string "0x28" then ARM
+  else if i = int_of_string "0x2A" then SuperH
+  else if i = int_of_string "0x32" then IA64
+  else if i = int_of_string "0x3E" then X86_64
+  else if i = int_of_string "0xB7" then AArch64
+  else failwith (Format.sprintf "Machine.of_int %i" i)
+;;
+  
+let to_string = function
+  | None -> "none"
+  | SPARC -> "sparc"
+  | X86 -> "x86"
+  | MIPS -> "mips"
+  | PowerPC -> "powerpc"
+  | ARM -> "arm"
+  | SuperH -> "superh"
+  | IA64 -> "ia64"
+  | X86_64 -> "x86_64"
+  | AArch64 -> "aarch64"
+;;
+
+let pretty fmt x = Format.fprintf fmt "%s" (to_string x);;

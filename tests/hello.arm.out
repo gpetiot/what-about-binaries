@@ -1,0 +1,59 @@
+file header:
+class: 32 bits
+data: little-endian
+version: 1
+etype: executable
+machine: arm
+entry: 0x00010315
+phoff: 52
+shoff: 7092
+flags: 83887106
+ehsize: 52
+phentsize: 32
+phnum: 9
+shentsize: 40
+shnum: 30
+shstrndx: 27
+
+section header:
+name: ; type: null; flags: 0; addr: 0x00000000; off: 0; size: 0; link: 0; info: 0; align: 0; entsize: 0
+name: .interp; type: progbits; flags: 2; addr: 0x00010154; off: 340; size: 25; link: 0; info: 0; align: 1; entsize: 0
+name: .note.ABI-tag; type: note; flags: 2; addr: 0x00010170; off: 368; size: 32; link: 0; info: 0; align: 4; entsize: 0
+name: .note.gnu.build-id; type: note; flags: 2; addr: 0x00010190; off: 400; size: 36; link: 0; info: 0; align: 4; entsize: 0
+name: .gnu.hash; type: gnu_hash; flags: 2; addr: 0x000101B4; off: 436; size: 44; link: 5; info: 0; align: 4; entsize: 4
+name: .dynsym; type: dynsym; flags: 2; addr: 0x000101E0; off: 480; size: 80; link: 6; info: 1; align: 4; entsize: 16
+name: .dynstr; type: strtab; flags: 2; addr: 0x00010230; off: 560; size: 65; link: 0; info: 0; align: 1; entsize: 0
+name: .gnu.version; type: gnu_versym; flags: 2; addr: 0x00010272; off: 626; size: 10; link: 5; info: 0; align: 2; entsize: 2
+name: .gnu.version_r; type: gnu_verneed; flags: 2; addr: 0x0001027C; off: 636; size: 32; link: 6; info: 1; align: 4; entsize: 0
+name: .rel.dyn; type: rel; flags: 2; addr: 0x0001029C; off: 668; size: 8; link: 5; info: 0; align: 4; entsize: 8
+name: .rel.plt; type: rel; flags: 66; addr: 0x000102A4; off: 676; size: 32; link: 5; info: 12; align: 4; entsize: 8
+name: .init; type: progbits; flags: 6; addr: 0x000102C4; off: 708; size: 12; link: 0; info: 0; align: 4; entsize: 0
+name: .plt; type: progbits; flags: 6; addr: 0x000102D0; off: 720; size: 68; link: 0; info: 0; align: 4; entsize: 4
+name: .text; type: progbits; flags: 6; addr: 0x00010314; off: 788; size: 312; link: 0; info: 0; align: 4; entsize: 0
+name: .fini; type: progbits; flags: 6; addr: 0x0001044C; off: 1100; size: 8; link: 0; info: 0; align: 4; entsize: 0
+name: .rodata; type: progbits; flags: 2; addr: 0x00010454; off: 1108; size: 12; link: 0; info: 0; align: 4; entsize: 0
+name: .ARM.exidx; type: arm_exidx; flags: 130; addr: 0x00010460; off: 1120; size: 8; link: 13; info: 0; align: 4; entsize: 0
+name: .eh_frame; type: progbits; flags: 2; addr: 0x00010468; off: 1128; size: 4; link: 0; info: 0; align: 4; entsize: 0
+name: .init_array; type: init_array; flags: 3; addr: 0x00020F0C; off: 3852; size: 4; link: 0; info: 0; align: 4; entsize: 0
+name: .fini_array; type: fini_array; flags: 3; addr: 0x00020F10; off: 3856; size: 4; link: 0; info: 0; align: 4; entsize: 0
+name: .jcr; type: progbits; flags: 3; addr: 0x00020F14; off: 3860; size: 4; link: 0; info: 0; align: 4; entsize: 0
+name: .dynamic; type: dynamic; flags: 3; addr: 0x00020F18; off: 3864; size: 232; link: 6; info: 0; align: 4; entsize: 8
+name: .got; type: progbits; flags: 3; addr: 0x00021000; off: 4096; size: 32; link: 0; info: 0; align: 4; entsize: 4
+name: .data; type: progbits; flags: 3; addr: 0x00021020; off: 4128; size: 8; link: 0; info: 0; align: 4; entsize: 0
+name: .bss; type: nobits; flags: 3; addr: 0x00021028; off: 4136; size: 4; link: 0; info: 0; align: 1; entsize: 0
+name: .comment; type: progbits; flags: 48; addr: 0x00000000; off: 4136; size: 45; link: 0; info: 0; align: 1; entsize: 1
+name: .ARM.attributes; type: arm_attributes; flags: 0; addr: 0x00000000; off: 4181; size: 53; link: 0; info: 0; align: 1; entsize: 0
+name: .shstrtab; type: strtab; flags: 0; addr: 0x00000000; off: 4234; size: 266; link: 0; info: 0; align: 1; entsize: 0
+name: .symtab; type: symtab; flags: 0; addr: 0x00000000; off: 4500; size: 1664; link: 29; info: 79; align: 4; entsize: 16
+name: .strtab; type: strtab; flags: 0; addr: 0x00000000; off: 6164; size: 928; link: 0; info: 0; align: 1; entsize: 0
+
+program header:
+type: arm_exidx; off: 1120; vaddr: 0x00010460; addr: 0x00010460; filesz: 8; memsz: 8; flags: 4; align: 4
+type: phdr; off: 52; vaddr: 0x00010034; addr: 0x00010034; filesz: 288; memsz: 288; flags: 5; align: 4
+type: interp; off: 340; vaddr: 0x00010154; addr: 0x00010154; filesz: 25; memsz: 25; flags: 4; align: 1
+type: load; off: 0; vaddr: 0x00010000; addr: 0x00010000; filesz: 1132; memsz: 1132; flags: 5; align: 65536
+type: load; off: 3852; vaddr: 0x00020F0C; addr: 0x00020F0C; filesz: 284; memsz: 288; flags: 6; align: 65536
+type: dynamic; off: 3864; vaddr: 0x00020F18; addr: 0x00020F18; filesz: 232; memsz: 232; flags: 6; align: 4
+type: note; off: 368; vaddr: 0x00010170; addr: 0x00010170; filesz: 68; memsz: 68; flags: 4; align: 4
+type: gnu_stack; off: 0; vaddr: 0x00000000; addr: 0x00000000; filesz: 0; memsz: 0; flags: 6; align: 16
+type: gnu_relro; off: 3852; vaddr: 0x00020F0C; addr: 0x00020F0C; filesz: 244; memsz: 244; flags: 4; align: 1
