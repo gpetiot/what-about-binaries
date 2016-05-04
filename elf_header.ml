@@ -201,8 +201,8 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
 	      let ph_memsz = multi_bytes_int buf o6 s6 in
 	      let ph_flags = multi_bytes_int buf o7 s7 in
 	      let ph_align = multi_bytes_int buf o8 s8 in
-	      let ph = { ph_type; ph_off; ph_vaddr; ph_addr; ph_filesz; ph_memsz;
-			 ph_flags; ph_align } in
+	      let ph = { ph_type; ph_off; ph_vaddr; ph_addr; ph_filesz;
+			 ph_memsz; ph_flags; ph_align } in
 	      aux chan (i+header.ei_phentsize) (ph::ret)
 	    end
 	  else
@@ -283,7 +283,8 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
 	      let buf = Buffer.create header.ei_shentsize in
 	      Buffer.add_channel buf chan header.ei_shentsize;
 	      let sh_name = multi_bytes_int buf 0 4 in
-	      let sh_type = Section_header_type.of_int(multi_bytes_int buf 4 4) in
+	      let sh_type =
+		Section_header_type.of_int (multi_bytes_int buf 4 4) in
 	      let sh_flags = multi_bytes_int buf 8 A.size in
 	      let sh_addr = multi_bytes_addr buf (8+A.size) A.size in
 	      let sh_off = multi_bytes_int buf (8+A.size*2) A.size in
