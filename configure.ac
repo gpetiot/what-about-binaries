@@ -26,3 +26,4 @@ if test "$OCAMLFIND" = "no"; then
 fi
 
 AC_CHECK_OCAML_PKG([js_of_ocaml])
+AC_CHECK_OCAML_PKG([lablgtk2])

@@ -8,6 +8,7 @@ SOURCES = hexa.mli hexa.ml \
 	elf_header.mli elf_header.ml
 
 EXEC = obaf
+EXECGUI = $(EXEC)_gui
 CAMLC = ocamlc
 CAMLOPT = ocamlopt
 CAMLDEP = ocamldep
@@ -42,19 +43,28 @@ $(EXEC).opt: $(SOURCES:.mli=.cmi) $(OPTOBJS) main.cmx
 
 .PHONY: clean
 clean:
-	rm -f *.cm[iox] *.o *.annot *~ .*~ #*#
-	rm -f $(EXEC)
-	rm -f $(EXEC).opt
-	rm -f configure config.log
-	rm -rf autom4te.cache
-	rm -f webgui.byte webgui/webgui.js
+	@rm -f *.cm[iox] *.o *.annot *~ .*~ #*#
+	@rm -f $(EXEC)
+	@rm -f $(EXEC).opt
+	@rm -f configure config.log
+	@rm -rf autom4te.cache
+	@rm -f webgui.byte webgui/webgui.js
 	make clean -C tests
+
+.PHONY: gui
+gui: $(EXECGUI)
+
+$(EXECGUI): $(SOURCES:.mli=.cmi) $(OBJS) gui/main.ml
+	ocamlfind $(CAMLC) -annot -g -package lablgtk2 -linkpkg $(LIBS) $(OBJS) gui/main.ml -o $@
+
+$(EXECGUI).opt: $(SOURCES:.mli=.cmi) $(OPTOBJS) gui/main.ml
+	ocamlfind $(CAMLOPT) -annot -g -package lablgtk2 -linkpkg $(LIBS:.cma=.cmxa) $(OPTOBJS) gui/main.ml -o $@
 
 .PHONY: webgui
 webgui: webgui/webgui.js
 
 webgui.byte: $(OBJS) webgui.ml
-	ocamlfind ocamlc -annot -package js_of_ocaml -syntax camlp4o -package js_of_ocaml.syntax -linkpkg -o $@ $(OBJS) $< webgui.ml
+	ocamlfind $(CAMLC) -annot -package js_of_ocaml -syntax camlp4o -package js_of_ocaml.syntax -linkpkg -o $@ $(OBJS) $< webgui.ml
 
 webgui/webgui.js: webgui.byte
 	js_of_ocaml $< -o $@
