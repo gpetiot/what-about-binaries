@@ -29,6 +29,7 @@ let () =
 	let fh = FH.parse filename in
 	let shl = FH.Sh.parse fh filename in
 	let phl = FH.Ph.parse fh filename in
+	let strtab = FH.Sh.strtab ~filename ~tablename:".strtab" shl in
 	begin
 	  Format.printf "file header:\n%a" FH.pretty fh;
 	  let pp_sep fmt () = Format.fprintf fmt "" in

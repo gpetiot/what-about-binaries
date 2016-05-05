@@ -154,6 +154,34 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
       Format.printf "%s" (Printexc.to_string exn);
       raise Invalid_Elf
   ;;
+  
+  module Strtab = struct
+    let parse filename ~off ~size =
+      let chan = open_in_bin filename in
+      let rec aux chan i =
+	if i < off then
+	  let _ = input_byte chan in
+	  aux chan (i+1)
+	else
+	  let buf = Buffer.create size in
+	  Buffer.add_channel buf chan size;
+	  Buffer.contents buf
+      in
+      try
+	let r = aux chan 0 in
+	close_in chan;
+	r
+      with exn ->
+	close_in chan;
+	Format.printf "%s" (Printexc.to_string exn);
+	raise Invalid_Elf
+    ;;
+
+    let get snames index =
+      let end_index = String.index_from snames index (char_of_int 0) in
+      String.sub snames index (end_index - index)
+    ;;
+  end;;
 
   module Ph = struct
     type entry = {
@@ -243,30 +271,15 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
 	e.sh_off e.sh_size e.sh_link e.sh_info e.sh_addralign e.sh_entsize
     ;;
 
-    let parse_section_names off size filename =
-      let chan = open_in_bin filename in
-      let rec aux chan i =
-	if i < off then
-	  let _ = input_byte chan in
-	  aux chan (i+1)
-	else
-	  let buf = Buffer.create size in
-	  Buffer.add_channel buf chan size;
-	  Buffer.contents buf
-      in
-      try
-	let r = aux chan 0 in
-	close_in chan;
-	r
-      with exn ->
-	close_in chan;
-	Format.printf "%s" (Printexc.to_string exn);
-	raise Invalid_Elf
-    ;;
-
-    let get_section_name snames index =
-      let end_index = String.index_from snames index (char_of_int 0) in
-      String.sub snames index (end_index - index)
+    let get name = List.find (fun x -> x.sh_name = name);;
+    let offset s = s.sh_off;;
+    let size s = s.sh_size;;
+    
+    let strtab ~filename ~tablename sections =
+      let strtab = get tablename sections in
+      let off = offset strtab in
+      let size = size strtab in
+      Strtab.parse filename ~off ~size
     ;;
 
     let parse header filename =
@@ -304,10 +317,10 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
 	let r = List.rev (aux chan 0 []) in
 	close_in chan;
 	let _,_,_,_,off,size,_,_,_,_ = List.nth r header.ei_shstrndx in
-	let shnames = parse_section_names off size filename in
+	let shnames = Strtab.parse filename ~off ~size in
 	let name_section (id,sh_type,sh_flags,sh_addr,sh_off,sh_size,sh_link,
 			  sh_info,sh_addralign,sh_entsize) =
-	  let sh_name = get_section_name shnames id in
+	  let sh_name = Strtab.get shnames id in
 	  { sh_name; sh_type; sh_flags; sh_addr; sh_off; sh_size; sh_link;
 	    sh_info; sh_addralign; sh_entsize }
 	in
@@ -317,10 +330,6 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
 	Format.printf "%s" (Printexc.to_string exn);
 	raise Invalid_Elf
     ;;
-
-    let get name = List.find (fun x -> x.sh_name = name);;
-    let offset s = s.sh_off;;
-    let size s = s.sh_size;;
   end;;
     
   module Symtbl = struct
@@ -344,7 +353,7 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
 	fmt "value: %i; size: %i; name: %s\n" x.value x.size x.name
     ;;
       
-    let parse ~filename ~tablename sections =
+    let parse ~filename ~tablename ~strtab sections =
       let section = Sh.get tablename sections in
       let offset = Sh.offset section in
       let size = Sh.size section in
