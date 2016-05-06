@@ -40,7 +40,9 @@ sig
   val pretty : Format.formatter -> t -> unit
   val of_list : int list -> t
   val logor : int_t -> int_t -> int_t
+  val logand : int_t -> int_t -> int_t
   val shift_left : int_t -> int -> int_t
+  val shift_right : int_t -> int -> int_t
   val of_int : int -> int_t
   val to_int : int_t -> int
   val ph_offsets : int * int * int * int * int * int * int * int
@@ -67,7 +69,9 @@ struct
     | [a;b;c;d] -> a,b,c,d
     | _ -> failwith "Archi.Addr32.of_list"
   let logor = Int32.logor
+  let logand = Int32.logand
   let shift_left = Int32.shift_left
+  let shift_right = Int32.shift_right
   let of_int = Int32.of_int
   let to_int = Int32.to_int
   let ph_offsets = 0,4,8,12,16,20,24,28
@@ -99,7 +103,9 @@ struct
     | [a;b;c;d;e;f;g;h] -> a,b,c,d,e,f,g,h
     | _ -> failwith "Archi.Addr64.of_list"
   let logor = Int64.logor
+  let logand = Int64.logand
   let shift_left = Int64.shift_left
+  let shift_right = Int64.shift_right
   let of_int = Int64.of_int
   let to_int = Int64.to_int
   let ph_offsets = 0,8,16,24,32,40,4,48
