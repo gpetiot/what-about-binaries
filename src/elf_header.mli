@@ -36,6 +36,7 @@ module Make (A : Archi.Addr) (E : Endian.T) :
       val get : string -> entry list -> entry
       val offset : entry -> int
       val size : entry -> int
+      val entry_size : entry -> int
       val strtab : filename:string -> tablename:string -> entry list
 	-> string
     end

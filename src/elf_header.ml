@@ -103,7 +103,10 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
   let multi_bytes buf off nb =
     let rec aux ret = function
       | x when x = nb -> ret
-      | x -> aux ((Buffer.nth buf (off+x))::ret) (x+1)
+      | x ->
+	 try aux ((Buffer.nth buf (off+x))::ret) (x+1)
+	 with Invalid_argument _ ->
+	   failwith (Printf.sprintf "Elf_header.multi_bytes %i %i" off nb)
     in
     let l = List.rev_map int_of_char (aux [] 0) in
     E.order l
@@ -274,6 +277,7 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
     let get name = List.find (fun x -> x.sh_name = name);;
     let offset s = s.sh_off;;
     let size s = s.sh_size;;
+    let entry_size s = s.sh_entsize;;
     
     let strtab ~filename ~tablename sections =
       let strtab = get tablename sections in
@@ -333,31 +337,103 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
   end;;
     
   module Symtbl = struct
-    type sym_t = Notype | Func | Secction | File | Object
-    type bind_t = Local | Global | Weak
-    type vis_t = Default | Hidden
-    type ndx_t = Abs | Und | Int of int
+    module Binding = struct
+      type t = Local | Global | Weak
+      let of_int = function
+	| 0 -> Local
+	| 1 -> Global
+	| 2 -> Weak
+	| x -> failwith (Printf.sprintf "Elf_header.Symtbl.Binding.of_int %i" x)
+      ;;
+      let to_string = function
+	| Local -> "local"
+	| Global -> "global"
+	| Weak -> "weak"
+      ;;
+      let pretty fmt x = Format.fprintf fmt "%s" (to_string x);;
+    end;;
+    module Type = struct
+      type t = Notype | Object | Func | Section | File
+      let of_int = function
+	| 0 -> Notype
+	| 1 -> Object
+	| 2 -> Func
+	| 3 -> Section
+	| 4 -> File
+	| x -> failwith (Printf.sprintf "Elf_header.Symtbl.Type.of_int %i" x)
+      ;;
+      let to_string = function
+	| Notype -> "notype"
+	| Object -> "object"
+	| Func -> "func"
+	| Section -> "section"
+	| File -> "file"
+      ;;
+      let pretty fmt x = Format.fprintf fmt "%s" (to_string x);;
+    end;;
+      
+    (*type vis_t = Default | Hidden
+    type ndx_t = Abs | Und | Int of int*)
     
     type entry = {
       value : int;
       size : int;
-      symtype : sym_t;
-      bind : bind_t;
-      vis : vis_t;
-      ndx : ndx_t;
+      symtype : Type.t;
+      bind : Binding.t;
+      (*vis : vis_t;
+      ndx : ndx_t;*)
       name : string;
     };;
       
     let pretty fmt x =
       Format.fprintf
-	fmt "value: %i; size: %i; name: %s\n" x.value x.size x.name
+	fmt "name: %s; value: %i; size: %i; type: %a; bind: %a\n"
+	x.name x.value x.size Type.pretty x.symtype Binding.pretty x.bind
     ;;
       
     let parse ~filename ~tablename ~strtab sections =
       let section = Sh.get tablename sections in
       let offset = Sh.offset section in
       let size = Sh.size section in
-      assert false
+      let entry_size = Sh.entry_size section in
+      let chan = open_in_bin filename in
+      let rec aux chan i ret =
+	let sbeg = offset in
+	let send = offset+size in
+	if i < sbeg then
+	  let _ = input_byte chan in
+	  aux chan (i+1) ret
+	else
+	  if i < send then
+	    begin
+	      let buf = Buffer.create entry_size in
+	      Buffer.add_channel buf chan entry_size;
+	      let name_id = multi_bytes_int buf 0 4 in
+	      let value = multi_bytes_int buf 4 A.size in
+	      let size = multi_bytes_int buf (4+A.size) A.size in
+	      let info = multi_bytes_int buf (4+A.size*2) 1 in
+	      let _other = multi_bytes_int buf (5+A.size*2) 1 in
+	      let _shndex = multi_bytes_int buf (6+A.size*2) 2 in
+	      let name = Strtab.get strtab name_id in
+	      let bind =
+		Binding.of_int (A.to_int (A.shift_right (A.of_int info) 4)) in
+	      let symtype =
+		Type.of_int
+		  (A.to_int (A.logand (A.of_int info) (A.of_int 15))) in
+	      let symbol = {value; size; symtype; bind; name} in
+	      aux chan (i+entry_size) (symbol::ret)
+	    end
+	  else
+	    ret
+      in
+      try
+	let r = List.rev (aux chan 0 []) in
+	close_in chan;
+	r
+      with exn ->
+	close_in chan;
+	Format.printf "%s" (Printexc.to_string exn);
+	raise Invalid_Elf
     ;;
   end;;
 end;;

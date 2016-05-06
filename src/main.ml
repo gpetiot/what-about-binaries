@@ -30,13 +30,17 @@ let () =
 	let shl = FH.Sh.parse fh filename in
 	let phl = FH.Ph.parse fh filename in
 	let strtab = FH.Sh.strtab ~filename ~tablename:".strtab" shl in
+	let symtab =
+	  FH.Symtbl.parse ~filename ~tablename:".symtab" ~strtab shl in
 	begin
 	  Format.printf "file header:\n%a" FH.pretty fh;
 	  let pp_sep fmt () = Format.fprintf fmt "" in
 	  Format.printf "\nsection header:\n%a"
 			(Format.pp_print_list ~pp_sep FH.Sh.pretty) shl;
 	  Format.printf "\nprogram header:\n%a"
-			(Format.pp_print_list ~pp_sep FH.Ph.pretty) phl
+			(Format.pp_print_list ~pp_sep FH.Ph.pretty) phl;
+	  Format.printf "\nsymbol table:\n%a"
+			(Format.pp_print_list ~pp_sep FH.Symtbl.pretty) symtab
 	end
       with
 	Elf_header.Invalid_Elf -> Format.printf "invalid ELF file !\n"
