@@ -337,49 +337,14 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
   end;;
     
   module Symtbl = struct
-    module Binding = struct
-      type t = Local | Global | Weak
-      let of_int = function
-	| 0 -> Local
-	| 1 -> Global
-	| 2 -> Weak
-	| x -> failwith (Printf.sprintf "Elf_header.Symtbl.Binding.of_int %i" x)
-      ;;
-      let to_string = function
-	| Local -> "local"
-	| Global -> "global"
-	| Weak -> "weak"
-      ;;
-      let pretty fmt x = Format.fprintf fmt "%s" (to_string x);;
-    end;;
-    module Type = struct
-      type t = Notype | Object | Func | Section | File
-      let of_int = function
-	| 0 -> Notype
-	| 1 -> Object
-	| 2 -> Func
-	| 3 -> Section
-	| 4 -> File
-	| x -> failwith (Printf.sprintf "Elf_header.Symtbl.Type.of_int %i" x)
-      ;;
-      let to_string = function
-	| Notype -> "notype"
-	| Object -> "object"
-	| Func -> "func"
-	| Section -> "section"
-	| File -> "file"
-      ;;
-      let pretty fmt x = Format.fprintf fmt "%s" (to_string x);;
-    end;;
-      
     (*type vis_t = Default | Hidden
     type ndx_t = Abs | Und | Int of int*)
     
     type entry = {
       value : int;
       size : int;
-      symtype : Type.t;
-      bind : Binding.t;
+      symtype : Symbol.Type.t;
+      bind : Symbol.Binding.t;
       (*vis : vis_t;
       ndx : ndx_t;*)
       name : string;
@@ -388,7 +353,8 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
     let pretty fmt x =
       Format.fprintf
 	fmt "name: %s; value: %i; size: %i; type: %a; bind: %a\n"
-	x.name x.value x.size Type.pretty x.symtype Binding.pretty x.bind
+	x.name x.value x.size Symbol.Type.pretty x.symtype
+	Symbol.Binding.pretty x.bind
     ;;
       
     let parse ~filename ~tablename ~strtab sections =
@@ -416,9 +382,10 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
 	      let _shndex = multi_bytes_int buf (6+A.size*2) 2 in
 	      let name = Strtab.get strtab name_id in
 	      let bind =
-		Binding.of_int (A.to_int (A.shift_right (A.of_int info) 4)) in
+		Symbol.Binding.of_int
+		  (A.to_int (A.shift_right (A.of_int info) 4)) in
 	      let symtype =
-		Type.of_int
+		Symbol.Type.of_int
 		  (A.to_int (A.logand (A.of_int info) (A.of_int 15))) in
 	      let symbol = {value; size; symtype; bind; name} in
 	      aux chan (i+entry_size) (symbol::ret)
