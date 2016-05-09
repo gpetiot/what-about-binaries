@@ -103,7 +103,10 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
   let multi_bytes buf off nb =
     let rec aux ret = function
       | x when x = nb -> ret
-      | x -> aux ((Buffer.nth buf (off+x))::ret) (x+1)
+      | x ->
+	 try aux ((Buffer.nth buf (off+x))::ret) (x+1)
+	 with Invalid_argument _ ->
+	   failwith (Printf.sprintf "Elf_header.multi_bytes %i %i" off nb)
     in
     let l = List.rev_map int_of_char (aux [] 0) in
     E.order l
@@ -154,6 +157,34 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
       Format.printf "%s" (Printexc.to_string exn);
       raise Invalid_Elf
   ;;
+  
+  module Strtab = struct
+    let parse filename ~off ~size =
+      let chan = open_in_bin filename in
+      let rec aux chan i =
+	if i < off then
+	  let _ = input_byte chan in
+	  aux chan (i+1)
+	else
+	  let buf = Buffer.create size in
+	  Buffer.add_channel buf chan size;
+	  Buffer.contents buf
+      in
+      try
+	let r = aux chan 0 in
+	close_in chan;
+	r
+      with exn ->
+	close_in chan;
+	Format.printf "%s" (Printexc.to_string exn);
+	raise Invalid_Elf
+    ;;
+
+    let get snames index =
+      let end_index = String.index_from snames index (char_of_int 0) in
+      String.sub snames index (end_index - index)
+    ;;
+  end;;
 
   module Ph = struct
     type entry = {
@@ -243,30 +274,16 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
 	e.sh_off e.sh_size e.sh_link e.sh_info e.sh_addralign e.sh_entsize
     ;;
 
-    let parse_section_names off size filename =
-      let chan = open_in_bin filename in
-      let rec aux chan i =
-	if i < off then
-	  let _ = input_byte chan in
-	  aux chan (i+1)
-	else
-	  let buf = Buffer.create size in
-	  Buffer.add_channel buf chan size;
-	  Buffer.contents buf
-      in
-      try
-	let r = aux chan 0 in
-	close_in chan;
-	r
-      with exn ->
-	close_in chan;
-	Format.printf "%s" (Printexc.to_string exn);
-	raise Invalid_Elf
-    ;;
-
-    let get_section_name snames index =
-      let end_index = String.index_from snames index (char_of_int 0) in
-      String.sub snames index (end_index - index)
+    let get name = List.find (fun x -> x.sh_name = name);;
+    let offset s = s.sh_off;;
+    let size s = s.sh_size;;
+    let entry_size s = s.sh_entsize;;
+    
+    let strtab ~filename ~tablename sections =
+      let strtab = get tablename sections in
+      let off = offset strtab in
+      let size = size strtab in
+      Strtab.parse filename ~off ~size
     ;;
 
     let parse header filename =
@@ -304,14 +321,82 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
 	let r = List.rev (aux chan 0 []) in
 	close_in chan;
 	let _,_,_,_,off,size,_,_,_,_ = List.nth r header.ei_shstrndx in
-	let shnames = parse_section_names off size filename in
+	let shnames = Strtab.parse filename ~off ~size in
 	let name_section (id,sh_type,sh_flags,sh_addr,sh_off,sh_size,sh_link,
 			  sh_info,sh_addralign,sh_entsize) =
-	  let sh_name = get_section_name shnames id in
+	  let sh_name = Strtab.get shnames id in
 	  { sh_name; sh_type; sh_flags; sh_addr; sh_off; sh_size; sh_link;
 	    sh_info; sh_addralign; sh_entsize }
 	in
 	List.map name_section r
+      with exn ->
+	close_in chan;
+	Format.printf "%s" (Printexc.to_string exn);
+	raise Invalid_Elf
+    ;;
+  end;;
+    
+  module Symtbl = struct
+    (*type vis_t = Default | Hidden
+    type ndx_t = Abs | Und | Int of int*)
+    
+    type entry = {
+      value : int;
+      size : int;
+      symtype : Symbol.Type.t;
+      bind : Symbol.Binding.t;
+      (*vis : vis_t;
+      ndx : ndx_t;*)
+      name : string;
+    };;
+      
+    let pretty fmt x =
+      Format.fprintf
+	fmt "name: %s; value: %i; size: %i; type: %a; bind: %a\n"
+	x.name x.value x.size Symbol.Type.pretty x.symtype
+	Symbol.Binding.pretty x.bind
+    ;;
+      
+    let parse ~filename ~tablename ~strtab sections =
+      let section = Sh.get tablename sections in
+      let offset = Sh.offset section in
+      let size = Sh.size section in
+      let entry_size = Sh.entry_size section in
+      let chan = open_in_bin filename in
+      let rec aux chan i ret =
+	let sbeg = offset in
+	let send = offset+size in
+	if i < sbeg then
+	  let _ = input_byte chan in
+	  aux chan (i+1) ret
+	else
+	  if i < send then
+	    begin
+	      let buf = Buffer.create entry_size in
+	      Buffer.add_channel buf chan entry_size;
+	      let name_id = multi_bytes_int buf 0 4 in
+	      let value = multi_bytes_int buf 4 A.size in
+	      let size = multi_bytes_int buf (4+A.size) A.size in
+	      let info = multi_bytes_int buf (4+A.size*2) 1 in
+	      let _other = multi_bytes_int buf (5+A.size*2) 1 in
+	      let _shndex = multi_bytes_int buf (6+A.size*2) 2 in
+	      let name = Strtab.get strtab name_id in
+	      let bind =
+		Symbol.Binding.of_int
+		  (A.to_int (A.shift_right (A.of_int info) 4)) in
+	      let symtype =
+		Symbol.Type.of_int
+		  (A.to_int (A.logand (A.of_int info) (A.of_int 15))) in
+	      let symbol = {value; size; symtype; bind; name} in
+	      aux chan (i+entry_size) (symbol::ret)
+	    end
+	  else
+	    ret
+      in
+      try
+	let r = List.rev (aux chan 0 []) in
+	close_in chan;
+	r
       with exn ->
 	close_in chan;
 	Format.printf "%s" (Printexc.to_string exn);

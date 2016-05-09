@@ -5,6 +5,7 @@ SOURCES = src/hexa.mli src/hexa.ml \
 	src/machine.mli src/machine.ml \
 	src/program_header_type.mli src/program_header_type.ml \
 	src/section_header_type.mli src/section_header_type.ml \
+	src/symbol.mli src/symbol.ml \
 	src/elf_header.mli src/elf_header.ml
 
 EXEC = obaf

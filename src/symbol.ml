@@ -16,39 +16,38 @@
 (*                                                                        *)
 (**************************************************************************)
 
-exception Invalid_Elf;;
+module Binding = struct
+  type t = Local | Global | Weak
+  let of_int = function
+    | 0 -> Local
+    | 1 -> Global
+    | 2 -> Weak
+    | x -> failwith (Printf.sprintf "Symbol.Binding.of_int %i" x)
+  ;;
+  let to_string = function
+    | Local -> "local"
+    | Global -> "global"
+    | Weak -> "weak"
+  ;;
+  let pretty fmt x = Format.fprintf fmt "%s" (to_string x);;
+end;;
 
-val parse_class_endianness : string -> Archi.eclass * Endian.t;;
-
-module Make (A : Archi.Addr) (E : Endian.T) :
-(sig
-    type t
-    val pretty : Format.formatter -> t -> unit
-    val parse : string -> t
-    module Strtab : sig
-      val parse : string -> off:int -> size:int -> string
-      val get : string -> int -> string
-    end
-    module Sh : sig
-      type entry
-      val pretty : Format.formatter -> entry -> unit
-      val parse : t -> string -> entry list
-      val get : string -> entry list -> entry
-      val offset : entry -> int
-      val size : entry -> int
-      val entry_size : entry -> int
-      val strtab : filename:string -> tablename:string -> entry list
-	-> string
-    end
-    module Ph : sig
-      type entry
-      val pretty : Format.formatter -> entry -> unit
-      val parse : t -> string -> entry list
-    end
-    module Symtbl : sig
-      type entry
-      val pretty : Format.formatter -> entry -> unit
-      val parse : filename:string -> tablename:string -> strtab:string ->
-	Sh.entry list -> entry list
-    end
-end);;
+module Type = struct
+  type t = Notype | Object | Func | Section | File
+  let of_int = function
+    | 0 -> Notype
+    | 1 -> Object
+    | 2 -> Func
+    | 3 -> Section
+    | 4 -> File
+    | x -> failwith (Printf.sprintf "Symbol.Type.of_int %i" x)
+  ;;
+  let to_string = function
+    | Notype -> "notype"
+    | Object -> "object"
+    | Func -> "func"
+    | Section -> "section"
+    | File -> "file"
+  ;;
+  let pretty fmt x = Format.fprintf fmt "%s" (to_string x);;
+end;;
