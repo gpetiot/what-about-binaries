@@ -43,6 +43,7 @@ sig
   val logand : int_t -> int_t -> int_t
   val shift_left : int_t -> int -> int_t
   val shift_right : int_t -> int -> int_t
+  val shift_right_logical : int_t -> int -> int_t
   val of_int : int -> int_t
   val to_int : int_t -> int
   val ph_offsets : int * int * int * int * int * int * int * int
@@ -72,6 +73,7 @@ struct
   let logand = Int32.logand
   let shift_left = Int32.shift_left
   let shift_right = Int32.shift_right
+  let shift_right_logical = Int32.shift_right_logical
   let of_int = Int32.of_int
   let to_int = Int32.to_int
   let ph_offsets = 0,4,8,12,16,20,24,28
@@ -106,6 +108,7 @@ struct
   let logand = Int64.logand
   let shift_left = Int64.shift_left
   let shift_right = Int64.shift_right
+  let shift_right_logical = Int64.shift_right_logical
   let of_int = Int64.of_int
   let to_int = Int64.to_int
   let ph_offsets = 0,8,16,24,32,40,4,48
