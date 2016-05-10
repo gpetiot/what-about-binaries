@@ -163,3 +163,10 @@ name: __TMC_END__; value: 135208; size: 0; type: object; bind: global
 name: _ITM_registerTMCloneTable; value: 0; size: 0; type: notype; bind: weak
 name: abort@@GLIBC_2.4; value: 0; size: 0; type: func; bind: global
 name: _init; value: 66244; size: 0; type: func; bind: global
+
+dynamic symbol table:
+name: ; value: 0; size: 0; type: notype; bind: local
+name: __gmon_start__; value: 0; size: 0; type: notype; bind: weak
+name: puts; value: 0; size: 0; type: func; bind: global
+name: abort; value: 0; size: 0; type: func; bind: global
+name: __libc_start_main; value: 0; size: 0; type: func; bind: global

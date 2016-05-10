@@ -124,3 +124,9 @@ name: _Jv_RegisterClasses; value: 32; size: 0; type: notype; bind: local
 name: __TMC_END__; value: 27039464829747729; size: 0; type: notype; bind: local
 name: _ITM_registerTMCloneTable; value: 32; size: 0; type: notype; bind: local
 name: _init; value: 18018659117760530; size: 0; type: notype; bind: local
+
+dynamic symbol table:
+name: ; value: 0; size: 0; type: notype; bind: local
+name: puts; value: 18; size: 0; type: notype; bind: local
+name: __libc_start_main; value: 18; size: 0; type: notype; bind: local
+name: __gmon_start__; value: 32; size: 0; type: notype; bind: local
