@@ -1,4 +1,5 @@
 
+CAPSTONE=@CAPSTONE@
 SOURCES = src/hexa.mli src/hexa.ml \
 	src/archi.mli src/archi.ml \
 	src/endian.mli src/endian.ml \
@@ -6,10 +7,15 @@ SOURCES = src/hexa.mli src/hexa.ml \
 	src/program_header_type.mli src/program_header_type.ml \
 	src/section_header_type.mli src/section_header_type.ml \
 	src/symbol.mli src/symbol.ml \
+	$(CAPSTONE)/arm_const.mli $(CAPSTONE)/arm_const.ml \
+	$(CAPSTONE)/arm.mli $(CAPSTONE)/arm.ml \
+	$(CAPSTONE)/capstone.mli $(CAPSTONE)/capstone.ml \
 	src/elf_header.mli src/elf_header.ml
 
-EXEC = obaf
-EXECGUI = $(EXEC)_gui
+EXEC_BYTE = obaf.byte
+EXEC_OPT = obaf
+EXECGUI_BYTE = obaf_gui.byte
+EXECGUI_OPT = obaf_gui
 CAMLC = ocamlc
 CAMLOPT = ocamlopt
 CAMLDEP = ocamldep
@@ -19,45 +25,50 @@ WITHSTR =str.cma -cclib -lstr
 WITHNUMS =nums.cma -cclib -lnums
 WITHTHREADS =threads.cma -cclib -lthreads
 WITHDBM =dbm.cma -cclib -lmldbm -cclib -lndbm
-LIBS=
+WITHCAPSTONE=-I $(CAPSTONE) $(CAPSTONE)/ocaml.o -cclib -lcapstone
+LIBS=$(WITHCAPSTONE)
 OBJS = $(SOURCES:.ml=.cmo)
 OPTOBJS = $(SOURCES:.ml=.cmx)
 
-all: $(EXEC)
+all: $(EXEC_OPT)
 
-opt: $(EXEC).opt
-
-$(EXEC): $(SOURCES:.mli=.cmi) $(OBJS) src/main.cmo
+$(EXEC_BYTE): $(SOURCES:.mli=.cmi) $(OBJS) src/main.cmo
 	$(CAMLC) -I src -o $@ $(LIBS) $(OBJS) src/main.cmo
 
-$(EXEC).opt: $(SOURCES:.mli=.cmi) $(OPTOBJS) src/main.cmx
+$(EXEC_OPT): $(SOURCES:.mli=.cmi) $(OPTOBJS) src/main.cmx
 	$(CAMLOPT) -I src -o $@ $(LIBS:.cma=.cmxa) $(OPTOBJS) src/main.cmx
 
-%.cmo: %.ml
+src/main.cmo: src/main.ml
+	$(CAMLC) -I src -c -annot $(LIBS) $<
+
+src/main.cmx: src/main.ml
+	$(CAMLOPT) -I src -c -annot $(LIBS:.cma=.cmxa) $<
+
+%.cmo: %.ml %.cmi
 	$(CAMLC) -I src -c -annot $<
 
 %.cmi: %.mli
 	$(CAMLC) -I src -c -annot $<
 
-%.cmx: %.ml
+%.cmx: %.ml %.cmi
 	$(CAMLOPT) -I src -c -annot $<
 
 .PHONY: clean
 clean:
 	@rm -f src/*.cm[iox] src/*.o src/*.annot src/*~ *~ .*~ #*#
-	@rm -f $(EXEC) $(EXEC).opt $(EXECGUI) $(EXECGUI).opt
+	@rm -f $(EXEC_BYTE) $(EXEC_OPT) $(EXECGUI_BYTE) $(EXECGUI_OPT)
 	@rm -f configure config.log
 	@rm -rf autom4te.cache
 	@rm -f src/webgui.byte src/webgui/webgui.js
 	make clean -C tests
 
 .PHONY: gui
-gui: $(EXECGUI)
+gui: $(EXECGUI_OPT)
 
-$(EXECGUI): $(SOURCES:.mli=.cmi) $(OBJS) src/gui/main.ml
+$(EXECGUI_BYTE): $(SOURCES:.mli=.cmi) $(OBJS) src/gui/main.ml
 	ocamlfind $(CAMLC) -I src -annot -g -package lablgtk2 -linkpkg $(LIBS) $(OBJS) src/gui/main.ml -o $@
 
-$(EXECGUI).opt: $(SOURCES:.mli=.cmi) $(OPTOBJS) src/gui/main.ml
+$(EXECGUI_OPT): $(SOURCES:.mli=.cmi) $(OPTOBJS) src/gui/main.ml
 	ocamlfind $(CAMLOPT) -I src -annot -g -package lablgtk2 -linkpkg $(LIBS:.cma=.cmxa) $(OPTOBJS) src/gui/main.ml -o $@
 
 .PHONY: webgui

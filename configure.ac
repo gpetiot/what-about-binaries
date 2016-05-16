@@ -27,3 +27,9 @@ fi
 
 AC_CHECK_OCAML_PKG([js_of_ocaml])
 AC_CHECK_OCAML_PKG([lablgtk2])
+
+AC_MSG_CHECKING(presence of Capstone OCaml binding)
+CAPSTONE=`dirname \`locate capstone.ml -l1\``
+AC_MSG_RESULT($CAPSTONE)
+AC_SUBST(CAPSTONE)
+AC_OUTPUT(Makefile)

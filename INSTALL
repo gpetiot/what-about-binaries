@@ -1,0 +1,18 @@
+
+#################################################
+#               Dependencies                    #
+#################################################
+
+git clone https://github.com/aquynh/capstone.git
+make -C capstone
+sudo make install -C capstone
+make -C capstone/bindings/ocaml
+
+
+#################################################
+#                   OBAF                        #
+#################################################
+
+autoconf
+./configure
+make
