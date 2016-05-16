@@ -1,5 +1,11 @@
 
 CAPSTONE=@CAPSTONE@
+
+CAPSTONE_OBJ=\
+	$(CAPSTONE)/arm_const.cmx \
+	$(CAPSTONE)/arm.cmx \
+	$(CAPSTONE)/capstone.cmx
+
 SOURCES = src/hexa.mli src/hexa.ml \
 	src/archi.mli src/archi.ml \
 	src/endian.mli src/endian.ml \
@@ -7,9 +13,6 @@ SOURCES = src/hexa.mli src/hexa.ml \
 	src/program_header_type.mli src/program_header_type.ml \
 	src/section_header_type.mli src/section_header_type.ml \
 	src/symbol.mli src/symbol.ml \
-	$(CAPSTONE)/arm_const.mli $(CAPSTONE)/arm_const.ml \
-	$(CAPSTONE)/arm.mli $(CAPSTONE)/arm.ml \
-	$(CAPSTONE)/capstone.mli $(CAPSTONE)/capstone.ml \
 	src/elf_header.mli src/elf_header.ml
 
 EXEC_BYTE = obaf.byte
@@ -36,7 +39,7 @@ $(EXEC_BYTE): $(SOURCES:.mli=.cmi) $(OBJS) src/main.cmo
 	$(CAMLC) -I src -o $@ $(LIBS) $(OBJS) src/main.cmo
 
 $(EXEC_OPT): $(SOURCES:.mli=.cmi) $(OPTOBJS) src/main.cmx
-	$(CAMLOPT) -I src -o $@ $(LIBS:.cma=.cmxa) $(OPTOBJS) src/main.cmx
+	$(CAMLOPT) -I src -o $@ $(LIBS:.cma=.cmxa) $(CAPSTONE_OBJ) $(OPTOBJS) src/main.cmx
 
 src/main.cmo: src/main.ml
 	$(CAMLC) -I src -c -annot $(LIBS) $<
@@ -44,13 +47,13 @@ src/main.cmo: src/main.ml
 src/main.cmx: src/main.ml
 	$(CAMLOPT) -I src -c -annot $(LIBS:.cma=.cmxa) $<
 
-%.cmo: %.ml %.cmi
+src/%.cmo: src/%.ml src/%.cmi
 	$(CAMLC) -I src -c -annot $<
 
-%.cmi: %.mli
+src/%.cmi: src/%.mli
 	$(CAMLC) -I src -c -annot $<
 
-%.cmx: %.ml %.cmi
+src/%.cmx: src/%.ml src/%.cmi
 	$(CAMLOPT) -I src -c -annot $<
 
 .PHONY: clean
