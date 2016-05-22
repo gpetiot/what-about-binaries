@@ -1,0 +1,172 @@
+file header:
+class: 32 bits
+data: little-endian
+version: 1
+etype: executable
+machine: arm
+entry: 0x000102E1
+phoff: 52
+shoff: 7104
+flags: 83887106
+ehsize: 52
+phentsize: 32
+phnum: 9
+shentsize: 40
+shnum: 30
+shstrndx: 27
+
+section header:
+name: ; type: null; flags: 0; addr: 0x00000000; off: 0; size: 0; link: 0; info: 0; align: 0; entsize: 0
+name: .interp; type: progbits; flags: 2; addr: 0x00010154; off: 340; size: 25; link: 0; info: 0; align: 1; entsize: 0
+name: .note.ABI-tag; type: note; flags: 2; addr: 0x00010170; off: 368; size: 32; link: 0; info: 0; align: 4; entsize: 0
+name: .note.gnu.build-id; type: note; flags: 2; addr: 0x00010190; off: 400; size: 36; link: 0; info: 0; align: 4; entsize: 0
+name: .gnu.hash; type: gnu_hash; flags: 2; addr: 0x000101B4; off: 436; size: 36; link: 5; info: 0; align: 4; entsize: 4
+name: .dynsym; type: dynsym; flags: 2; addr: 0x000101D8; off: 472; size: 64; link: 6; info: 1; align: 4; entsize: 16
+name: .dynstr; type: strtab; flags: 2; addr: 0x00010218; off: 536; size: 60; link: 0; info: 0; align: 1; entsize: 0
+name: .gnu.version; type: gnu_versym; flags: 2; addr: 0x00010254; off: 596; size: 8; link: 5; info: 0; align: 2; entsize: 2
+name: .gnu.version_r; type: gnu_verneed; flags: 2; addr: 0x0001025C; off: 604; size: 32; link: 6; info: 1; align: 4; entsize: 0
+name: .rel.dyn; type: rel; flags: 2; addr: 0x0001027C; off: 636; size: 8; link: 5; info: 0; align: 4; entsize: 8
+name: .rel.plt; type: rel; flags: 66; addr: 0x00010284; off: 644; size: 24; link: 5; info: 12; align: 4; entsize: 8
+name: .init; type: progbits; flags: 6; addr: 0x0001029C; off: 668; size: 12; link: 0; info: 0; align: 4; entsize: 0
+name: .plt; type: progbits; flags: 6; addr: 0x000102A8; off: 680; size: 56; link: 0; info: 0; align: 4; entsize: 4
+name: .text; type: progbits; flags: 6; addr: 0x000102E0; off: 736; size: 324; link: 0; info: 0; align: 4; entsize: 0
+name: .fini; type: progbits; flags: 6; addr: 0x00010424; off: 1060; size: 8; link: 0; info: 0; align: 4; entsize: 0
+name: .rodata; type: progbits; flags: 18; addr: 0x0001042C; off: 1068; size: 4; link: 0; info: 0; align: 4; entsize: 4
+name: .ARM.exidx; type: arm_exidx; flags: 130; addr: 0x00010430; off: 1072; size: 8; link: 13; info: 0; align: 4; entsize: 0
+name: .eh_frame; type: progbits; flags: 2; addr: 0x00010438; off: 1080; size: 4; link: 0; info: 0; align: 4; entsize: 0
+name: .init_array; type: init_array; flags: 3; addr: 0x00020F0C; off: 3852; size: 4; link: 0; info: 0; align: 4; entsize: 0
+name: .fini_array; type: fini_array; flags: 3; addr: 0x00020F10; off: 3856; size: 4; link: 0; info: 0; align: 4; entsize: 0
+name: .jcr; type: progbits; flags: 3; addr: 0x00020F14; off: 3860; size: 4; link: 0; info: 0; align: 4; entsize: 0
+name: .dynamic; type: dynamic; flags: 3; addr: 0x00020F18; off: 3864; size: 232; link: 6; info: 0; align: 4; entsize: 8
+name: .got; type: progbits; flags: 3; addr: 0x00021000; off: 4096; size: 28; link: 0; info: 0; align: 4; entsize: 4
+name: .data; type: progbits; flags: 3; addr: 0x0002101C; off: 4124; size: 16; link: 0; info: 0; align: 4; entsize: 0
+name: .bss; type: nobits; flags: 3; addr: 0x0002102C; off: 4140; size: 4; link: 0; info: 0; align: 1; entsize: 0
+name: .comment; type: progbits; flags: 48; addr: 0x00000000; off: 4140; size: 45; link: 0; info: 0; align: 1; entsize: 1
+name: .ARM.attributes; type: arm_attributes; flags: 0; addr: 0x00000000; off: 4185; size: 53; link: 0; info: 0; align: 1; entsize: 0
+name: .shstrtab; type: strtab; flags: 0; addr: 0x00000000; off: 4238; size: 266; link: 0; info: 0; align: 1; entsize: 0
+name: .symtab; type: symtab; flags: 0; addr: 0x00000000; off: 4504; size: 1680; link: 29; info: 79; align: 4; entsize: 16
+name: .strtab; type: strtab; flags: 0; addr: 0x00000000; off: 6184; size: 918; link: 0; info: 0; align: 1; entsize: 0
+
+program header:
+type: arm_exidx; off: 1072; vaddr: 0x00010430; addr: 0x00010430; filesz: 8; memsz: 8; flags: 4; align: 4
+type: phdr; off: 52; vaddr: 0x00010034; addr: 0x00010034; filesz: 288; memsz: 288; flags: 5; align: 4
+type: interp; off: 340; vaddr: 0x00010154; addr: 0x00010154; filesz: 25; memsz: 25; flags: 4; align: 1
+type: load; off: 0; vaddr: 0x00010000; addr: 0x00010000; filesz: 1084; memsz: 1084; flags: 5; align: 65536
+type: load; off: 3852; vaddr: 0x00020F0C; addr: 0x00020F0C; filesz: 288; memsz: 292; flags: 6; align: 65536
+type: dynamic; off: 3864; vaddr: 0x00020F18; addr: 0x00020F18; filesz: 232; memsz: 232; flags: 6; align: 4
+type: note; off: 368; vaddr: 0x00010170; addr: 0x00010170; filesz: 68; memsz: 68; flags: 4; align: 4
+type: gnu_stack; off: 0; vaddr: 0x00000000; addr: 0x00000000; filesz: 0; memsz: 0; flags: 6; align: 16
+type: gnu_relro; off: 3852; vaddr: 0x00020F0C; addr: 0x00020F0C; filesz: 244; memsz: 244; flags: 4; align: 1
+
+symbol table:
+name: ; value: 0; size: 0; type: notype; bind: local
+name: ; value: 65876; size: 0; type: section; bind: local
+name: ; value: 65904; size: 0; type: section; bind: local
+name: ; value: 65936; size: 0; type: section; bind: local
+name: ; value: 65972; size: 0; type: section; bind: local
+name: ; value: 66008; size: 0; type: section; bind: local
+name: ; value: 66072; size: 0; type: section; bind: local
+name: ; value: 66132; size: 0; type: section; bind: local
+name: ; value: 66140; size: 0; type: section; bind: local
+name: ; value: 66172; size: 0; type: section; bind: local
+name: ; value: 66180; size: 0; type: section; bind: local
+name: ; value: 66204; size: 0; type: section; bind: local
+name: ; value: 66216; size: 0; type: section; bind: local
+name: ; value: 66272; size: 0; type: section; bind: local
+name: ; value: 66596; size: 0; type: section; bind: local
+name: ; value: 66604; size: 0; type: section; bind: local
+name: ; value: 66608; size: 0; type: section; bind: local
+name: ; value: 66616; size: 0; type: section; bind: local
+name: ; value: 134924; size: 0; type: section; bind: local
+name: ; value: 134928; size: 0; type: section; bind: local
+name: ; value: 134932; size: 0; type: section; bind: local
+name: ; value: 134936; size: 0; type: section; bind: local
+name: ; value: 135168; size: 0; type: section; bind: local
+name: ; value: 135196; size: 0; type: section; bind: local
+name: ; value: 135212; size: 0; type: section; bind: local
+name: ; value: 0; size: 0; type: section; bind: local
+name: ; value: 0; size: 0; type: section; bind: local
+name: /usr/lib/gcc-cross/arm-linux-gnueabihf/5/../../../../arm-linux-gnueabihf/lib/../lib/crt1.o; value: 0; size: 0; type: file; bind: local
+name: $d; value: 65904; size: 0; type: notype; bind: local
+name: $t; value: 66272; size: 0; type: notype; bind: local
+name: $d; value: 66608; size: 0; type: notype; bind: local
+name: $d; value: 66308; size: 0; type: notype; bind: local
+name: $d; value: 66604; size: 0; type: notype; bind: local
+name: $d; value: 135196; size: 0; type: notype; bind: local
+name: /usr/lib/gcc-cross/arm-linux-gnueabihf/5/../../../../arm-linux-gnueabihf/lib/../lib/crti.o; value: 0; size: 0; type: file; bind: local
+name: $a; value: 66320; size: 0; type: notype; bind: local
+name: call_weak_fn; value: 66320; size: 0; type: func; bind: local
+name: $d; value: 66348; size: 0; type: notype; bind: local
+name: $a; value: 66204; size: 0; type: notype; bind: local
+name: $a; value: 66596; size: 0; type: notype; bind: local
+name: /usr/lib/gcc-cross/arm-linux-gnueabihf/5/../../../../arm-linux-gnueabihf/lib/../lib/crtn.o; value: 0; size: 0; type: file; bind: local
+name: $a; value: 66212; size: 0; type: notype; bind: local
+name: $a; value: 66600; size: 0; type: notype; bind: local
+name: crtstuff.c; value: 0; size: 0; type: file; bind: local
+name: __JCR_LIST__; value: 134932; size: 0; type: object; bind: local
+name: $t; value: 66356; size: 0; type: notype; bind: local
+name: deregister_tm_clones; value: 66357; size: 0; type: func; bind: local
+name: $d; value: 66388; size: 0; type: notype; bind: local
+name: $t; value: 66392; size: 0; type: notype; bind: local
+name: register_tm_clones; value: 66393; size: 0; type: func; bind: local
+name: $d; value: 135200; size: 0; type: notype; bind: local
+name: __do_global_dtors_aux; value: 66437; size: 0; type: func; bind: local
+name: completed.9878; value: 135212; size: 1; type: object; bind: local
+name: $d; value: 134928; size: 0; type: notype; bind: local
+name: __do_global_dtors_aux_fini_array_entry; value: 134928; size: 0; type: object; bind: local
+name: frame_dummy; value: 66461; size: 0; type: func; bind: local
+name: $d; value: 134924; size: 0; type: notype; bind: local
+name: __frame_dummy_init_array_entry; value: 134924; size: 0; type: object; bind: local
+name: $d; value: 135212; size: 0; type: notype; bind: local
+name: add.c; value: 0; size: 0; type: file; bind: local
+name: $d; value: 135204; size: 0; type: notype; bind: local
+name: $t; value: 66496; size: 0; type: notype; bind: local
+name: elf-init.oS; value: 0; size: 0; type: file; bind: local
+name: $t; value: 66532; size: 0; type: notype; bind: local
+name: $d; value: 66584; size: 0; type: notype; bind: local
+name: $t; value: 66592; size: 0; type: notype; bind: local
+name: crtstuff.c; value: 0; size: 0; type: file; bind: local
+name: $d; value: 66616; size: 0; type: notype; bind: local
+name: __FRAME_END__; value: 66616; size: 0; type: object; bind: local
+name: $d; value: 134932; size: 0; type: notype; bind: local
+name: __JCR_END__; value: 134932; size: 0; type: object; bind: local
+name: ; value: 0; size: 0; type: file; bind: local
+name: __init_array_end; value: 134928; size: 0; type: notype; bind: local
+name: _DYNAMIC; value: 134936; size: 0; type: object; bind: local
+name: __init_array_start; value: 134924; size: 0; type: notype; bind: local
+name: _GLOBAL_OFFSET_TABLE_; value: 135168; size: 0; type: object; bind: local
+name: $a; value: 66216; size: 0; type: notype; bind: local
+name: $d; value: 66232; size: 0; type: notype; bind: local
+name: $a; value: 66236; size: 0; type: notype; bind: local
+name: __libc_csu_fini; value: 66593; size: 2; type: func; bind: global
+name: _ITM_deregisterTMCloneTable; value: 0; size: 0; type: notype; bind: weak
+name: data_start; value: 135196; size: 0; type: notype; bind: weak
+name: __bss_start__; value: 135212; size: 0; type: notype; bind: global
+name: _bss_end__; value: 135216; size: 0; type: notype; bind: global
+name: _edata; value: 135212; size: 0; type: notype; bind: global
+name: x; value: 135204; size: 4; type: object; bind: global
+name: _fini; value: 66596; size: 0; type: func; bind: global
+name: __bss_end__; value: 135216; size: 0; type: notype; bind: global
+name: __data_start; value: 135196; size: 0; type: notype; bind: global
+name: __libc_start_main@@GLIBC_2.4; value: 0; size: 0; type: func; bind: global
+name: __gmon_start__; value: 0; size: 0; type: notype; bind: weak
+name: __dso_handle; value: 135200; size: 0; type: object; bind: global
+name: _IO_stdin_used; value: 66604; size: 4; type: object; bind: global
+name: __libc_csu_init; value: 66533; size: 60; type: func; bind: global
+name: _end; value: 135216; size: 0; type: notype; bind: global
+name: _start; value: 66273; size: 0; type: func; bind: global
+name: __end__; value: 135216; size: 0; type: notype; bind: global
+name: y; value: 135208; size: 4; type: object; bind: global
+name: __bss_start; value: 135212; size: 0; type: notype; bind: global
+name: main; value: 66497; size: 36; type: func; bind: global
+name: _Jv_RegisterClasses; value: 0; size: 0; type: notype; bind: weak
+name: __TMC_END__; value: 135212; size: 0; type: object; bind: global
+name: _ITM_registerTMCloneTable; value: 0; size: 0; type: notype; bind: weak
+name: abort@@GLIBC_2.4; value: 0; size: 0; type: func; bind: global
+name: _init; value: 66204; size: 0; type: func; bind: global
+
+dynamic symbol table:
+name: ; value: 0; size: 0; type: notype; bind: local
+name: __gmon_start__; value: 0; size: 0; type: notype; bind: weak
+name: __libc_start_main; value: 0; size: 0; type: func; bind: global
+name: abort; value: 0; size: 0; type: func; bind: global

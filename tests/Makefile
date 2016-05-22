@@ -2,7 +2,9 @@
 FILES=\
 	hello.arm \
 	hello.x86_64 \
-	verifyPIN_A.axf
+	verifyPIN_A.axf \
+	add.arm \
+	add.x86_64
 
 all: tests
 
