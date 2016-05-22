@@ -66,8 +66,7 @@ let () =
 	end;
 
 	(* instructions *)
-	let module D = FH.Decode(FH.ARMv7) in
-	ignore (D.start ~filename ~secname:".text" shl)
+        FH.Decode.start ~filename ~secname:".text" shl
       with
 	Elf_header.Invalid_Elf -> Format.printf "invalid ELF file !\n"
     else

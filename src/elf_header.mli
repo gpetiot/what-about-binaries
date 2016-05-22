@@ -51,15 +51,7 @@ module Make (A : Archi.Addr) (E : Endian.T) :
       val parse : filename:string -> tablename:string -> strtab:string ->
 	Sh.entry list -> entry list
     end
-    module type Instructions =
-    sig
-      type t;;
-      val size : int;; (* size of an instruction in bytes *)
-      val pretty : Format.formatter -> t -> unit;;
-      val parse : Buffer.t -> unit;;
-    end;;
-    module ARMv7 : Instructions;;
-    module Decode (I : Instructions) : sig
-      val start : filename:string -> secname:string -> Sh.entry list -> 'a list
+    module Decode : sig
+      val start : filename:string -> secname:string -> Sh.entry list -> unit
     end
 end);;
