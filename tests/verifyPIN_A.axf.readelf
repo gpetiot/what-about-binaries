@@ -1,0 +1,234 @@
+ELF Header:
+  Magic:   7f 45 4c 46 01 01 01 00 00 00 00 00 00 00 00 00 
+  Class:                             ELF32
+  Data:                              2's complement, little endian
+  Version:                           1 (current)
+  OS/ABI:                            UNIX - System V
+  ABI Version:                       0
+  Type:                              EXEC (Executable file)
+  Machine:                           ARM
+  Version:                           0x1
+  Entry point address:               0x8000195
+  Start of program headers:          30192 (bytes into file)
+  Start of section headers:          30256 (bytes into file)
+  Flags:                             0x5000002, has entry point, Version5 EABI
+  Size of this header:               52 (bytes)
+  Size of program headers:           32 (bytes)
+  Number of program headers:         2
+  Size of section headers:           40 (bytes)
+  Number of section headers:         17
+  Section header string table index: 16
+
+Section Headers:
+  [Nr] Name              Type            Addr     Off    Size   ES Flg Lk Inf Al
+  [ 0]                   NULL            00000000 000000 000000 00      0   0  0
+  [ 1] ER_IROM1          PROGBITS        08000000 000034 000220 00  AX  0   0  4
+  [ 2] RW_IRAM1          NOBITS          20000000 000254 000400 00  WA  0   0  8
+  [ 3] RW_IRAM2          PROGBITS        20008000 000254 000020 00  WA  0   0  4
+  [ 4] ER_IROM2          PROGBITS        08004000 000274 000288 00  AX  0   0  4
+  [ 5] .debug_abbrev     PROGBITS        00000000 0004fc 0005c4 00      0   0  1
+  [ 6] .debug_frame      PROGBITS        00000000 000ac0 00058c 00      0   0  1
+  [ 7] .debug_info       PROGBITS        00000000 00104c 0011b0 00      0   0  1
+  [ 8] .debug_line       PROGBITS        00000000 0021fc 0006f4 00      0   0  1
+  [ 9] .debug_loc        PROGBITS        00000000 0028f0 00020c 00      0   0  1
+  [10] .debug_macinfo    PROGBITS        00000000 002afc 00092c 00      0   0  1
+  [11] .debug_pubnames   PROGBITS        00000000 003428 00029f 00      0   0  1
+  [12] .symtab           SYMTAB          00000000 0036c8 000b10 10     13  73  4
+  [13] .strtab           STRTAB          00000000 0041d8 000aa0 00      0   0  1
+  [14] .note             NOTE            00000000 004c78 000020 00      0   0  4
+  [15] .comment          PROGBITS        00000000 004c98 0028ac 00      0   0  1
+  [16] .shstrtab         STRTAB          00000000 007544 0000ac 00      0   0  1
+Key to Flags:
+  W (write), A (alloc), X (execute), M (merge), S (strings)
+  I (info), L (link order), G (group), T (TLS), E (exclude), x (unknown)
+  O (extra OS processing required) o (OS specific), p (processor specific)
+
+Program Headers:
+  Type           Offset   VirtAddr   PhysAddr   FileSiz MemSiz  Flg Align
+  LOAD           0x000034 0x08000000 0x08000000 0x00240 0x00640 RWE 0x8
+  LOAD           0x000274 0x08004000 0x08004000 0x00288 0x00288 R E 0x4
+
+ Section to Segment mapping:
+  Segment Sections...
+   00     ER_IROM1 
+   01     ER_IROM2 
+
+Symbol table '.symtab' contains 177 entries:
+   Num:    Value  Size Type    Bind   Vis      Ndx Name
+     0: 00000000     0 NOTYPE  LOCAL  DEFAULT  UND 
+     1: 08000000     0 NOTYPE  LOCAL  DEFAULT    1 $d.realdata
+     2: 08000194     0 NOTYPE  LOCAL  DEFAULT    1 $t
+     3: 080001a0     0 NOTYPE  LOCAL  DEFAULT    1 $d
+     4: 080001a8     0 NOTYPE  LOCAL  DEFAULT    1 $t
+     5: 080001c4     0 NOTYPE  LOCAL  DEFAULT    1 $d
+     6: 080001cc     0 NOTYPE  LOCAL  DEFAULT    1 $t
+     7: 080001e8     0 NOTYPE  LOCAL  DEFAULT    1 $d
+     8: 080001f0     0 NOTYPE  LOCAL  DEFAULT    1 $t
+     9: 08000210     0 NOTYPE  LOCAL  DEFAULT    1 $d.realdata
+    10: 20000000     0 NOTYPE  LOCAL  DEFAULT    2 $d.realdata
+    11: 20008000     0 NOTYPE  LOCAL  DEFAULT    3 $d.realdata
+    12: 08004000     0 NOTYPE  LOCAL  DEFAULT    4 $t
+    13: 08004184     0 NOTYPE  LOCAL  DEFAULT    4 $d
+    14: 080041a8     0 NOTYPE  LOCAL  DEFAULT    4 $t
+    15: 080041fc     0 NOTYPE  LOCAL  DEFAULT    4 $d
+    16: 0800420c     0 NOTYPE  LOCAL  DEFAULT    4 $t
+    17: 0800423c     0 NOTYPE  LOCAL  DEFAULT    4 $d
+    18: 08004248     0 NOTYPE  LOCAL  DEFAULT    4 $t
+    19: 08004282     0 NOTYPE  LOCAL  DEFAULT    4 $d
+    20: 00000000     0 FILE    LOCAL  DEFAULT  ABS ..\..\share\keil\00-STM32
+    21: 20000000  1024 SECTION LOCAL  DEFAULT    2 STACK
+    22: 08000000   404 SECTION LOCAL  DEFAULT    1 RESET
+    23: 080001a8    36 SECTION LOCAL  DEFAULT    1 .text
+    24: 080001a8     0 NOTYPE  LOCAL  DEFAULT    1 $v0
+    25: 00000000     0 FILE    LOCAL  DEFAULT  ABS User\main.c
+    26: 08004000     0 SECTION LOCAL  DEFAULT    4 .text
+    27: 00000000     0 FILE    LOCAL  DEFAULT  ABS User\\stm32f4xx_it.c
+    28: 00000000     0 FILE    LOCAL  DEFAULT  ABS User\stm32f4xx_it.c
+    29: 08004016     0 SECTION LOCAL  DEFAULT    4 .text
+    30: 00000000     0 FILE    LOCAL  DEFAULT  ABS User\\system_stm32f4xx.c
+    31: 00000000     0 FILE    LOCAL  DEFAULT  ABS User\system_stm32f4xx.c
+    32: 08004030     0 SECTION LOCAL  DEFAULT    4 .text
+    33: 080040e7   158 FUNC    LOCAL  DEFAULT    4 SetSysClock
+    34: 20008000    20 SECTION LOCAL  DEFAULT    3 .data
+    35: 00000000     0 FILE    LOCAL  DEFAULT  ABS ..\src\code.c
+    36: 080041a8     0 SECTION LOCAL  DEFAULT    4 .text
+    37: 00000000     0 FILE    LOCAL  DEFAULT  ABS ..\src\countermeasure.c
+    38: 00000000     0 FILE    LOCAL  DEFAULT  ABS ..\src\oracle.c
+    39: 0800420c     0 SECTION LOCAL  DEFAULT    4 .text
+    40: 00000000     0 FILE    LOCAL  DEFAULT  ABS User\initialize_card.c
+    41: 08004248     0 SECTION LOCAL  DEFAULT    4 .text
+    42: 20008014    11 SECTION LOCAL  DEFAULT    3 .data
+    43: 00000000     0 FILE    LOCAL  DEFAULT  ABS ../clib/microlib/init/ent
+    44: 08000194     0 SECTION LOCAL  DEFAULT    1 .ARM.Collect$$$$00000000
+    45: 00000000     0 FILE    LOCAL  DEFAULT  ABS dc.s
+    46: 00000000     0 FILE    LOCAL  DEFAULT  ABS ../clib/microlib/init/ent
+    47: 08000194     4 SECTION LOCAL  DEFAULT    1 .ARM.Collect$$$$00000001
+    48: 080001a4     4 SECTION LOCAL  DEFAULT    1 .ARM.Collect$$$$00002712
+    49: 080001a4     4 OBJECT  LOCAL  DEFAULT    1 __lit__00000000
+    50: 00000000     0 FILE    LOCAL  DEFAULT  ABS ../clib/microlib/init/ent
+    51: 08000198     4 SECTION LOCAL  DEFAULT    1 .ARM.Collect$$$$00000004
+    52: 00000000     0 FILE    LOCAL  DEFAULT  ABS ../clib/microlib/init/ent
+    53: 00000000     0 FILE    LOCAL  DEFAULT  ABS ../clib/microlib/init/ent
+    54: 0800019c     0 SECTION LOCAL  DEFAULT    1 .ARM.Collect$$$$00000008
+    55: 00000000     0 FILE    LOCAL  DEFAULT  ABS ../clib/microlib/init/ent
+    56: 00000000     0 FILE    LOCAL  DEFAULT  ABS ../clib/microlib/init/ent
+    57: 0800019c     0 SECTION LOCAL  DEFAULT    1 .ARM.Collect$$$$0000000A
+    58: 00000000     0 FILE    LOCAL  DEFAULT  ABS ../clib/microlib/init/ent
+    59: 0800019c     8 SECTION LOCAL  DEFAULT    1 .ARM.Collect$$$$0000000B
+    60: 00000000     0 FILE    LOCAL  DEFAULT  ABS ../clib/microlib/init/ent
+    61: 00000000     0 FILE    LOCAL  DEFAULT  ABS ../clib/microlib/init/ent
+    62: 080001a4     0 SECTION LOCAL  DEFAULT    1 .ARM.Collect$$$$0000000D
+    63: 00000000     0 FILE    LOCAL  DEFAULT  ABS ../clib/microlib/init/ent
+    64: 00000000     0 FILE    LOCAL  DEFAULT  ABS ../clib/microlib/init/ent
+    65: 080001a4     0 SECTION LOCAL  DEFAULT    1 .ARM.Collect$$$$0000000F
+    66: 00000000     0 FILE    LOCAL  DEFAULT  ABS ../clib/microlib/init/ent
+    67: 00000000     0 FILE    LOCAL  DEFAULT  ABS init.s
+    68: 080001cc    36 SECTION LOCAL  DEFAULT    1 .text
+    69: 00000000     0 FILE    LOCAL  DEFAULT  ABS handlers.s
+    70: 080001f0    14 SECTION LOCAL  DEFAULT    1 i.__scatterload_copy
+    71: 080001fe     2 SECTION LOCAL  DEFAULT    1 i.__scatterload_null
+    72: 08000200    14 SECTION LOCAL  DEFAULT    1 i.__scatterload_zeroinit
+    73: 00000000     0 NOTYPE  GLOBAL HIDDEN   ABS BuildAttributes$$THM_ISAv
+    74: 00000000     0 NOTYPE  GLOBAL HIDDEN   ABS __ARM_use_no_argv
+    75: 00000194     0 NOTYPE  GLOBAL HIDDEN   ABS __Vectors_Size
+    76: 08000000     4 OBJECT  GLOBAL HIDDEN     1 __Vectors
+    77: 08000194     0 OBJECT  GLOBAL HIDDEN     1 __Vectors_End
+    78: 08000195     0 FUNC    GLOBAL HIDDEN     1 __main
+    79: 08000195     0 FUNC    GLOBAL HIDDEN     1 _main_stk
+    80: 08000199     0 FUNC    GLOBAL HIDDEN     1 _main_scatterload
+    81: 0800019d     0 FUNC    GLOBAL HIDDEN     1 __main_after_scatterload
+    82: 0800019d     0 FUNC    GLOBAL HIDDEN     1 _main_clock
+    83: 0800019d     0 FUNC    GLOBAL HIDDEN     1 _main_cpp_init
+    84: 0800019d     0 FUNC    GLOBAL HIDDEN     1 _main_init
+    85: 080001a5     0 FUNC    GLOBAL HIDDEN     1 __rt_final_cpp
+    86: 080001a5     0 FUNC    GLOBAL HIDDEN     1 __rt_final_exit
+    87: 080001a9     8 FUNC    WEAK   HIDDEN     1 Reset_Handler
+    88: 080001c3     0 FUNC    WEAK   HIDDEN     1 ADC_IRQHandler
+    89: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA1_Stream0_IRQHandler
+    90: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA1_Stream1_IRQHandler
+    91: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA1_Stream2_IRQHandler
+    92: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA1_Stream3_IRQHandler
+    93: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA1_Stream4_IRQHandler
+    94: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA1_Stream5_IRQHandler
+    95: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA1_Stream6_IRQHandler
+    96: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA1_Stream7_IRQHandler
+    97: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA2_Stream0_IRQHandler
+    98: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA2_Stream1_IRQHandler
+    99: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA2_Stream2_IRQHandler
+   100: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA2_Stream3_IRQHandler
+   101: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA2_Stream4_IRQHandler
+   102: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA2_Stream5_IRQHandler
+   103: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA2_Stream6_IRQHandler
+   104: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA2_Stream7_IRQHandler
+   105: 080001c3     0 FUNC    WEAK   HIDDEN     1 EXTI0_IRQHandler
+   106: 080001c3     0 FUNC    WEAK   HIDDEN     1 EXTI15_10_IRQHandler
+   107: 080001c3     0 FUNC    WEAK   HIDDEN     1 EXTI1_IRQHandler
+   108: 080001c3     0 FUNC    WEAK   HIDDEN     1 EXTI2_IRQHandler
+   109: 080001c3     0 FUNC    WEAK   HIDDEN     1 EXTI3_IRQHandler
+   110: 080001c3     0 FUNC    WEAK   HIDDEN     1 EXTI4_IRQHandler
+   111: 080001c3     0 FUNC    WEAK   HIDDEN     1 EXTI9_5_IRQHandler
+   112: 080001c3     0 FUNC    WEAK   HIDDEN     1 FLASH_IRQHandler
+   113: 080001c3     0 FUNC    WEAK   HIDDEN     1 FPU_IRQHandler
+   114: 080001c3     0 FUNC    WEAK   HIDDEN     1 I2C1_ER_IRQHandler
+   115: 080001c3     0 FUNC    WEAK   HIDDEN     1 I2C1_EV_IRQHandler
+   116: 080001c3     0 FUNC    WEAK   HIDDEN     1 I2C2_ER_IRQHandler
+   117: 080001c3     0 FUNC    WEAK   HIDDEN     1 I2C2_EV_IRQHandler
+   118: 080001c3     0 FUNC    WEAK   HIDDEN     1 I2C3_ER_IRQHandler
+   119: 080001c3     0 FUNC    WEAK   HIDDEN     1 I2C3_EV_IRQHandler
+   120: 080001c3     0 FUNC    WEAK   HIDDEN     1 OTG_FS_IRQHandler
+   121: 080001c3     0 FUNC    WEAK   HIDDEN     1 OTG_FS_WKUP_IRQHandler
+   122: 080001c3     0 FUNC    WEAK   HIDDEN     1 PVD_IRQHandler
+   123: 080001c3     0 FUNC    WEAK   HIDDEN     1 RCC_IRQHandler
+   124: 080001c3     0 FUNC    WEAK   HIDDEN     1 RTC_Alarm_IRQHandler
+   125: 080001c3     0 FUNC    WEAK   HIDDEN     1 RTC_WKUP_IRQHandler
+   126: 080001c3     0 FUNC    WEAK   HIDDEN     1 SDIO_IRQHandler
+   127: 080001c3     0 FUNC    WEAK   HIDDEN     1 SPI1_IRQHandler
+   128: 080001c3     0 FUNC    WEAK   HIDDEN     1 SPI2_IRQHandler
+   129: 080001c3     0 FUNC    WEAK   HIDDEN     1 SPI3_IRQHandler
+   130: 080001c3     0 FUNC    WEAK   HIDDEN     1 SPI4_IRQHandler
+   131: 080001c3     0 FUNC    WEAK   HIDDEN     1 TAMP_STAMP_IRQHandler
+   132: 080001c3     0 FUNC    WEAK   HIDDEN     1 TIM1_BRK_TIM9_IRQHandler
+   133: 080001c3     0 FUNC    WEAK   HIDDEN     1 TIM1_CC_IRQHandler
+   134: 080001c3     0 FUNC    WEAK   HIDDEN     1 TIM1_TRG_COM_TIM11_IRQHan
+   135: 080001c3     0 FUNC    WEAK   HIDDEN     1 TIM1_UP_TIM10_IRQHandler
+   136: 080001c3     0 FUNC    WEAK   HIDDEN     1 TIM2_IRQHandler
+   137: 080001c3     0 FUNC    WEAK   HIDDEN     1 TIM3_IRQHandler
+   138: 080001c3     0 FUNC    WEAK   HIDDEN     1 TIM4_IRQHandler
+   139: 080001c3     0 FUNC    WEAK   HIDDEN     1 TIM5_IRQHandler
+   140: 080001c3     0 FUNC    WEAK   HIDDEN     1 USART1_IRQHandler
+   141: 080001c3     0 FUNC    WEAK   HIDDEN     1 USART2_IRQHandler
+   142: 080001c3     0 FUNC    WEAK   HIDDEN     1 USART6_IRQHandler
+   143: 080001c3     0 FUNC    WEAK   HIDDEN     1 WWDG_IRQHandler
+   144: 080001cd    28 FUNC    GLOBAL HIDDEN     1 __scatterload
+   145: 080001cd     0 FUNC    GLOBAL HIDDEN     1 __scatterload_rt2
+   146: 080001f1    14 FUNC    GLOBAL HIDDEN     1 __scatterload_copy
+   147: 080001ff     2 FUNC    GLOBAL HIDDEN     1 __scatterload_null
+   148: 08000201    14 FUNC    GLOBAL HIDDEN     1 __scatterload_zeroinit
+   149: 08000210     0 NOTYPE  GLOBAL HIDDEN     1 Region$$Table$$Base
+   150: 08000220     0 NOTYPE  GLOBAL HIDDEN     1 Region$$Table$$Limit
+   151: 08004001    22 FUNC    GLOBAL HIDDEN     4 main
+   152: 08004017     2 FUNC    GLOBAL HIDDEN     4 NMI_Handler
+   153: 08004019     2 FUNC    GLOBAL HIDDEN     4 HardFault_Handler
+   154: 0800401b     2 FUNC    GLOBAL HIDDEN     4 MemManage_Handler
+   155: 0800401d     2 FUNC    GLOBAL HIDDEN     4 BusFault_Handler
+   156: 0800401f     2 FUNC    GLOBAL HIDDEN     4 UsageFault_Handler
+   157: 08004021     2 FUNC    GLOBAL HIDDEN     4 SVC_Handler
+   158: 08004023     2 FUNC    GLOBAL HIDDEN     4 DebugMon_Handler
+   159: 08004025     2 FUNC    GLOBAL HIDDEN     4 PendSV_Handler
+   160: 08004027     2 FUNC    WEAK   HIDDEN     4 TimingDelay_Decrement
+   161: 08004029     8 FUNC    GLOBAL HIDDEN     4 SysTick_Handler
+   162: 08004031    74 FUNC    GLOBAL HIDDEN     4 SystemInit
+   163: 0800407b   108 FUNC    GLOBAL HIDDEN     4 SystemCoreClockUpdate
+   164: 080041a9    36 FUNC    GLOBAL HIDDEN     4 byteArrayCompare
+   165: 080041cd    48 FUNC    GLOBAL HIDDEN     4 verifyPIN_A
+   166: 0800420d    24 FUNC    GLOBAL HIDDEN     4 oracle
+   167: 08004225    24 FUNC    GLOBAL HIDDEN     4 oracle_ptc
+   168: 08004249    58 FUNC    GLOBAL HIDDEN     4 initialize
+   169: 20000400     0 OBJECT  GLOBAL HIDDEN     2 __initial_sp
+   170: 20008000     4 OBJECT  GLOBAL HIDDEN     3 SystemCoreClock
+   171: 20008004    16 OBJECT  GLOBAL HIDDEN     3 AHBPrescTable
+   172: 20008014     1 OBJECT  GLOBAL HIDDEN     3 g_authenticated
+   173: 20008015     1 OBJECT  GLOBAL HIDDEN     3 g_ptc
+   174: 20008016     1 OBJECT  GLOBAL HIDDEN     3 g_countermeasure
+   175: 20008017     4 OBJECT  GLOBAL HIDDEN     3 g_userPin
+   176: 2000801b     4 OBJECT  GLOBAL HIDDEN     3 g_cardPin
