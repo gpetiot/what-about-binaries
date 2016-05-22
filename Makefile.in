@@ -4,6 +4,8 @@ CAPSTONE=@CAPSTONE@
 CAPSTONE_OBJ=\
 	$(CAPSTONE)/arm_const.cmx \
 	$(CAPSTONE)/arm.cmx \
+	$(CAPSTONE)/x86_const.cmx \
+	$(CAPSTONE)/x86.cmx \
 	$(CAPSTONE)/capstone.cmx
 
 SOURCES=src/hexa.ml \
@@ -13,6 +15,8 @@ SOURCES=src/hexa.ml \
 	src/program_header_type.ml \
 	src/section_header_type.ml \
 	src/symbol.ml \
+	src/decode_arm.ml \
+	src/decode_x86.ml \
 	src/elf_header.ml
 
 EXEC_OPT=obaf
@@ -41,10 +45,10 @@ src/main.cmx: src/main.ml
 	$(CAMLOPT) -I src -c -annot $(LIBS:.cma=.cmxa) $<
 
 src/%.cmi: src/%.mli
-	$(CAMLC) -I src -c -annot $<
+	$(CAMLC) -I src -c -annot $(LIBS:.cma=.cmxa) $<
 
 src/%.cmx: src/%.ml src/%.cmi
-	$(CAMLOPT) -I src -c -annot $<
+	$(CAMLOPT) -I src -c -annot $(LIBS:.cma=.cmxa) $<
 
 .PHONY: clean
 clean:
