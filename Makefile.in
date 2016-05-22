@@ -44,6 +44,9 @@ $(EXEC_OPT): $(HEADERS:.mli=.cmi) $(OPTOBJS) src/main.cmx $(CAPSTONE_OBJ)
 src/main.cmx: src/main.ml
 	$(CAMLOPT) -I src -c -annot $(LIBS:.cma=.cmxa) $<
 
+src/gui/main.cmx: src/gui/main.ml
+	$(CAMLOPT) -I src -c -annot $(LIBS:.cma=.cmxa) $<
+
 src/%.cmi: src/%.mli
 	$(CAMLC) -I src -c -annot $(LIBS:.cma=.cmxa) $<
 
@@ -61,8 +64,8 @@ clean:
 .PHONY: gui
 gui: $(EXECGUI_OPT)
 
-$(EXECGUI_OPT): $(HEADERS:.mli=.cmi) $(OPTOBJS) src/gui/main.ml
-	ocamlfind $(CAMLOPT) -I src -annot -g -package lablgtk2 -linkpkg $(LIBS:.cma=.cmxa) $(OPTOBJS) src/gui/main.ml -o $@
+$(EXECGUI_OPT): $(HEADERS:.mli=.cmi) $(OPTOBJS) src/gui/main.cmx $(CAPSTONE_OBJ)
+	ocamlfind $(CAMLOPT) -I src -annot -g -package lablgtk2 -linkpkg $(LIBS:.cma=.cmxa) $(CAPSTONE_OBJ) $(OPTOBJS) src/gui/main.cmx -o $@
 
 .PHONY: tests
 tests:
