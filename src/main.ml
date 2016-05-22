@@ -66,7 +66,11 @@ let () =
 	end;
 
 	(* instructions *)
-        FH.Decode.start ~filename ~secname:".text" shl
+	begin
+	  try
+            FH.Decode.start ~filename ~secname:".text" shl
+	  with Not_found -> ()
+	end
       with
 	Elf_header.Invalid_Elf -> Format.printf "invalid ELF file !\n"
     else
