@@ -51,4 +51,7 @@ module Make (A : Archi.Addr) (E : Endian.T) :
       val parse : filename:string -> tablename:string -> strtab:string ->
 	Sh.entry list -> entry list
     end
+    module Decode : sig
+      val start : filename:string -> secname:string -> Sh.entry list -> unit
+    end
 end);;

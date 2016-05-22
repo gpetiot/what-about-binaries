@@ -278,6 +278,7 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
     let offset s = s.sh_off;;
     let size s = s.sh_size;;
     let entry_size s = s.sh_entsize;;
+    let addr s = s.sh_addr;;
     
     let strtab ~filename ~tablename sections =
       let strtab = get tablename sections in
@@ -383,7 +384,7 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
 	      let name = Strtab.get strtab name_id in
 	      let bind =
 		Symbol.Binding.of_int
-		  (A.to_int (A.shift_right (A.of_int info) 4)) in
+		  (A.to_int (A.shift_right_logical (A.of_int info) 4)) in
 	      let symtype =
 		Symbol.Type.of_int
 		  (A.to_int (A.logand (A.of_int info) (A.of_int 15))) in
@@ -401,6 +402,16 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
 	close_in chan;
 	Format.printf "%s" (Printexc.to_string exn);
 	raise Invalid_Elf
+    ;;
+  end;;
+
+  module Decode = struct
+    let start ~filename ~secname sections =
+      let section = Sh.get secname sections in
+      let offset = Sh.offset section in
+      let size = Sh.size section in
+      let start_addr = Sh.addr section in
+      ()
     ;;
   end;;
 end;;

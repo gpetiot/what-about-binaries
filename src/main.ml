@@ -63,6 +63,13 @@ let () =
 	      "\ndynamic symbol table:\n%a"
 	      (Format.pp_print_list ~pp_sep FH.Symtbl.pretty) dsymtab
 	  with Not_found -> ()
+	end;
+
+	(* instructions *)
+	begin
+	  try
+            FH.Decode.start ~filename ~secname:".text" shl
+	  with Not_found -> ()
 	end
       with
 	Elf_header.Invalid_Elf -> Format.printf "invalid ELF file !\n"
