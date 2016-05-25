@@ -25,7 +25,6 @@ if test "$OCAMLFIND" = "no"; then
   AC_MSG_ERROR([You must install OCaml findlib (the ocamlfind command)])
 fi
 
-AC_CHECK_OCAML_PKG([js_of_ocaml])
 AC_CHECK_OCAML_PKG([lablgtk2])
 
 AC_MSG_CHECKING(presence of Capstone OCaml binding)
