@@ -28,7 +28,13 @@ fi
 AC_CHECK_OCAML_PKG([lablgtk2])
 
 AC_MSG_CHECKING(presence of Capstone OCaml binding)
-CAPSTONE=`dirname \`locate capstone.ml -l1\``
+CAPSTONE_PATH=`locate capstone.ml -l1`
+if test "$CAPSTONE_PATH" = ""; then
+  AC_MSG_ERROR([Cannot find Capstone.])
+else
+  CAPSTONE=`dirname $CAPSTONE_PATH`
+fi
+
 AC_MSG_RESULT($CAPSTONE)
 AC_SUBST(CAPSTONE)
 AC_OUTPUT(Makefile)
