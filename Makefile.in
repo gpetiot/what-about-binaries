@@ -55,8 +55,8 @@ clean:
 	@rm -f $(EXEC_OPT)
 	@rm -f configure config.log
 	@rm -rf autom4te.cache
-	make clean -C tests
+	@make clean -C tests
 
 .PHONY: tests
 tests:
-	make -C tests
+	@make -C tests
