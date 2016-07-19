@@ -10,7 +10,7 @@ all: tests
 
 tests: $(FILES)
 	for x in $(FILES); do \
-		../obaf $$x > $$x.out 2> $$x.err; \
+		../wab $$x > $$x.out 2> $$x.err; \
 	done
 
 .PHONY: clean

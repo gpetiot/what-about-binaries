@@ -1,4 +1,4 @@
-AC_INIT(obaf,0.1~dev)
+AC_INIT(wab,0.1~dev)
 #AC_CONFIG_MACRO_DIR([m4])
 m4_include([m4/ocaml.m4])
 

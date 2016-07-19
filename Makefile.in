@@ -19,7 +19,7 @@ SOURCES=src/hexa.ml \
 	src/decode_x86.ml \
 	src/elf_header.ml
 
-EXEC_OPT=obaf
+EXEC_OPT=wab
 CAMLC=ocamlc
 CAMLOPT=ocamlopt
 CAMLDEP=ocamldep
