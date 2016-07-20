@@ -3,19 +3,21 @@
 #               Dependencies                    #
 #################################################
 
-git clone https://github.com/aquynh/capstone.git
-make -C capstone
-sudo make install -C capstone
-make -C capstone/bindings/ocaml
+$ git clone https://github.com/aquynh/capstone.git
 
-add to your .bashrc:
+add the following two lines to your .bashrc:
 
 export CAPSTONE_PATH=<YourPathToCapstone>
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CAPSTONE_PATH
+
+$ make -C $CAPSTONE_PATH
+$ LIBRARY_PATH=$CAPSTONE_PATH make -C $CAPSTONE_PATH/bindings/ocaml
+$ ldconfig -l $CAPSTONE_PATH/libcapstone.so
 
 #################################################
 #                    WAB                        #
 #################################################
 
-autoconf
-./configure
-make
+$ autoconf
+$ ./configure
+$ make

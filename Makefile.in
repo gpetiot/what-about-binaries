@@ -29,7 +29,7 @@ WITHSTR=str.cma -cclib -lstr
 WITHNUMS=nums.cma -cclib -lnums
 WITHTHREADS=threads.cma -cclib -lthreads
 WITHDBM=dbm.cma -cclib -lmldbm -cclib -lndbm
-WITHCAPSTONE=-I $(CAPSTONE) $(CAPSTONE)/ocaml.o -cclib -lcapstone
+WITHCAPSTONE=-I $(CAPSTONE) $(CAPSTONE)/ocaml.o -cclib -lcapstone -cclib -L$(CAPSTONE_PATH)
 LIBS=$(WITHCAPSTONE)
 OPTOBJS=$(SOURCES:.ml=.cmx)
 HEADERS=$(SOURCES:.ml=.mli)
