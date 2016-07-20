@@ -9,7 +9,6 @@ let () =
 	let module A = (val (Archi.addr eclass)) in
 	let module E = (val (Endian.endianness edata)) in
 	let module FH = Elf_header.Make(A)(E) in
-	let pp_sep fmt () = Format.fprintf fmt "" in
 
 	(* file header *)
 	let fh = FH.parse filename in
@@ -17,23 +16,20 @@ let () =
 
 	(* section header *)
 	let shl = FH.Sh.parse fh filename in
-	Format.printf
-	  "\nsection header:\n%a"
-	  (Format.pp_print_list ~pp_sep FH.Sh.pretty) shl;
+	Format.printf "\nsection header:\n";
+	List.iter (fun x -> Format.printf "%a" FH.Sh.pretty x) shl;
 
 	(* program header *)
 	let phl = FH.Ph.parse fh filename in
-	Format.printf
-	  "\nprogram header:\n%a"
-	  (Format.pp_print_list ~pp_sep FH.Ph.pretty) phl;
+	Format.printf "\nprogram header:\n";
+	List.iter (fun x -> Format.printf "%a" FH.Ph.pretty x) phl;
 
 	(* symbol table *)
 	let strtab = FH.Sh.strtab ~filename ~tablename:".strtab" shl in
 	let symtab =
 	  FH.Symtbl.parse ~filename ~tablename:".symtab" ~strtab shl in
-	Format.printf
-	  "\nsymbol table:\n%a"
-	  (Format.pp_print_list ~pp_sep FH.Symtbl.pretty) symtab;
+	Format.printf "\nsymbol table:\n";
+	List.iter (fun x -> Format.printf "%a" FH.Symtbl.pretty x) symtab;
 	
 	(* dynamic symbol table *)
 	begin
@@ -42,9 +38,8 @@ let () =
 	    let dsymtab =
 	      FH.Symtbl.parse ~filename ~tablename:".dynsym" ~strtab:dstrtab shl
 	    in
-	    Format.printf
-	      "\ndynamic symbol table:\n%a"
-	      (Format.pp_print_list ~pp_sep FH.Symtbl.pretty) dsymtab
+	    Format.printf "\ndynamic symbol table:\n";
+	    List.iter (fun x -> Format.printf "%a" FH.Symtbl.pretty x) dsymtab
 	  with Not_found -> ()
 	end;
 
