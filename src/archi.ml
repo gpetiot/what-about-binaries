@@ -47,7 +47,7 @@ struct
     else if e < 255 then e+1,0,0,0
     else assert false
   let pretty fmt (a,b,c,d) =
-    Format.fprintf fmt "0x%a%a%a%a"
+    Format.fprintf fmt "%a%a%a%a"
       Hexa.pretty a Hexa.pretty b Hexa.pretty c Hexa.pretty d
   let of_list = function
     | [a;b;c;d] -> a,b,c,d
@@ -81,7 +81,7 @@ struct
     else if a < 255 then a+1,0,0,0,0,0,0,0
     else assert false
   let pretty fmt (a,b,c,d,e,f,g,h) =
-    Format.fprintf fmt "0x%a%a%a%a%a%a%a%a"
+    Format.fprintf fmt "%a%a%a%a%a%a%a%a"
       Hexa.pretty a Hexa.pretty b Hexa.pretty c Hexa.pretty d
       Hexa.pretty e Hexa.pretty f Hexa.pretty g Hexa.pretty h
   let of_list = function

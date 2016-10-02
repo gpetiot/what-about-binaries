@@ -12,24 +12,28 @@ let () =
 
 	(* file header *)
 	let fh = FH.parse filename in
-	Format.printf "file header:\n%a" FH.pretty fh;
+	Format.printf "ELF Header:\n%a" FH.pretty fh;
 
 	(* section header *)
 	let shl = FH.Sh.parse fh filename in
-	Format.printf "\nsection header:\n";
-	List.iter (fun x -> Format.printf "%a" FH.Sh.pretty x) shl;
+	Format.printf "\nSection Headers:\n";
+	Format.printf
+	  "  [Nr] Name              Type            Addr     Off    Size   ES \
+Flg Lk Inf Al\n";
+	List.iteri (fun i x -> Format.printf "  [%2i] %a" i FH.Sh.pretty x)
+	  shl;
+	Format.printf "\
+Key to Flags:\n\
+\  W (write), A (alloc), X (execute), M (merge), S (strings)\n\
+\  I (info), L (link order), G (group), T (TLS), E (exclude), x (unknown)\n\
+\  O (extra OS processing required) o (OS specific), p (processor specific)\n";
 
 	(* program header *)
 	let phl = FH.Ph.parse fh filename in
-	Format.printf "\nprogram header:\n";
+	Format.printf "\nProgram Headers:\n";
+	Format.printf "  Type           Offset   VirtAddr   PhysAddr   FileSiz \
+MemSiz  Flg Align\n";
 	List.iter (fun x -> Format.printf "%a" FH.Ph.pretty x) phl;
-
-	(* symbol table *)
-	let strtab = FH.Sh.strtab ~filename ~tablename:".strtab" shl in
-	let symtab =
-	  FH.Symtbl.parse ~filename ~tablename:".symtab" ~strtab shl in
-	Format.printf "\nsymbol table:\n";
-	List.iter (fun x -> Format.printf "%a" FH.Symtbl.pretty x) symtab;
 	
 	(* dynamic symbol table *)
 	begin
@@ -38,10 +42,27 @@ let () =
 	    let dsymtab =
 	      FH.Symtbl.parse ~filename ~tablename:".dynsym" ~strtab:dstrtab shl
 	    in
-	    Format.printf "\ndynamic symbol table:\n";
-	    List.iter (fun x -> Format.printf "%a" FH.Symtbl.pretty x) dsymtab
+	    Format.printf "\nSymbol table '.dynsym' contains %i entries:\n"
+	      (List.length dsymtab);
+	    Format.printf
+	      "   Num:    Value  Size Type    Bind   Vis      Ndx Name\n";
+	    List.iteri
+	      (fun i x -> Format.printf "%6i: %a" i FH.Symtbl.pretty x)
+	      dsymtab
 	  with Not_found -> ()
 	end;
+
+	(* symbol table *)
+	let strtab = FH.Sh.strtab ~filename ~tablename:".strtab" shl in
+	let symtab =
+	  FH.Symtbl.parse ~filename ~tablename:".symtab" ~strtab shl in
+	Format.printf "\nSymbol table '.symtab' contains %i entries:\n"
+	  (List.length symtab);
+	Format.printf
+	  "   Num:    Value  Size Type    Bind   Vis      Ndx Name\n";
+	List.iteri
+	  (fun i x -> Format.printf "%6i: %a" i FH.Symtbl.pretty x)
+	  symtab;
 
 	(* instructions *)
 	begin

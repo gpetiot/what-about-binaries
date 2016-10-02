@@ -15,13 +15,13 @@ let int_to_etype = function
 ;;
 
 let etype_to_string = function
-  | None -> "none"
-  | Relocatable -> "relocatable"
-  | Executable -> "executable"
-  | Shared -> "shared"
-  | Core -> "core"
-  | Loproc -> "loproc"
-  | Hiproc -> "hiproc"
+  | None -> "NONE"
+  | Relocatable -> "RELOCATABLE"
+  | Executable -> "EXEC (Executable file)"
+  | Shared -> "SHARED"
+  | Core -> "CORE"
+  | Loproc -> "LOPROC"
+  | Hiproc -> "HIPROC"
 ;;
 
 let parse_class_endianness filename =
@@ -51,7 +51,7 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
     ei_entry : A.t;
     ei_phoff : int;
     ei_shoff : int;
-    ei_flags : int;
+    ei_flags : A.t;
     ei_ehsize : int;
     ei_phentsize : int;
     ei_phnum : int;
@@ -63,18 +63,35 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
   let pretty fmt e =
     Format.fprintf
       fmt
-      "class: %a bits\ndata: %a\nversion: %i\netype: %s\nmachine: %a\n\
-       entry: %a\nphoff: %i\nshoff: %i\nflags: %i\nehsize: %i\nphentsize: %i\n\
-       phnum: %i\nshentsize: %i\nshnum: %i\nshstrndx: %i\n"
+      "\
+\  Class:                             ELF%a\n\
+\  Data:                              %a\n\
+\  Version:                           %i\n\
+\  OS/ABI:                            %i\n\
+\  ABI Version:                       %i\n\
+\  Type:                              %s\n\
+\  Machine:                           %a\n\
+\  Entry point address:               0x%a\n\
+\  Start of program headers:          %i (bytes into file)\n\
+\  Start of section headers:          %i (bytes into file)\n\
+\  Flags:                             0x%a\n\
+\  Size of this header:               %i (bytes)\n\
+\  Size of program headers:           %i (bytes)\n\
+\  Number of program headers:         %i\n\
+\  Size of section headers:           %i (bytes)\n\
+\  Number of section headers:         %i\n\
+\  Section header string table index: %i\n"
       Archi.pretty A.eclass
       Endian.pretty E.edata
       e.ei_version
+      e.ei_osabi
+      e.ei_abiversion
       (etype_to_string e.ei_type)
       Machine.pretty e.ei_machine
       A.pretty e.ei_entry
       e.ei_phoff
       e.ei_shoff
-      e.ei_flags
+      A.pretty e.ei_flags
       e.ei_ehsize
       e.ei_phentsize
       e.ei_phnum
@@ -123,7 +140,7 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
       let ei_entry = multi_bytes_addr buf 24 A.size in
       let ei_phoff = multi_bytes_int buf (24+A.size) A.size in
       let ei_shoff = multi_bytes_int buf (24+A.size*2) A.size in
-      let ei_flags = multi_bytes_int buf (24+A.size*3) 4 in
+      let ei_flags = multi_bytes_addr buf (24+A.size*3) 4 in
       let ei_ehsize = multi_bytes_int buf (28+A.size*3) 2 in
       assert (ei_ehsize = A.header_size);
       let ei_phentsize = multi_bytes_int buf (30+A.size*3) 2 in
@@ -172,23 +189,33 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
   module Ph = struct
     type entry = {
       ph_type : Program_header_type.t;
-      ph_off : int;
+      ph_off : A.t;
       ph_vaddr : A.t;
       ph_addr : A.t;
-      ph_filesz : int;
-      ph_memsz : int;
+      ph_filesz : A.t;
+      ph_memsz : A.t;
       ph_flags : int;
-      ph_align : int;
+      ph_align : A.t;
     };;
+
+    let flag_read f = (f land 4) <> 0;;
+    let flag_write f = (f land 2) <> 0;;
+    let flag_exec f = (f land 1) <> 0;;
 
     let pretty fmt e =
       Format.fprintf
 	fmt
-	"type: %a; off: %i; vaddr: %a; addr: %a; filesz: %i; memsz: %i; \
-	 flags: %i; align: %i\n"
-	Program_header_type.pretty e.ph_type e.ph_off A.pretty e.ph_vaddr
-	A.pretty e.ph_addr e.ph_filesz e.ph_memsz e.ph_flags
-	e.ph_align
+	"  %a 0x%a 0x%a 0x%a 0x%a 0x%a %c%c%c 0x%a\n"
+	Program_header_type.pretty e.ph_type
+	A.pretty e.ph_off
+	A.pretty e.ph_vaddr
+	A.pretty e.ph_addr
+	A.pretty e.ph_filesz
+	A.pretty e.ph_memsz
+	(if flag_read e.ph_flags then 'R' else ' ')
+	(if flag_write e.ph_flags then 'W' else ' ')
+	(if flag_exec e.ph_flags then 'E' else ' ')
+	A.pretty e.ph_align
     ;;
 
     let parse header filename =
@@ -208,13 +235,13 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
 	      let s1,s2,s3,s4,s5,s6,s7,s8 = A.ph_sizes in
 	      let ph_type =
 		Program_header_type.of_int (multi_bytes_int buf o1 s1) in
-	      let ph_off = multi_bytes_int buf o2 s2 in
+	      let ph_off = multi_bytes_addr buf o2 s2 in
 	      let ph_vaddr = multi_bytes_addr buf o3 s3 in
 	      let ph_addr = multi_bytes_addr buf o4 s4 in
-	      let ph_filesz = multi_bytes_int buf o5 s5 in
-	      let ph_memsz = multi_bytes_int buf o6 s6 in
+	      let ph_filesz = multi_bytes_addr buf o5 s5 in
+	      let ph_memsz = multi_bytes_addr buf o6 s6 in
 	      let ph_flags = multi_bytes_int buf o7 s7 in
-	      let ph_align = multi_bytes_int buf o8 s8 in
+	      let ph_align = multi_bytes_addr buf o8 s8 in
 	      let ph = { ph_type; ph_off; ph_vaddr; ph_addr; ph_filesz;
 			 ph_memsz; ph_flags; ph_align } in
 	      aux chan (i+header.ei_phentsize) (ph::ret)
@@ -250,11 +277,17 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
     let pretty fmt e =
       Format.fprintf
 	fmt
-	"name: %s; type: %a; flags: %i; addr: %a; off: %i; size: %i; \
-	 link: %i; info: %i; align: %i; entsize: %i\n"
-	e.sh_name Section_header_type.pretty e.sh_type e.sh_flags
+	"%-17s %a %a %6i %6i %2i %3i %2i %3i %2i\n"
+	e.sh_name
+	Section_header_type.pretty e.sh_type
 	A.pretty e.sh_addr
-	e.sh_off e.sh_size e.sh_link e.sh_info e.sh_addralign e.sh_entsize
+	e.sh_off
+	e.sh_size
+	e.sh_entsize
+	e.sh_flags
+	e.sh_link
+	e.sh_info
+	e.sh_addralign
     ;;
 
     let get name = List.find (fun x -> x.sh_name = name);;
@@ -321,24 +354,23 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
   end;;
     
   module Symtbl = struct
-    (*type vis_t = Default | Hidden
-    type ndx_t = Abs | Und | Int of int*)
-    
     type entry = {
-      value : int;
+      value : A.t;
       size : int;
       symtype : Symbol.Type.t;
       bind : Symbol.Binding.t;
-      (*vis : vis_t;
-      ndx : ndx_t;*)
+      vis : Symbol.Visibility.t;
+      ndx : Symbol.Ndx.t;
       name : string;
     };;
       
     let pretty fmt x =
       Format.fprintf
-	fmt "name: %s; value: %i; size: %i; type: %a; bind: %a\n"
-	x.name x.value x.size Symbol.Type.pretty x.symtype
+	fmt "%a%6i %a %a %a %a %s\n"
+        A.pretty x.value x.size Symbol.Type.pretty x.symtype
 	Symbol.Binding.pretty x.bind
+	Symbol.Visibility.pretty x.vis
+	Symbol.Ndx.pretty x.ndx x.name
     ;;
       
     let parse ~filename ~tablename ~strtab sections =
@@ -359,11 +391,11 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
 	      let buf = Buffer.create entry_size in
 	      Buffer.add_channel buf chan entry_size;
 	      let name_id = multi_bytes_int buf 0 4 in
-	      let value = multi_bytes_int buf 4 A.size in
+	      let value = multi_bytes_addr buf 4 A.size in
 	      let size = multi_bytes_int buf (4+A.size) A.size in
 	      let info = multi_bytes_int buf (4+A.size*2) 1 in
-	      let _other = multi_bytes_int buf (5+A.size*2) 1 in
-	      let _shndex = multi_bytes_int buf (6+A.size*2) 2 in
+	      let other = multi_bytes_int buf (5+A.size*2) 1 in
+	      let shndex = multi_bytes_int buf (6+A.size*2) 2 in
 	      let name = Strtab.get strtab name_id in
 	      let bind =
 		Symbol.Binding.of_int
@@ -371,7 +403,9 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
 	      let symtype =
 		Symbol.Type.of_int
 		  (A.to_int (A.logand (A.of_int info) (A.of_int 15))) in
-	      let symbol = {value; size; symtype; bind; name} in
+	      let vis = Symbol.Visibility.of_int other in
+	      let ndx = Symbol.Ndx.of_int shndex in
+	      let symbol = {value; size; symtype; bind; vis; ndx; name} in
 	      aux chan (i+entry_size) (symbol::ret)
 	    end
 	  else

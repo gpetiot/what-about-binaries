@@ -8,8 +8,8 @@ let of_int = function
 ;;
 
 let pretty fmt = function
-  | LittleEndian -> Format.fprintf fmt "little-endian"
-  | BigEndian -> Format.fprintf fmt "big-endian"
+  | LittleEndian -> Format.fprintf fmt "little endian"
+  | BigEndian -> Format.fprintf fmt "big endian"
 ;;
 
 module type T =

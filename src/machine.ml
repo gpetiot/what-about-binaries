@@ -29,16 +29,16 @@ let of_int i =
 ;;
   
 let to_string = function
-  | None -> "none"
-  | SPARC -> "sparc"
-  | X86 -> "x86"
-  | MIPS -> "mips"
-  | PowerPC -> "powerpc"
-  | ARM -> "arm"
-  | SuperH -> "superh"
-  | IA64 -> "ia64"
-  | X86_64 -> "x86_64"
-  | AArch64 -> "aarch64"
+  | None -> "NONE"
+  | SPARC -> "SPARC"
+  | X86 -> "X86"
+  | MIPS -> "MIPS"
+  | PowerPC -> "POWERPC"
+  | ARM -> "ARM"
+  | SuperH -> "SUPERH"
+  | IA64 -> "IA64"
+  | X86_64 -> "X86_64"
+  | AArch64 -> "AARCH64"
 ;;
 
 let pretty fmt x = Format.fprintf fmt "%s" (to_string x);;
