@@ -1,218 +1,227 @@
-file header:
-class: 32 bits
-data: little-endian
-version: 1
-etype: executable
-machine: arm
-entry: 0x08000195
-phoff: 30192
-shoff: 30256
-flags: 83886082
-ehsize: 52
-phentsize: 32
-phnum: 2
-shentsize: 40
-shnum: 17
-shstrndx: 16
+ELF Header:
+  Class:                             ELF32
+  Data:                              little endian
+  Version:                           1
+  OS/ABI:                            0
+  ABI Version:                       0
+  Type:                              EXEC (Executable file)
+  Machine:                           ARM
+  Entry point address:               0x8000195
+  Start of program headers:          30192 (bytes into file)
+  Start of section headers:          30256 (bytes into file)
+  Flags:                             0x5000002
+  Size of this header:               52 (bytes)
+  Size of program headers:           32 (bytes)
+  Number of program headers:         2
+  Size of section headers:           40 (bytes)
+  Number of section headers:         17
+  Section header string table index: 16
 
-section header:
-name: ; type: null; flags: 0; addr: 0x00000000; off: 0; size: 0; link: 0; info: 0; align: 0; entsize: 0
-name: ER_IROM1; type: progbits; flags: 6; addr: 0x08000000; off: 52; size: 544; link: 0; info: 0; align: 4; entsize: 0
-name: RW_IRAM1; type: nobits; flags: 3; addr: 0x20000000; off: 596; size: 1024; link: 0; info: 0; align: 8; entsize: 0
-name: RW_IRAM2; type: progbits; flags: 3; addr: 0x20008000; off: 596; size: 32; link: 0; info: 0; align: 4; entsize: 0
-name: ER_IROM2; type: progbits; flags: 6; addr: 0x08004000; off: 628; size: 648; link: 0; info: 0; align: 4; entsize: 0
-name: .debug_abbrev; type: progbits; flags: 0; addr: 0x00000000; off: 1276; size: 1476; link: 0; info: 0; align: 1; entsize: 0
-name: .debug_frame; type: progbits; flags: 0; addr: 0x00000000; off: 2752; size: 1420; link: 0; info: 0; align: 1; entsize: 0
-name: .debug_info; type: progbits; flags: 0; addr: 0x00000000; off: 4172; size: 4528; link: 0; info: 0; align: 1; entsize: 0
-name: .debug_line; type: progbits; flags: 0; addr: 0x00000000; off: 8700; size: 1780; link: 0; info: 0; align: 1; entsize: 0
-name: .debug_loc; type: progbits; flags: 0; addr: 0x00000000; off: 10480; size: 524; link: 0; info: 0; align: 1; entsize: 0
-name: .debug_macinfo; type: progbits; flags: 0; addr: 0x00000000; off: 11004; size: 2348; link: 0; info: 0; align: 1; entsize: 0
-name: .debug_pubnames; type: progbits; flags: 0; addr: 0x00000000; off: 13352; size: 671; link: 0; info: 0; align: 1; entsize: 0
-name: .symtab; type: symtab; flags: 0; addr: 0x00000000; off: 14024; size: 2832; link: 13; info: 73; align: 4; entsize: 16
-name: .strtab; type: strtab; flags: 0; addr: 0x00000000; off: 16856; size: 2720; link: 0; info: 0; align: 1; entsize: 0
-name: .note; type: note; flags: 0; addr: 0x00000000; off: 19576; size: 32; link: 0; info: 0; align: 4; entsize: 0
-name: .comment; type: progbits; flags: 0; addr: 0x00000000; off: 19608; size: 10412; link: 0; info: 0; align: 1; entsize: 0
-name: .shstrtab; type: strtab; flags: 0; addr: 0x00000000; off: 30020; size: 172; link: 0; info: 0; align: 1; entsize: 0
+Section Headers:
+  [Nr] Name              Type            Addr     Off    Size   ES Flg Lk Inf Al
+  [ 0]                   NULL            00000000 00000000 00000000 00   0  0   0  0
+  [ 1] ER_IROM1          PROGBITS        08000000 00000034 00000220 00   6  0   0  4
+  [ 2] RW_IRAM1          NOBITS          20000000 00000254 00000400 00   3  0   0  8
+  [ 3] RW_IRAM2          PROGBITS        20008000 00000254 00000020 00   3  0   0  4
+  [ 4] ER_IROM2          PROGBITS        08004000 00000274 00000288 00   6  0   0  4
+  [ 5] .debug_abbrev     PROGBITS        00000000 000004fc 000005c4 00   0  0   0  1
+  [ 6] .debug_frame      PROGBITS        00000000 00000ac0 0000058c 00   0  0   0  1
+  [ 7] .debug_info       PROGBITS        00000000 0000104c 000011b0 00   0  0   0  1
+  [ 8] .debug_line       PROGBITS        00000000 000021fc 000006f4 00   0  0   0  1
+  [ 9] .debug_loc        PROGBITS        00000000 000028f0 0000020c 00   0  0   0  1
+  [10] .debug_macinfo    PROGBITS        00000000 00002afc 0000092c 00   0  0   0  1
+  [11] .debug_pubnames   PROGBITS        00000000 00003428 0000029f 00   0  0   0  1
+  [12] .symtab           SYMTAB          00000000 000036c8 00000b10 10   0 13  73  4
+  [13] .strtab           STRTAB          00000000 000041d8 00000aa0 00   0  0   0  1
+  [14] .note             NOTE            00000000 00004c78 00000020 00   0  0   0  4
+  [15] .comment          PROGBITS        00000000 00004c98 000028ac 00   0  0   0  1
+  [16] .shstrtab         STRTAB          00000000 00007544 000000ac 00   0  0   0  1
+Key to Flags:
+  W (write), A (alloc), X (execute), M (merge), S (strings)
+  I (info), L (link order), G (group), T (TLS), E (exclude), x (unknown)
+  O (extra OS processing required) o (OS specific), p (processor specific)
 
-program header:
-type: load; off: 52; vaddr: 0x08000000; addr: 0x08000000; filesz: 576; memsz: 1600; flags: -2147483641; align: 8
-type: load; off: 628; vaddr: 0x08004000; addr: 0x08004000; filesz: 648; memsz: 648; flags: 5; align: 4
+Program Headers:
+  Type           Offset   VirtAddr   PhysAddr   FileSiz MemSiz  Flg Align
+  LOAD           0x0000000000000034 0x0000000008000000 0x0000000008000000 0x240 0x640 RWE 8
+  LOAD           0x0000000000000274 0x0000000008004000 0x0000000008004000 0x288 0x288 R E 4
 
-symbol table:
-name: ; value: 0; size: 0; type: notype; bind: local
-name: $d.realdata; value: 134217728; size: 0; type: notype; bind: local
-name: $t; value: 134218132; size: 0; type: notype; bind: local
-name: $d; value: 134218144; size: 0; type: notype; bind: local
-name: $t; value: 134218152; size: 0; type: notype; bind: local
-name: $d; value: 134218180; size: 0; type: notype; bind: local
-name: $t; value: 134218188; size: 0; type: notype; bind: local
-name: $d; value: 134218216; size: 0; type: notype; bind: local
-name: $t; value: 134218224; size: 0; type: notype; bind: local
-name: $d.realdata; value: 134218256; size: 0; type: notype; bind: local
-name: $d.realdata; value: 536870912; size: 0; type: notype; bind: local
-name: $d.realdata; value: 536903680; size: 0; type: notype; bind: local
-name: $t; value: 134234112; size: 0; type: notype; bind: local
-name: $d; value: 134234500; size: 0; type: notype; bind: local
-name: $t; value: 134234536; size: 0; type: notype; bind: local
-name: $d; value: 134234620; size: 0; type: notype; bind: local
-name: $t; value: 134234636; size: 0; type: notype; bind: local
-name: $d; value: 134234684; size: 0; type: notype; bind: local
-name: $t; value: 134234696; size: 0; type: notype; bind: local
-name: $d; value: 134234754; size: 0; type: notype; bind: local
-name: ..\..\share\keil\00-STM32F4xx_STANDARD_PERIPHERAL_DRIVERS\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f401xx.s; value: 0; size: 0; type: file; bind: local
-name: STACK; value: 536870912; size: 1024; type: section; bind: local
-name: RESET; value: 134217728; size: 404; type: section; bind: local
-name: .text; value: 134218152; size: 36; type: section; bind: local
-name: $v0; value: 134218152; size: 0; type: notype; bind: local
-name: User\main.c; value: 0; size: 0; type: file; bind: local
-name: .text; value: 134234112; size: 0; type: section; bind: local
-name: User\\stm32f4xx_it.c; value: 0; size: 0; type: file; bind: local
-name: User\stm32f4xx_it.c; value: 0; size: 0; type: file; bind: local
-name: .text; value: 134234134; size: 0; type: section; bind: local
-name: User\\system_stm32f4xx.c; value: 0; size: 0; type: file; bind: local
-name: User\system_stm32f4xx.c; value: 0; size: 0; type: file; bind: local
-name: .text; value: 134234160; size: 0; type: section; bind: local
-name: SetSysClock; value: 134234343; size: 158; type: func; bind: local
-name: .data; value: 536903680; size: 20; type: section; bind: local
-name: ..\src\code.c; value: 0; size: 0; type: file; bind: local
-name: .text; value: 134234536; size: 0; type: section; bind: local
-name: ..\src\countermeasure.c; value: 0; size: 0; type: file; bind: local
-name: ..\src\oracle.c; value: 0; size: 0; type: file; bind: local
-name: .text; value: 134234636; size: 0; type: section; bind: local
-name: User\initialize_card.c; value: 0; size: 0; type: file; bind: local
-name: .text; value: 134234696; size: 0; type: section; bind: local
-name: .data; value: 536903700; size: 11; type: section; bind: local
-name: ../clib/microlib/init/entry.s; value: 0; size: 0; type: file; bind: local
-name: .ARM.Collect$$$$00000000; value: 134218132; size: 0; type: section; bind: local
-name: dc.s; value: 0; size: 0; type: file; bind: local
-name: ../clib/microlib/init/entry.s; value: 0; size: 0; type: file; bind: local
-name: .ARM.Collect$$$$00000001; value: 134218132; size: 4; type: section; bind: local
-name: .ARM.Collect$$$$00002712; value: 134218148; size: 4; type: section; bind: local
-name: __lit__00000000; value: 134218148; size: 4; type: object; bind: local
-name: ../clib/microlib/init/entry.s; value: 0; size: 0; type: file; bind: local
-name: .ARM.Collect$$$$00000004; value: 134218136; size: 4; type: section; bind: local
-name: ../clib/microlib/init/entry.s; value: 0; size: 0; type: file; bind: local
-name: ../clib/microlib/init/entry.s; value: 0; size: 0; type: file; bind: local
-name: .ARM.Collect$$$$00000008; value: 134218140; size: 0; type: section; bind: local
-name: ../clib/microlib/init/entry.s; value: 0; size: 0; type: file; bind: local
-name: ../clib/microlib/init/entry.s; value: 0; size: 0; type: file; bind: local
-name: .ARM.Collect$$$$0000000A; value: 134218140; size: 0; type: section; bind: local
-name: ../clib/microlib/init/entry.s; value: 0; size: 0; type: file; bind: local
-name: .ARM.Collect$$$$0000000B; value: 134218140; size: 8; type: section; bind: local
-name: ../clib/microlib/init/entry.s; value: 0; size: 0; type: file; bind: local
-name: ../clib/microlib/init/entry.s; value: 0; size: 0; type: file; bind: local
-name: .ARM.Collect$$$$0000000D; value: 134218148; size: 0; type: section; bind: local
-name: ../clib/microlib/init/entry.s; value: 0; size: 0; type: file; bind: local
-name: ../clib/microlib/init/entry.s; value: 0; size: 0; type: file; bind: local
-name: .ARM.Collect$$$$0000000F; value: 134218148; size: 0; type: section; bind: local
-name: ../clib/microlib/init/entry.s; value: 0; size: 0; type: file; bind: local
-name: init.s; value: 0; size: 0; type: file; bind: local
-name: .text; value: 134218188; size: 36; type: section; bind: local
-name: handlers.s; value: 0; size: 0; type: file; bind: local
-name: i.__scatterload_copy; value: 134218224; size: 14; type: section; bind: local
-name: i.__scatterload_null; value: 134218238; size: 2; type: section; bind: local
-name: i.__scatterload_zeroinit; value: 134218240; size: 14; type: section; bind: local
-name: BuildAttributes$$THM_ISAv4$E$P$D$K$B$S$7EM$VFPi3$EXTD16$VFPS$VFMA$PE$A:L22UL41UL21$X:L11$S22US41US21$IEEE1$IW$USESV6$~STKCKD$USESV7$~SHL$OSPACE$EBA8$MICROLIB$REQ8$PRES8$EABIv2; value: 0; size: 0; type: notype; bind: global
-name: __ARM_use_no_argv; value: 0; size: 0; type: notype; bind: global
-name: __Vectors_Size; value: 404; size: 0; type: notype; bind: global
-name: __Vectors; value: 134217728; size: 4; type: object; bind: global
-name: __Vectors_End; value: 134218132; size: 0; type: object; bind: global
-name: __main; value: 134218133; size: 0; type: func; bind: global
-name: _main_stk; value: 134218133; size: 0; type: func; bind: global
-name: _main_scatterload; value: 134218137; size: 0; type: func; bind: global
-name: __main_after_scatterload; value: 134218141; size: 0; type: func; bind: global
-name: _main_clock; value: 134218141; size: 0; type: func; bind: global
-name: _main_cpp_init; value: 134218141; size: 0; type: func; bind: global
-name: _main_init; value: 134218141; size: 0; type: func; bind: global
-name: __rt_final_cpp; value: 134218149; size: 0; type: func; bind: global
-name: __rt_final_exit; value: 134218149; size: 0; type: func; bind: global
-name: Reset_Handler; value: 134218153; size: 8; type: func; bind: weak
-name: ADC_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: DMA1_Stream0_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: DMA1_Stream1_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: DMA1_Stream2_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: DMA1_Stream3_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: DMA1_Stream4_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: DMA1_Stream5_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: DMA1_Stream6_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: DMA1_Stream7_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: DMA2_Stream0_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: DMA2_Stream1_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: DMA2_Stream2_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: DMA2_Stream3_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: DMA2_Stream4_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: DMA2_Stream5_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: DMA2_Stream6_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: DMA2_Stream7_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: EXTI0_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: EXTI15_10_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: EXTI1_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: EXTI2_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: EXTI3_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: EXTI4_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: EXTI9_5_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: FLASH_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: FPU_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: I2C1_ER_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: I2C1_EV_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: I2C2_ER_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: I2C2_EV_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: I2C3_ER_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: I2C3_EV_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: OTG_FS_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: OTG_FS_WKUP_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: PVD_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: RCC_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: RTC_Alarm_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: RTC_WKUP_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: SDIO_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: SPI1_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: SPI2_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: SPI3_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: SPI4_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: TAMP_STAMP_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: TIM1_BRK_TIM9_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: TIM1_CC_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: TIM1_TRG_COM_TIM11_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: TIM1_UP_TIM10_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: TIM2_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: TIM3_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: TIM4_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: TIM5_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: USART1_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: USART2_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: USART6_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: WWDG_IRQHandler; value: 134218179; size: 0; type: func; bind: weak
-name: __scatterload; value: 134218189; size: 28; type: func; bind: global
-name: __scatterload_rt2; value: 134218189; size: 0; type: func; bind: global
-name: __scatterload_copy; value: 134218225; size: 14; type: func; bind: global
-name: __scatterload_null; value: 134218239; size: 2; type: func; bind: global
-name: __scatterload_zeroinit; value: 134218241; size: 14; type: func; bind: global
-name: Region$$Table$$Base; value: 134218256; size: 0; type: notype; bind: global
-name: Region$$Table$$Limit; value: 134218272; size: 0; type: notype; bind: global
-name: main; value: 134234113; size: 22; type: func; bind: global
-name: NMI_Handler; value: 134234135; size: 2; type: func; bind: global
-name: HardFault_Handler; value: 134234137; size: 2; type: func; bind: global
-name: MemManage_Handler; value: 134234139; size: 2; type: func; bind: global
-name: BusFault_Handler; value: 134234141; size: 2; type: func; bind: global
-name: UsageFault_Handler; value: 134234143; size: 2; type: func; bind: global
-name: SVC_Handler; value: 134234145; size: 2; type: func; bind: global
-name: DebugMon_Handler; value: 134234147; size: 2; type: func; bind: global
-name: PendSV_Handler; value: 134234149; size: 2; type: func; bind: global
-name: TimingDelay_Decrement; value: 134234151; size: 2; type: func; bind: weak
-name: SysTick_Handler; value: 134234153; size: 8; type: func; bind: global
-name: SystemInit; value: 134234161; size: 74; type: func; bind: global
-name: SystemCoreClockUpdate; value: 134234235; size: 108; type: func; bind: global
-name: byteArrayCompare; value: 134234537; size: 36; type: func; bind: global
-name: verifyPIN_A; value: 134234573; size: 48; type: func; bind: global
-name: oracle; value: 134234637; size: 24; type: func; bind: global
-name: oracle_ptc; value: 134234661; size: 24; type: func; bind: global
-name: initialize; value: 134234697; size: 58; type: func; bind: global
-name: __initial_sp; value: 536871936; size: 0; type: object; bind: global
-name: SystemCoreClock; value: 536903680; size: 4; type: object; bind: global
-name: AHBPrescTable; value: 536903684; size: 16; type: object; bind: global
-name: g_authenticated; value: 536903700; size: 1; type: object; bind: global
-name: g_ptc; value: 536903701; size: 1; type: object; bind: global
-name: g_countermeasure; value: 536903702; size: 1; type: object; bind: global
-name: g_userPin; value: 536903703; size: 4; type: object; bind: global
-name: g_cardPin; value: 536903707; size: 4; type: object; bind: global
+Symbol table '.symtab' contains 177 entries:
+   Num:    Value  Size Type    Bind   Vis      Ndx Name
+     0: 00000000     0 NOTYPE  LOCAL  DEFAULT  UND 
+     1: 08000000     0 NOTYPE  LOCAL  DEFAULT    1 $d.realdata
+     2: 08000194     0 NOTYPE  LOCAL  DEFAULT    1 $t
+     3: 080001a0     0 NOTYPE  LOCAL  DEFAULT    1 $d
+     4: 080001a8     0 NOTYPE  LOCAL  DEFAULT    1 $t
+     5: 080001c4     0 NOTYPE  LOCAL  DEFAULT    1 $d
+     6: 080001cc     0 NOTYPE  LOCAL  DEFAULT    1 $t
+     7: 080001e8     0 NOTYPE  LOCAL  DEFAULT    1 $d
+     8: 080001f0     0 NOTYPE  LOCAL  DEFAULT    1 $t
+     9: 08000210     0 NOTYPE  LOCAL  DEFAULT    1 $d.realdata
+    10: 20000000     0 NOTYPE  LOCAL  DEFAULT    2 $d.realdata
+    11: 20008000     0 NOTYPE  LOCAL  DEFAULT    3 $d.realdata
+    12: 08004000     0 NOTYPE  LOCAL  DEFAULT    4 $t
+    13: 08004184     0 NOTYPE  LOCAL  DEFAULT    4 $d
+    14: 080041a8     0 NOTYPE  LOCAL  DEFAULT    4 $t
+    15: 080041fc     0 NOTYPE  LOCAL  DEFAULT    4 $d
+    16: 0800420c     0 NOTYPE  LOCAL  DEFAULT    4 $t
+    17: 0800423c     0 NOTYPE  LOCAL  DEFAULT    4 $d
+    18: 08004248     0 NOTYPE  LOCAL  DEFAULT    4 $t
+    19: 08004282     0 NOTYPE  LOCAL  DEFAULT    4 $d
+    20: 00000000     0 FILE    LOCAL  DEFAULT  ABS ..\..\share\keil\00-STM32F4xx_STANDARD_PERIPHERAL_DRIVERS\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f401xx.s
+    21: 20000000  1024 SECTION LOCAL  DEFAULT    2 STACK
+    22: 08000000   404 SECTION LOCAL  DEFAULT    1 RESET
+    23: 080001a8    36 SECTION LOCAL  DEFAULT    1 .text
+    24: 080001a8     0 NOTYPE  LOCAL  DEFAULT    1 $v0
+    25: 00000000     0 FILE    LOCAL  DEFAULT  ABS User\main.c
+    26: 08004000     0 SECTION LOCAL  DEFAULT    4 .text
+    27: 00000000     0 FILE    LOCAL  DEFAULT  ABS User\\stm32f4xx_it.c
+    28: 00000000     0 FILE    LOCAL  DEFAULT  ABS User\stm32f4xx_it.c
+    29: 08004016     0 SECTION LOCAL  DEFAULT    4 .text
+    30: 00000000     0 FILE    LOCAL  DEFAULT  ABS User\\system_stm32f4xx.c
+    31: 00000000     0 FILE    LOCAL  DEFAULT  ABS User\system_stm32f4xx.c
+    32: 08004030     0 SECTION LOCAL  DEFAULT    4 .text
+    33: 080040e7   158 FUNC    LOCAL  DEFAULT    4 SetSysClock
+    34: 20008000    20 SECTION LOCAL  DEFAULT    3 .data
+    35: 00000000     0 FILE    LOCAL  DEFAULT  ABS ..\src\code.c
+    36: 080041a8     0 SECTION LOCAL  DEFAULT    4 .text
+    37: 00000000     0 FILE    LOCAL  DEFAULT  ABS ..\src\countermeasure.c
+    38: 00000000     0 FILE    LOCAL  DEFAULT  ABS ..\src\oracle.c
+    39: 0800420c     0 SECTION LOCAL  DEFAULT    4 .text
+    40: 00000000     0 FILE    LOCAL  DEFAULT  ABS User\initialize_card.c
+    41: 08004248     0 SECTION LOCAL  DEFAULT    4 .text
+    42: 20008014    11 SECTION LOCAL  DEFAULT    3 .data
+    43: 00000000     0 FILE    LOCAL  DEFAULT  ABS ../clib/microlib/init/entry.s
+    44: 08000194     0 SECTION LOCAL  DEFAULT    1 .ARM.Collect$$$$00000000
+    45: 00000000     0 FILE    LOCAL  DEFAULT  ABS dc.s
+    46: 00000000     0 FILE    LOCAL  DEFAULT  ABS ../clib/microlib/init/entry.s
+    47: 08000194     4 SECTION LOCAL  DEFAULT    1 .ARM.Collect$$$$00000001
+    48: 080001a4     4 SECTION LOCAL  DEFAULT    1 .ARM.Collect$$$$00002712
+    49: 080001a4     4 OBJECT  LOCAL  DEFAULT    1 __lit__00000000
+    50: 00000000     0 FILE    LOCAL  DEFAULT  ABS ../clib/microlib/init/entry.s
+    51: 08000198     4 SECTION LOCAL  DEFAULT    1 .ARM.Collect$$$$00000004
+    52: 00000000     0 FILE    LOCAL  DEFAULT  ABS ../clib/microlib/init/entry.s
+    53: 00000000     0 FILE    LOCAL  DEFAULT  ABS ../clib/microlib/init/entry.s
+    54: 0800019c     0 SECTION LOCAL  DEFAULT    1 .ARM.Collect$$$$00000008
+    55: 00000000     0 FILE    LOCAL  DEFAULT  ABS ../clib/microlib/init/entry.s
+    56: 00000000     0 FILE    LOCAL  DEFAULT  ABS ../clib/microlib/init/entry.s
+    57: 0800019c     0 SECTION LOCAL  DEFAULT    1 .ARM.Collect$$$$0000000A
+    58: 00000000     0 FILE    LOCAL  DEFAULT  ABS ../clib/microlib/init/entry.s
+    59: 0800019c     8 SECTION LOCAL  DEFAULT    1 .ARM.Collect$$$$0000000B
+    60: 00000000     0 FILE    LOCAL  DEFAULT  ABS ../clib/microlib/init/entry.s
+    61: 00000000     0 FILE    LOCAL  DEFAULT  ABS ../clib/microlib/init/entry.s
+    62: 080001a4     0 SECTION LOCAL  DEFAULT    1 .ARM.Collect$$$$0000000D
+    63: 00000000     0 FILE    LOCAL  DEFAULT  ABS ../clib/microlib/init/entry.s
+    64: 00000000     0 FILE    LOCAL  DEFAULT  ABS ../clib/microlib/init/entry.s
+    65: 080001a4     0 SECTION LOCAL  DEFAULT    1 .ARM.Collect$$$$0000000F
+    66: 00000000     0 FILE    LOCAL  DEFAULT  ABS ../clib/microlib/init/entry.s
+    67: 00000000     0 FILE    LOCAL  DEFAULT  ABS init.s
+    68: 080001cc    36 SECTION LOCAL  DEFAULT    1 .text
+    69: 00000000     0 FILE    LOCAL  DEFAULT  ABS handlers.s
+    70: 080001f0    14 SECTION LOCAL  DEFAULT    1 i.__scatterload_copy
+    71: 080001fe     2 SECTION LOCAL  DEFAULT    1 i.__scatterload_null
+    72: 08000200    14 SECTION LOCAL  DEFAULT    1 i.__scatterload_zeroinit
+    73: 00000000     0 NOTYPE  GLOBAL HIDDEN   ABS BuildAttributes$$THM_ISAv4$E$P$D$K$B$S$7EM$VFPi3$EXTD16$VFPS$VFMA$PE$A:L22UL41UL21$X:L11$S22US41US21$IEEE1$IW$USESV6$~STKCKD$USESV7$~SHL$OSPACE$EBA8$MICROLIB$REQ8$PRES8$EABIv2
+    74: 00000000     0 NOTYPE  GLOBAL HIDDEN   ABS __ARM_use_no_argv
+    75: 00000194     0 NOTYPE  GLOBAL HIDDEN   ABS __Vectors_Size
+    76: 08000000     4 OBJECT  GLOBAL HIDDEN     1 __Vectors
+    77: 08000194     0 OBJECT  GLOBAL HIDDEN     1 __Vectors_End
+    78: 08000195     0 FUNC    GLOBAL HIDDEN     1 __main
+    79: 08000195     0 FUNC    GLOBAL HIDDEN     1 _main_stk
+    80: 08000199     0 FUNC    GLOBAL HIDDEN     1 _main_scatterload
+    81: 0800019d     0 FUNC    GLOBAL HIDDEN     1 __main_after_scatterload
+    82: 0800019d     0 FUNC    GLOBAL HIDDEN     1 _main_clock
+    83: 0800019d     0 FUNC    GLOBAL HIDDEN     1 _main_cpp_init
+    84: 0800019d     0 FUNC    GLOBAL HIDDEN     1 _main_init
+    85: 080001a5     0 FUNC    GLOBAL HIDDEN     1 __rt_final_cpp
+    86: 080001a5     0 FUNC    GLOBAL HIDDEN     1 __rt_final_exit
+    87: 080001a9     8 FUNC    WEAK   HIDDEN     1 Reset_Handler
+    88: 080001c3     0 FUNC    WEAK   HIDDEN     1 ADC_IRQHandler
+    89: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA1_Stream0_IRQHandler
+    90: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA1_Stream1_IRQHandler
+    91: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA1_Stream2_IRQHandler
+    92: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA1_Stream3_IRQHandler
+    93: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA1_Stream4_IRQHandler
+    94: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA1_Stream5_IRQHandler
+    95: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA1_Stream6_IRQHandler
+    96: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA1_Stream7_IRQHandler
+    97: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA2_Stream0_IRQHandler
+    98: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA2_Stream1_IRQHandler
+    99: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA2_Stream2_IRQHandler
+   100: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA2_Stream3_IRQHandler
+   101: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA2_Stream4_IRQHandler
+   102: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA2_Stream5_IRQHandler
+   103: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA2_Stream6_IRQHandler
+   104: 080001c3     0 FUNC    WEAK   HIDDEN     1 DMA2_Stream7_IRQHandler
+   105: 080001c3     0 FUNC    WEAK   HIDDEN     1 EXTI0_IRQHandler
+   106: 080001c3     0 FUNC    WEAK   HIDDEN     1 EXTI15_10_IRQHandler
+   107: 080001c3     0 FUNC    WEAK   HIDDEN     1 EXTI1_IRQHandler
+   108: 080001c3     0 FUNC    WEAK   HIDDEN     1 EXTI2_IRQHandler
+   109: 080001c3     0 FUNC    WEAK   HIDDEN     1 EXTI3_IRQHandler
+   110: 080001c3     0 FUNC    WEAK   HIDDEN     1 EXTI4_IRQHandler
+   111: 080001c3     0 FUNC    WEAK   HIDDEN     1 EXTI9_5_IRQHandler
+   112: 080001c3     0 FUNC    WEAK   HIDDEN     1 FLASH_IRQHandler
+   113: 080001c3     0 FUNC    WEAK   HIDDEN     1 FPU_IRQHandler
+   114: 080001c3     0 FUNC    WEAK   HIDDEN     1 I2C1_ER_IRQHandler
+   115: 080001c3     0 FUNC    WEAK   HIDDEN     1 I2C1_EV_IRQHandler
+   116: 080001c3     0 FUNC    WEAK   HIDDEN     1 I2C2_ER_IRQHandler
+   117: 080001c3     0 FUNC    WEAK   HIDDEN     1 I2C2_EV_IRQHandler
+   118: 080001c3     0 FUNC    WEAK   HIDDEN     1 I2C3_ER_IRQHandler
+   119: 080001c3     0 FUNC    WEAK   HIDDEN     1 I2C3_EV_IRQHandler
+   120: 080001c3     0 FUNC    WEAK   HIDDEN     1 OTG_FS_IRQHandler
+   121: 080001c3     0 FUNC    WEAK   HIDDEN     1 OTG_FS_WKUP_IRQHandler
+   122: 080001c3     0 FUNC    WEAK   HIDDEN     1 PVD_IRQHandler
+   123: 080001c3     0 FUNC    WEAK   HIDDEN     1 RCC_IRQHandler
+   124: 080001c3     0 FUNC    WEAK   HIDDEN     1 RTC_Alarm_IRQHandler
+   125: 080001c3     0 FUNC    WEAK   HIDDEN     1 RTC_WKUP_IRQHandler
+   126: 080001c3     0 FUNC    WEAK   HIDDEN     1 SDIO_IRQHandler
+   127: 080001c3     0 FUNC    WEAK   HIDDEN     1 SPI1_IRQHandler
+   128: 080001c3     0 FUNC    WEAK   HIDDEN     1 SPI2_IRQHandler
+   129: 080001c3     0 FUNC    WEAK   HIDDEN     1 SPI3_IRQHandler
+   130: 080001c3     0 FUNC    WEAK   HIDDEN     1 SPI4_IRQHandler
+   131: 080001c3     0 FUNC    WEAK   HIDDEN     1 TAMP_STAMP_IRQHandler
+   132: 080001c3     0 FUNC    WEAK   HIDDEN     1 TIM1_BRK_TIM9_IRQHandler
+   133: 080001c3     0 FUNC    WEAK   HIDDEN     1 TIM1_CC_IRQHandler
+   134: 080001c3     0 FUNC    WEAK   HIDDEN     1 TIM1_TRG_COM_TIM11_IRQHandler
+   135: 080001c3     0 FUNC    WEAK   HIDDEN     1 TIM1_UP_TIM10_IRQHandler
+   136: 080001c3     0 FUNC    WEAK   HIDDEN     1 TIM2_IRQHandler
+   137: 080001c3     0 FUNC    WEAK   HIDDEN     1 TIM3_IRQHandler
+   138: 080001c3     0 FUNC    WEAK   HIDDEN     1 TIM4_IRQHandler
+   139: 080001c3     0 FUNC    WEAK   HIDDEN     1 TIM5_IRQHandler
+   140: 080001c3     0 FUNC    WEAK   HIDDEN     1 USART1_IRQHandler
+   141: 080001c3     0 FUNC    WEAK   HIDDEN     1 USART2_IRQHandler
+   142: 080001c3     0 FUNC    WEAK   HIDDEN     1 USART6_IRQHandler
+   143: 080001c3     0 FUNC    WEAK   HIDDEN     1 WWDG_IRQHandler
+   144: 080001cd    28 FUNC    GLOBAL HIDDEN     1 __scatterload
+   145: 080001cd     0 FUNC    GLOBAL HIDDEN     1 __scatterload_rt2
+   146: 080001f1    14 FUNC    GLOBAL HIDDEN     1 __scatterload_copy
+   147: 080001ff     2 FUNC    GLOBAL HIDDEN     1 __scatterload_null
+   148: 08000201    14 FUNC    GLOBAL HIDDEN     1 __scatterload_zeroinit
+   149: 08000210     0 NOTYPE  GLOBAL HIDDEN     1 Region$$Table$$Base
+   150: 08000220     0 NOTYPE  GLOBAL HIDDEN     1 Region$$Table$$Limit
+   151: 08004001    22 FUNC    GLOBAL HIDDEN     4 main
+   152: 08004017     2 FUNC    GLOBAL HIDDEN     4 NMI_Handler
+   153: 08004019     2 FUNC    GLOBAL HIDDEN     4 HardFault_Handler
+   154: 0800401b     2 FUNC    GLOBAL HIDDEN     4 MemManage_Handler
+   155: 0800401d     2 FUNC    GLOBAL HIDDEN     4 BusFault_Handler
+   156: 0800401f     2 FUNC    GLOBAL HIDDEN     4 UsageFault_Handler
+   157: 08004021     2 FUNC    GLOBAL HIDDEN     4 SVC_Handler
+   158: 08004023     2 FUNC    GLOBAL HIDDEN     4 DebugMon_Handler
+   159: 08004025     2 FUNC    GLOBAL HIDDEN     4 PendSV_Handler
+   160: 08004027     2 FUNC    WEAK   HIDDEN     4 TimingDelay_Decrement
+   161: 08004029     8 FUNC    GLOBAL HIDDEN     4 SysTick_Handler
+   162: 08004031    74 FUNC    GLOBAL HIDDEN     4 SystemInit
+   163: 0800407b   108 FUNC    GLOBAL HIDDEN     4 SystemCoreClockUpdate
+   164: 080041a9    36 FUNC    GLOBAL HIDDEN     4 byteArrayCompare
+   165: 080041cd    48 FUNC    GLOBAL HIDDEN     4 verifyPIN_A
+   166: 0800420d    24 FUNC    GLOBAL HIDDEN     4 oracle
+   167: 08004225    24 FUNC    GLOBAL HIDDEN     4 oracle_ptc
+   168: 08004249    58 FUNC    GLOBAL HIDDEN     4 initialize
+   169: 20000400     0 OBJECT  GLOBAL HIDDEN     2 __initial_sp
+   170: 20008000     4 OBJECT  GLOBAL HIDDEN     3 SystemCoreClock
+   171: 20008004    16 OBJECT  GLOBAL HIDDEN     3 AHBPrescTable
+   172: 20008014     1 OBJECT  GLOBAL HIDDEN     3 g_authenticated
+   173: 20008015     1 OBJECT  GLOBAL HIDDEN     3 g_ptc
+   174: 20008016     1 OBJECT  GLOBAL HIDDEN     3 g_countermeasure
+   175: 20008017     4 OBJECT  GLOBAL HIDDEN     3 g_userPin
+   176: 2000801b     4 OBJECT  GLOBAL HIDDEN     3 g_cardPin

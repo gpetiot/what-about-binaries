@@ -1,132 +1,142 @@
-file header:
-class: 64 bits
-data: little-endian
-version: 1
-etype: executable
-machine: x86_64
-entry: 0x0000000000400440
-phoff: 64
-shoff: 6600
-flags: 0
-ehsize: 64
-phentsize: 56
-phnum: 9
-shentsize: 64
-shnum: 30
-shstrndx: 27
+ELF Header:
+  Class:                             ELF64
+  Data:                              little endian
+  Version:                           1
+  OS/ABI:                            0
+  ABI Version:                       0
+  Type:                              EXEC (Executable file)
+  Machine:                           X86_64
+  Entry point address:               0x400440
+  Start of program headers:          64 (bytes into file)
+  Start of section headers:          6600 (bytes into file)
+  Flags:                             0x0
+  Size of this header:               64 (bytes)
+  Size of program headers:           56 (bytes)
+  Number of program headers:         9
+  Size of section headers:           64 (bytes)
+  Number of section headers:         30
+  Section header string table index: 27
 
-section header:
-name: ; type: null; flags: 0; addr: 0x0000000000000000; off: 0; size: 0; link: 0; info: 0; align: 0; entsize: 0
-name: .interp; type: progbits; flags: 2; addr: 0x0000000000400238; off: 568; size: 28; link: 0; info: 0; align: 1; entsize: 0
-name: .note.ABI-tag; type: note; flags: 2; addr: 0x0000000000400254; off: 596; size: 32; link: 0; info: 0; align: 4; entsize: 0
-name: .note.gnu.build-id; type: note; flags: 2; addr: 0x0000000000400274; off: 628; size: 36; link: 0; info: 0; align: 4; entsize: 0
-name: .gnu.hash; type: gnu_hash; flags: 2; addr: 0x0000000000400298; off: 664; size: 28; link: 5; info: 0; align: 8; entsize: 0
-name: .dynsym; type: dynsym; flags: 2; addr: 0x00000000004002B8; off: 696; size: 96; link: 6; info: 1; align: 8; entsize: 24
-name: .dynstr; type: strtab; flags: 2; addr: 0x0000000000400318; off: 792; size: 61; link: 0; info: 0; align: 1; entsize: 0
-name: .gnu.version; type: gnu_versym; flags: 2; addr: 0x0000000000400356; off: 854; size: 8; link: 5; info: 0; align: 2; entsize: 2
-name: .gnu.version_r; type: gnu_verneed; flags: 2; addr: 0x0000000000400360; off: 864; size: 32; link: 6; info: 1; align: 8; entsize: 0
-name: .rela.dyn; type: rela; flags: 2; addr: 0x0000000000400380; off: 896; size: 24; link: 5; info: 0; align: 8; entsize: 24
-name: .rela.plt; type: rela; flags: 66; addr: 0x0000000000400398; off: 920; size: 72; link: 5; info: 12; align: 8; entsize: 24
-name: .init; type: progbits; flags: 6; addr: 0x00000000004003E0; off: 992; size: 26; link: 0; info: 0; align: 4; entsize: 0
-name: .plt; type: progbits; flags: 6; addr: 0x0000000000400400; off: 1024; size: 64; link: 0; info: 0; align: 16; entsize: 16
-name: .text; type: progbits; flags: 6; addr: 0x0000000000400440; off: 1088; size: 386; link: 0; info: 0; align: 16; entsize: 0
-name: .fini; type: progbits; flags: 6; addr: 0x00000000004005C4; off: 1476; size: 9; link: 0; info: 0; align: 4; entsize: 0
-name: .rodata; type: progbits; flags: 2; addr: 0x00000000004005D0; off: 1488; size: 11; link: 0; info: 0; align: 4; entsize: 0
-name: .eh_frame_hdr; type: progbits; flags: 2; addr: 0x00000000004005DC; off: 1500; size: 52; link: 0; info: 0; align: 4; entsize: 0
-name: .eh_frame; type: progbits; flags: 2; addr: 0x0000000000400610; off: 1552; size: 244; link: 0; info: 0; align: 8; entsize: 0
-name: .init_array; type: init_array; flags: 3; addr: 0x0000000000600E10; off: 3600; size: 8; link: 0; info: 0; align: 8; entsize: 0
-name: .fini_array; type: fini_array; flags: 3; addr: 0x0000000000600E18; off: 3608; size: 8; link: 0; info: 0; align: 8; entsize: 0
-name: .jcr; type: progbits; flags: 3; addr: 0x0000000000600E20; off: 3616; size: 8; link: 0; info: 0; align: 8; entsize: 0
-name: .dynamic; type: dynamic; flags: 3; addr: 0x0000000000600E28; off: 3624; size: 464; link: 6; info: 0; align: 8; entsize: 16
-name: .got; type: progbits; flags: 3; addr: 0x0000000000600FF8; off: 4088; size: 8; link: 0; info: 0; align: 8; entsize: 8
-name: .got.plt; type: progbits; flags: 3; addr: 0x0000000000601000; off: 4096; size: 48; link: 0; info: 0; align: 8; entsize: 8
-name: .data; type: progbits; flags: 3; addr: 0x0000000000601030; off: 4144; size: 16; link: 0; info: 0; align: 8; entsize: 0
-name: .bss; type: nobits; flags: 3; addr: 0x0000000000601040; off: 4160; size: 8; link: 0; info: 0; align: 1; entsize: 0
-name: .comment; type: progbits; flags: 48; addr: 0x0000000000000000; off: 4160; size: 45; link: 0; info: 0; align: 1; entsize: 1
-name: .shstrtab; type: strtab; flags: 0; addr: 0x0000000000000000; off: 4205; size: 264; link: 0; info: 0; align: 1; entsize: 0
-name: .symtab; type: symtab; flags: 0; addr: 0x0000000000000000; off: 4472; size: 1560; link: 29; info: 45; align: 8; entsize: 24
-name: .strtab; type: strtab; flags: 0; addr: 0x0000000000000000; off: 6032; size: 563; link: 0; info: 0; align: 1; entsize: 0
+Section Headers:
+  [Nr] Name              Type            Addr     Off    Size   ES Flg Lk Inf Al
+  [ 0]                   NULL            00000000 00000000 00000000 00   0  0   0  0
+  [ 1] .interp           PROGBITS        00400238 00000238 0000001c 00   2  0   0  1
+  [ 2] .note.ABI-tag     NOTE            00400254 00000254 00000020 00   2  0   0  4
+  [ 3] .note.gnu.build-id NOTE            00400274 00000274 00000024 00   2  0   0  4
+  [ 4] .gnu.hash         GNU_HASH        00400298 00000298 0000001c 00   2  5   0  8
+  [ 5] .dynsym           DYNSYM          004002b8 000002b8 00000060 18   2  6   1  8
+  [ 6] .dynstr           STRTAB          00400318 00000318 0000003d 00   2  0   0  1
+  [ 7] .gnu.version      VERSYM          00400356 00000356 00000008 02   2  5   0  2
+  [ 8] .gnu.version_r    VERNEED         00400360 00000360 00000020 00   2  6   1  8
+  [ 9] .rela.dyn         RELA            00400380 00000380 00000018 18   2  5   0  8
+  [10] .rela.plt         RELA            00400398 00000398 00000048 18  66  5  12  8
+  [11] .init             PROGBITS        004003e0 000003e0 0000001a 00   6  0   0  4
+  [12] .plt              PROGBITS        00400400 00000400 00000040 10   6  0   0 16
+  [13] .text             PROGBITS        00400440 00000440 00000182 00   6  0   0 16
+  [14] .fini             PROGBITS        004005c4 000005c4 00000009 00   6  0   0  4
+  [15] .rodata           PROGBITS        004005d0 000005d0 0000000b 00   2  0   0  4
+  [16] .eh_frame_hdr     PROGBITS        004005dc 000005dc 00000034 00   2  0   0  4
+  [17] .eh_frame         PROGBITS        00400610 00000610 000000f4 00   2  0   0  8
+  [18] .init_array       INIT_ARRAY      00600e10 00000e10 00000008 00   3  0   0  8
+  [19] .fini_array       FINI_ARRAY      00600e18 00000e18 00000008 00   3  0   0  8
+  [20] .jcr              PROGBITS        00600e20 00000e20 00000008 00   3  0   0  8
+  [21] .dynamic          DYNAMIC         00600e28 00000e28 000001d0 10   3  6   0  8
+  [22] .got              PROGBITS        00600ff8 00000ff8 00000008 08   3  0   0  8
+  [23] .got.plt          PROGBITS        00601000 00001000 00000030 08   3  0   0  8
+  [24] .data             PROGBITS        00601030 00001030 00000010 00   3  0   0  8
+  [25] .bss              NOBITS          00601040 00001040 00000008 00   3  0   0  1
+  [26] .comment          PROGBITS        00000000 00001040 0000002d 01  48  0   0  1
+  [27] .shstrtab         STRTAB          00000000 0000106d 00000108 00   0  0   0  1
+  [28] .symtab           SYMTAB          00000000 00001178 00000618 18   0 29  45  8
+  [29] .strtab           STRTAB          00000000 00001790 00000233 00   0  0   0  1
+Key to Flags:
+  W (write), A (alloc), X (execute), M (merge), S (strings)
+  I (info), L (link order), G (group), T (TLS), E (exclude), x (unknown)
+  O (extra OS processing required) o (OS specific), p (processor specific)
 
-program header:
-type: phdr; off: 64; vaddr: 0x0000000000400040; addr: 0x0000000000400040; filesz: 504; memsz: 504; flags: 5; align: 8
-type: interp; off: 568; vaddr: 0x0000000000400238; addr: 0x0000000000400238; filesz: 28; memsz: 28; flags: 4; align: 1
-type: load; off: 0; vaddr: 0x0000000000400000; addr: 0x0000000000400000; filesz: 1796; memsz: 1796; flags: 5; align: 2097152
-type: load; off: 3600; vaddr: 0x0000000000600E10; addr: 0x0000000000600E10; filesz: 560; memsz: 568; flags: 6; align: 2097152
-type: dynamic; off: 3624; vaddr: 0x0000000000600E28; addr: 0x0000000000600E28; filesz: 464; memsz: 464; flags: 6; align: 8
-type: note; off: 596; vaddr: 0x0000000000400254; addr: 0x0000000000400254; filesz: 68; memsz: 68; flags: 4; align: 4
-type: gnu_eh_frame; off: 1500; vaddr: 0x00000000004005DC; addr: 0x00000000004005DC; filesz: 52; memsz: 52; flags: 4; align: 4
-type: gnu_stack; off: 0; vaddr: 0x0000000000000000; addr: 0x0000000000000000; filesz: 0; memsz: 0; flags: 6; align: 16
-type: gnu_relro; off: 3600; vaddr: 0x0000000000600E10; addr: 0x0000000000600E10; filesz: 496; memsz: 496; flags: 4; align: 1
+Program Headers:
+  Type           Offset   VirtAddr   PhysAddr   FileSiz MemSiz  Flg Align
+  PHDR           0x0000000000000040 0x0000000000400040 0x0000000000400040 0x1f8 0x1f8 R E 8
+  INTERP         0x0000000000000238 0x0000000000400238 0x0000000000400238 0x1c 0x1c R   1
+  LOAD           0x0000000000000000 0x0000000000400000 0x0000000000400000 0x704 0x704 R E 200000
+  LOAD           0x0000000000000e10 0x0000000000600e10 0x0000000000600e10 0x230 0x238 RW  200000
+  DYNAMIC        0x0000000000000e28 0x0000000000600e28 0x0000000000600e28 0x1d0 0x1d0 RW  8
+  NOTE           0x0000000000000254 0x0000000000400254 0x0000000000400254 0x44 0x44 R   4
+  GNU_EH_FRAME   0x00000000000005dc 0x00000000004005dc 0x00000000004005dc 0x34 0x34 R   4
+  GNU_STACK      0x0000000000000000 0x0000000000000000 0x0000000000000000 0x0 0x0 RW  10
+  GNU_RELRO      0x0000000000000e10 0x0000000000600e10 0x0000000000600e10 0x1f0 0x1f0 R   1
 
-symbol table:
-name: ; value: 0; size: 0; type: notype; bind: local
-name: ; value: 18016838050971651; size: 0; type: notype; bind: local
-name: ; value: 18016958310121475; size: 0; type: notype; bind: local
-name: ; value: 18017095749140483; size: 0; type: notype; bind: local
-name: ; value: 18017250368028675; size: 0; type: notype; bind: local
-name: ; value: 18017387807047683; size: 0; type: notype; bind: local
-name: ; value: 18017800123973635; size: 0; type: notype; bind: local
-name: ; value: 18018066412011523; size: 0; type: notype; bind: local
-name: ; value: 18018109361750019; size: 0; type: notype; bind: local
-name: ; value: 18018246800769027; size: 0; type: notype; bind: local
-name: ; value: 18018349880049667; size: 0; type: notype; bind: local
-name: ; value: 18018659117760515; size: 0; type: notype; bind: local
-name: ; value: 18018796556779523; size: 0; type: notype; bind: local
-name: ; value: 18019071434752003; size: 0; type: notype; bind: local
-name: ; value: 18020737882128387; size: 0; type: notype; bind: local
-name: ; value: 18020789421801475; size: 0; type: notype; bind: local
-name: ; value: 18020840961474563; size: 0; type: notype; bind: local
-name: ; value: 18021064299839491; size: 0; type: notype; bind: local
-name: ; value: 27037059647668227; size: 0; type: notype; bind: local
-name: ; value: 27037094007472131; size: 0; type: notype; bind: local
-name: ; value: 27037128367276035; size: 0; type: notype; bind: local
-name: ; value: 27037162727079939; size: 0; type: notype; bind: local
-name: ; value: 27039155591970819; size: 0; type: notype; bind: local
-name: ; value: 27039189951774723; size: 0; type: notype; bind: local
-name: ; value: 27039396110270467; size: 0; type: notype; bind: local
-name: ; value: 27039464829812739; size: 0; type: notype; bind: local
-name: ; value: 1703939; size: 0; type: notype; bind: local
-name: crtstuff.c; value: 4293984260; size: 0; type: notype; bind: local
-name: __JCR_LIST__; value: 27037128367276033; size: 0; type: notype; bind: local
-name: deregister_tm_clones; value: 18019277593182210; size: 0; type: notype; bind: local
-name: register_tm_clones; value: 18019552471089154; size: 0; type: notype; bind: local
-name: __do_global_dtors_aux; value: 18019827348996098; size: 0; type: notype; bind: local
-name: completed.7568; value: 27039464829812737; size: 4294967296; type: notype; bind: local
-name: __do_global_dtors_aux_fini_array_entry; value: 27037094007472129; size: 0; type: notype; bind: local
-name: frame_dummy; value: 18019964787949570; size: 0; type: notype; bind: local
-name: __frame_dummy_init_array_entry; value: 27037059647668225; size: 0; type: notype; bind: local
-name: a.c; value: 4293984260; size: 0; type: notype; bind: local
-name: crtstuff.c; value: 4293984260; size: 0; type: notype; bind: local
-name: __FRAME_END__; value: 18022095091990529; size: 0; type: notype; bind: local
-name: __JCR_END__; value: 27037128367276033; size: 0; type: notype; bind: local
-name: ; value: 4293984260; size: 0; type: notype; bind: local
-name: __init_array_end; value: 27037094007406592; size: 0; type: notype; bind: local
-name: _DYNAMIC; value: 27037162727079937; size: 0; type: notype; bind: local
-name: __init_array_start; value: 27037059647668224; size: 0; type: notype; bind: local
-name: _GLOBAL_OFFSET_TABLE_; value: 27039189951774721; size: 0; type: notype; bind: local
-name: __libc_csu_fini; value: 18020720702193682; size: 8589934592; type: notype; bind: local
-name: _ITM_deregisterTMCloneTable; value: 32; size: 0; type: notype; bind: local
-name: data_start; value: 27039396110270496; size: 0; type: notype; bind: local
-name: puts@@GLIBC_2.2.5; value: 18; size: 0; type: notype; bind: local
-name: _edata; value: 27039464829747216; size: 0; type: notype; bind: local
-name: _fini; value: 18020737882128402; size: 0; type: notype; bind: local
-name: __libc_start_main@@GLIBC_2.2.5; value: 18; size: 0; type: notype; bind: local
-name: __data_start; value: 27039396110270480; size: 0; type: notype; bind: local
-name: __gmon_start__; value: 32; size: 0; type: notype; bind: local
-name: __dso_handle; value: 27039430470009361; size: 0; type: notype; bind: local
-name: _IO_stdin_used; value: 18020789421801489; size: 17179869184; type: notype; bind: local
-name: __libc_csu_init; value: 18020239665856530; size: 433791696896; type: notype; bind: local
-name: _end; value: 27039499189551120; size: 0; type: notype; bind: local
-name: _start; value: 18019071434752018; size: 180388626432; type: notype; bind: local
-name: __bss_start; value: 27039464829812752; size: 0; type: notype; bind: local
-name: main; value: 18020127996706834; size: 90194313216; type: notype; bind: local
-name: _Jv_RegisterClasses; value: 32; size: 0; type: notype; bind: local
-name: __TMC_END__; value: 27039464829747729; size: 0; type: notype; bind: local
-name: _ITM_registerTMCloneTable; value: 32; size: 0; type: notype; bind: local
-name: _init; value: 18018659117760530; size: 0; type: notype; bind: local
+Symbol table '.dynsym' contains 4 entries:
+   Num:    Value  Size Type    Bind   Vis      Ndx Name
+     0: 00000000     0 NOTYPE  LOCAL  DEFAULT  UND 
+     1: 00000000     0 FUNC    GLOBAL DEFAULT  UND puts
+     2: 00000000     0 FUNC    GLOBAL DEFAULT  UND __libc_start_main
+     3: 00000000     0 NOTYPE  WEAK   DEFAULT  UND __gmon_start__
 
-dynamic symbol table:
-name: ; value: 0; size: 0; type: notype; bind: local
-name: puts; value: 18; size: 0; type: notype; bind: local
-name: __libc_start_main; value: 18; size: 0; type: notype; bind: local
-name: __gmon_start__; value: 32; size: 0; type: notype; bind: local
+Symbol table '.symtab' contains 65 entries:
+   Num:    Value  Size Type    Bind   Vis      Ndx Name
+     0: 00000000     0 NOTYPE  LOCAL  DEFAULT  UND 
+     1: 00400238     0 SECTION LOCAL  DEFAULT    1 
+     2: 00400254     0 SECTION LOCAL  DEFAULT    2 
+     3: 00400274     0 SECTION LOCAL  DEFAULT    3 
+     4: 00400298     0 SECTION LOCAL  DEFAULT    4 
+     5: 004002b8     0 SECTION LOCAL  DEFAULT    5 
+     6: 00400318     0 SECTION LOCAL  DEFAULT    6 
+     7: 00400356     0 SECTION LOCAL  DEFAULT    7 
+     8: 00400360     0 SECTION LOCAL  DEFAULT    8 
+     9: 00400380     0 SECTION LOCAL  DEFAULT    9 
+    10: 00400398     0 SECTION LOCAL  DEFAULT   10 
+    11: 004003e0     0 SECTION LOCAL  DEFAULT   11 
+    12: 00400400     0 SECTION LOCAL  DEFAULT   12 
+    13: 00400440     0 SECTION LOCAL  DEFAULT   13 
+    14: 004005c4     0 SECTION LOCAL  DEFAULT   14 
+    15: 004005d0     0 SECTION LOCAL  DEFAULT   15 
+    16: 004005dc     0 SECTION LOCAL  DEFAULT   16 
+    17: 00400610     0 SECTION LOCAL  DEFAULT   17 
+    18: 00600e10     0 SECTION LOCAL  DEFAULT   18 
+    19: 00600e18     0 SECTION LOCAL  DEFAULT   19 
+    20: 00600e20     0 SECTION LOCAL  DEFAULT   20 
+    21: 00600e28     0 SECTION LOCAL  DEFAULT   21 
+    22: 00600ff8     0 SECTION LOCAL  DEFAULT   22 
+    23: 00601000     0 SECTION LOCAL  DEFAULT   23 
+    24: 00601030     0 SECTION LOCAL  DEFAULT   24 
+    25: 00601040     0 SECTION LOCAL  DEFAULT   25 
+    26: 00000000     0 SECTION LOCAL  DEFAULT   26 
+    27: 00000000     0 FILE    LOCAL  DEFAULT  ABS crtstuff.c
+    28: 00600e20     0 OBJECT  LOCAL  DEFAULT   20 __JCR_LIST__
+    29: 00400470     0 FUNC    LOCAL  DEFAULT   13 deregister_tm_clones
+    30: 004004b0     0 FUNC    LOCAL  DEFAULT   13 register_tm_clones
+    31: 004004f0     0 FUNC    LOCAL  DEFAULT   13 __do_global_dtors_aux
+    32: 00601040     1 OBJECT  LOCAL  DEFAULT   25 completed.7568
+    33: 00600e18     0 OBJECT  LOCAL  DEFAULT   19 __do_global_dtors_aux_fini_array_entry
+    34: 00400510     0 FUNC    LOCAL  DEFAULT   13 frame_dummy
+    35: 00600e10     0 OBJECT  LOCAL  DEFAULT   18 __frame_dummy_init_array_entry
+    36: 00000000     0 FILE    LOCAL  DEFAULT  ABS a.c
+    37: 00000000     0 FILE    LOCAL  DEFAULT  ABS crtstuff.c
+    38: 00400700     0 OBJECT  LOCAL  DEFAULT   17 __FRAME_END__
+    39: 00600e20     0 OBJECT  LOCAL  DEFAULT   20 __JCR_END__
+    40: 00000000     0 FILE    LOCAL  DEFAULT  ABS 
+    41: 00600e18     0 NOTYPE  LOCAL  DEFAULT   18 __init_array_end
+    42: 00600e28     0 OBJECT  LOCAL  DEFAULT   21 _DYNAMIC
+    43: 00600e10     0 NOTYPE  LOCAL  DEFAULT   18 __init_array_start
+    44: 00601000     0 OBJECT  LOCAL  DEFAULT   23 _GLOBAL_OFFSET_TABLE_
+    45: 004005c0     2 FUNC    GLOBAL DEFAULT   13 __libc_csu_fini
+    46: 00000000     0 NOTYPE  WEAK   DEFAULT  UND _ITM_deregisterTMCloneTable
+    47: 00601030     0 NOTYPE  WEAK   DEFAULT   24 data_start
+    48: 00000000     0 FUNC    GLOBAL DEFAULT  UND puts@@GLIBC_2.2.5
+    49: 00601040     0 NOTYPE  GLOBAL DEFAULT   24 _edata
+    50: 004005c4     0 FUNC    GLOBAL DEFAULT   14 _fini
+    51: 00000000     0 FUNC    GLOBAL DEFAULT  UND __libc_start_main@@GLIBC_2.2.5
+    52: 00601030     0 NOTYPE  GLOBAL DEFAULT   24 __data_start
+    53: 00000000     0 NOTYPE  WEAK   DEFAULT  UND __gmon_start__
+    54: 00601038     0 OBJECT  GLOBAL HIDDEN    24 __dso_handle
+    55: 004005d0     4 OBJECT  GLOBAL DEFAULT   15 _IO_stdin_used
+    56: 00400550   101 FUNC    GLOBAL DEFAULT   13 __libc_csu_init
+    57: 00601048     0 NOTYPE  GLOBAL DEFAULT   25 _end
+    58: 00400440    42 FUNC    GLOBAL DEFAULT   13 _start
+    59: 00601040     0 NOTYPE  GLOBAL DEFAULT   25 __bss_start
+    60: 00400536    21 FUNC    GLOBAL DEFAULT   13 main
+    61: 00000000     0 NOTYPE  WEAK   DEFAULT  UND _Jv_RegisterClasses
+    62: 00601040     0 OBJECT  GLOBAL HIDDEN    24 __TMC_END__
+    63: 00000000     0 NOTYPE  WEAK   DEFAULT  UND _ITM_registerTMCloneTable
+    64: 004003e0     0 FUNC    GLOBAL DEFAULT   11 _init
