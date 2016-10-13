@@ -38,22 +38,44 @@ struct
   let half_size = 2
   let xword_size = 4
   let off_size = 4
-  let ph_offsets = 0,4,8,12,16,20,24,28
-  let ph_sizes = 4,4,4,4,4,4,4,4
-  let sym_offsets =
-    0,
-    word_size,
-    word_size+addr_size,
-    2*word_size + addr_size,
-    2*word_size + addr_size + 1,
-    2*word_size + addr_size + 2
+
+  let ph_sizes =
+    word_size, (* type *)
+    off_size,  (* offset *)
+    addr_size, (* vaddr *)
+    addr_size, (* paddr *)
+    word_size, (* filesz *)
+    word_size, (* memsz *)
+    word_size, (* flags *)
+    word_size  (* align *)
+    
+  let ph_offsets =
+    let ty, off, vaddr, paddr, filesz, memsz, flags, _align = ph_sizes in
+    0,                                    (* type *)
+    ty,                                   (* offset *)
+    ty+off,                               (* vaddr *)
+    ty+off+vaddr,                         (* paddr *)
+    ty+off+vaddr+paddr,                   (* filesz *)
+    ty+off+vaddr+paddr+filesz,            (* memsz *)
+    ty+off+vaddr+paddr+filesz+memsz,      (* flags *)
+    ty+off+vaddr+paddr+filesz+memsz+flags (* align *)
+      
   let sym_sizes =
-    word_size,
-    addr_size,
-    word_size,
-    1,
-    1,
-    half_size
+    word_size, (* name *)
+    addr_size, (* value *)
+    word_size, (* size *)
+    1,         (* info *)
+    1,         (* other *)
+    half_size  (* shndex *)
+    
+  let sym_offsets =
+    let name, value, size, info, other, _shndex = sym_sizes in
+    0,                         (* name *)
+    name,                      (* value *)
+    name+value,                (* size *)
+    name+value+size,           (* info *)
+    name+value+size+info,      (* other *)
+    name+value+size+info+other (* shndex *)
 end;;
 
 module Addr64 =
@@ -65,23 +87,45 @@ struct
   let addr_size  = 8
   let half_size = 2
   let xword_size = 8
-  let off_size = 4
-  let ph_offsets = 0,8,16,24,32,40,4,48
-  let ph_sizes = 4,8,8,8,8,8,4,8
-  let sym_offsets =
-    0,
-    word_size+2+half_size,
-    word_size+2+half_size+addr_size,
-    word_size,
-    word_size+1,
-    word_size+2
+  let off_size = 8
+    
+  let ph_sizes =
+    word_size,  (* type *)
+    off_size,   (* offset *)
+    addr_size,  (* vaddr *)
+    addr_size,  (* paddr *)
+    xword_size, (* filesz *)
+    xword_size, (* memsz *)
+    word_size,  (* flags *)
+    xword_size  (* align *)
+      
+  let ph_offsets =
+    let ty, off, vaddr, paddr, filesz, memsz, flags, _align = ph_sizes in
+    0,                                    (* type *)
+    ty+flags,                             (* offset *)
+    ty+flags+off,                         (* vaddr *)
+    ty+flags+off+vaddr,                   (* paddr *)
+    ty+flags+off+vaddr+paddr,             (* filesz *)
+    ty+flags+off+vaddr+paddr+filesz,      (* memsz *)
+    ty,                                   (* flags *)
+    ty+flags+off+vaddr+paddr+filesz+memsz (* align *)
+      
   let sym_sizes =
-    word_size,
-    addr_size,
-    xword_size,
-    1,
-    1,
-    half_size
+    word_size,  (* name *)
+    addr_size,  (* value *)
+    xword_size, (* size *)
+    1,          (* info *)
+    1,          (* other *)
+    half_size   (* shndex *)
+
+  let sym_offsets =
+    let name, value, _size, info, other, shndex = sym_sizes in
+    0,                            (* name *)
+    name+info+other+shndex,       (* value *)
+    name+info+other+shndex+value, (* size *)
+    name,                         (* info *)
+    name+info,                    (* other *)
+    name+info+other               (* shndex *)
 end;;
 
 let addr = function
