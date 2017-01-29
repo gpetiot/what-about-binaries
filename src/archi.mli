@@ -13,6 +13,7 @@ sig
   val ph_sizes : int * int * int * int * int * int * int * int
   val sym_offsets : int * int * int * int * int * int
   val sym_sizes : int * int * int * int * int * int
+  val modes : Capstone.mode list
 end;;
 
 val addr: eclass -> (module Addr);;

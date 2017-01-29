@@ -21,6 +21,7 @@ sig
   val ph_sizes : int * int * int * int * int * int * int * int
   val sym_offsets : int * int * int * int * int * int
   val sym_sizes : int * int * int * int * int * int
+  val modes : Capstone.mode list
 end;;
 
 module Addr32 =
@@ -71,6 +72,8 @@ struct
     name+value+size,           (* info *)
     name+value+size+info,      (* other *)
     name+value+size+info+other (* shndex *)
+
+  let modes = [Capstone.CS_MODE_32]
 end;;
 
 module Addr64 =
@@ -121,6 +124,8 @@ struct
     name,                         (* info *)
     name+info,                    (* other *)
     name+info+other               (* shndex *)
+      
+  let modes = [Capstone.CS_MODE_64]
 end;;
 
 let addr = function
