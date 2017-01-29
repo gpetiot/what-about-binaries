@@ -140,3 +140,12 @@ Symbol table '.symtab' contains 65 entries:
     62: 00601040     0 OBJECT  GLOBAL HIDDEN    24 __TMC_END__
     63: 00000000     0 NOTYPE  WEAK   DEFAULT  UND _ITM_registerTMCloneTable
     64: 004003e0     0 FUNC    GLOBAL DEFAULT   11 _init
+
+Instructions:
+0x1000	push	rbp
+0x1001	mov	rbp, rsp
+0x1004	mov	edi, 0x4005d4
+0x1009	call	0xeda
+0x100e	mov	eax, 0
+0x1013	pop	rbp
+0x1014	ret	
