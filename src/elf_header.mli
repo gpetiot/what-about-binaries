@@ -33,8 +33,13 @@ module Make (A : Archi.Addr) (E : Endian.T) :
       val pretty : Format.formatter -> entry -> unit
       val parse : filename:string -> tablename:string -> strtab:string ->
 	Sh.entry list -> entry list
+      val get : string -> entry list -> entry
+      val value : entry -> int
+      val size : entry -> int
     end
+    val machine : t -> Machine.t
     module Decode : sig
-      val start : filename:string -> secname:string -> Sh.entry list -> unit
+      val decode : filename:string -> secname:string -> Machine.t ->
+	Sh.entry list -> Symtbl.entry list -> Machine.instr list
     end
 end);;

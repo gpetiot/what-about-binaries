@@ -60,6 +60,8 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
     ei_shstrndx : int;
   };;
 
+  let machine x = x.ei_machine;;
+
   let pretty fmt e =
     Format.fprintf
       fmt
@@ -417,15 +419,48 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
 	Format.printf "%s" (Printexc.to_string exn);
 	raise Invalid_Elf
     ;;
+
+    let get s = List.find (fun x -> x.name = s);;
+    let value s = s.value;;
+    let size s = s.size;;
   end;;
 
   module Decode = struct
-    let start ~filename ~secname sections =
+    let decode ~filename ~secname ei_machine sections symbols =
       let section = Sh.get secname sections in
       let offset = Sh.offset section in
-      let size = Sh.size section in
+      let _size = Sh.size section in
       let start_addr = Sh.addr section in
-      ()
+      let main = Symtbl.get "main" symbols in
+      let main_value = Symtbl.value main in
+      let main_size = Symtbl.size main in
+      let chan = open_in_bin filename in
+      let rec aux chan i =
+	let sbeg = main_value - start_addr + offset in
+	let send = sbeg + main_size in
+	if i < sbeg then
+	  let _ = input_byte chan in
+	  aux chan (i+1)
+	else
+	  if i < send then
+	    begin
+	      let buf = Buffer.create main_size in
+	      Buffer.add_channel buf chan main_size;
+	      let buf_str = Buffer.contents buf in
+	      let module I = (val (Machine.instr ei_machine)) in
+	      I.decode A.modes buf_str
+	    end
+	  else
+	    assert false; (* unreachable *)
+      in
+      try
+        let instrs = aux chan 0 in
+	close_in chan;
+	instrs
+      with exn ->
+	close_in chan;
+	Format.printf "%s" (Printexc.to_string exn);
+	raise Invalid_Elf
     ;;
   end;;
 end;;

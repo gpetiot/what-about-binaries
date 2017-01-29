@@ -67,7 +67,15 @@ MemSiz  Flg Align\n";
 	(* instructions *)
 	begin
 	  try
-            FH.Decode.start ~filename ~secname:".text" shl
+	    let machine = FH.machine fh in
+            let instrs =
+	      FH.Decode.decode ~filename ~secname:".text" machine shl symtab in
+	    if instrs <> [] then
+	      begin
+		Format.printf "\nInstructions:\n";
+		List.iter
+		  (fun i -> Format.printf "%a" Machine.pretty_instr i) instrs
+	      end
 	  with Not_found -> ()
 	end
       with
