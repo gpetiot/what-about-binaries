@@ -229,17 +229,16 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
 	    begin
 	      let buf = Buffer.create header.ei_phentsize in
 	      Buffer.add_channel buf chan header.ei_phentsize;
-	      let o1,o2,o3,o4,o5,o6,o7,o8 = A.ph_offsets in
-	      let s1,s2,s3,s4,s5,s6,s7,s8 = A.ph_sizes in
 	      let ph_type =
-		Program_header_type.of_int (multi_bytes_int buf o1 s1) in
-	      let ph_off = multi_bytes_int buf o2 s2 in
-	      let ph_vaddr = multi_bytes_int buf o3 s3 in
-	      let ph_addr = multi_bytes_int buf o4 s4 in
-	      let ph_filesz = multi_bytes_int buf o5 s5 in
-	      let ph_memsz = multi_bytes_int buf o6 s6 in
-	      let ph_flags = multi_bytes_int buf o7 s7 in
-	      let ph_align = multi_bytes_int buf o8 s8 in
+		Program_header_type.of_int
+		  (multi_bytes_int buf A.type_offset A.type_size) in
+	      let ph_off = multi_bytes_int buf A.offset_offset A.offset_size in
+	      let ph_vaddr = multi_bytes_int buf A.vaddr_offset A.vaddr_size in
+	      let ph_addr = multi_bytes_int buf A.paddr_offset A.paddr_size in
+	      let ph_filesz = multi_bytes_int buf A.filesz_offset A.filesz_size in
+	      let ph_memsz = multi_bytes_int buf A.memsz_offset A.memsz_size in
+	      let ph_flags = multi_bytes_int buf A.flags_offset A.flags_size in
+	      let ph_align = multi_bytes_int buf A.align_offset A.align_size in
 	      let ph = { ph_type; ph_off; ph_vaddr; ph_addr; ph_filesz;
 			 ph_memsz; ph_flags; ph_align } in
 	      aux chan (i+header.ei_phentsize) (ph::ret)
@@ -391,14 +390,12 @@ module Make (A : Archi.Addr) (E : Endian.T) = struct
 	    begin
 	      let buf = Buffer.create entry_size in
 	      Buffer.add_channel buf chan entry_size;
-	      let o1,o2,o3,o4,o5,o6 = A.sym_offsets in
-	      let s1,s2,s3,s4,s5,s6 = A.sym_sizes in
-	      let name_id = multi_bytes_int buf o1 s1 in
-	      let value = multi_bytes_int buf o2 s2 in
-	      let size = multi_bytes_int buf o3 s3 in
-	      let info = multi_bytes_int buf o4 s4 in
-	      let other = multi_bytes_int buf o5 s5 in
-	      let shndex = multi_bytes_int buf o6 s6 in
+	      let name_id = multi_bytes_int buf A.name_offset A.name_size in
+	      let value = multi_bytes_int buf A.value_offset A.value_size in
+	      let size = multi_bytes_int buf A.size_offset A.size_size in
+	      let info = multi_bytes_int buf A.info_offset A.info_size in
+	      let other = multi_bytes_int buf A.other_offset A.other_size in
+	      let shndex = multi_bytes_int buf A.shndex_offset A.shndex_size in
 	      let name = Strtab.get strtab name_id in
 	      let bind = Symbol.Binding.of_int (info lsr 4) in
 	      let symtype = Symbol.Type.of_int (info land 15) in

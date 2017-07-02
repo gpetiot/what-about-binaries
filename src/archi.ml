@@ -17,11 +17,39 @@ sig
   val eclass : eclass
   val size : int
   val header_size : int
-  val ph_offsets : int * int * int * int * int * int * int * int
-  val ph_sizes : int * int * int * int * int * int * int * int
-  val sym_offsets : int * int * int * int * int * int
-  val sym_sizes : int * int * int * int * int * int
   val modes : Capstone.mode list
+  (* program header field sizes *)
+  val type_size : int
+  val offset_size : int
+  val vaddr_size : int
+  val paddr_size : int
+  val filesz_size : int
+  val memsz_size : int
+  val flags_size : int
+  val align_size : int
+  (* program header field offsets *)
+  val type_offset : int
+  val offset_offset : int
+  val vaddr_offset : int
+  val paddr_offset : int
+  val filesz_offset : int
+  val memsz_offset : int
+  val flags_offset : int
+  val align_offset : int
+  (* symbol field sizes *)
+  val name_size : int
+  val value_size : int
+  val size_size : int
+  val info_size : int
+  val other_size : int
+  val shndex_size : int
+  (* symbol field offsets *)
+  val name_offset : int
+  val info_offset : int
+  val other_offset : int
+  val shndex_offset : int
+  val value_offset : int
+  val size_offset : int
 end;;
 
 module Addr32 =
@@ -34,44 +62,42 @@ struct
   let half_size = 2
   let xword_size = 4
   let off_size = 4
-
-  let ph_sizes =
-    word_size, (* type *)
-    off_size,  (* offset *)
-    addr_size, (* vaddr *)
-    addr_size, (* paddr *)
-    word_size, (* filesz *)
-    word_size, (* memsz *)
-    word_size, (* flags *)
-    word_size  (* align *)
     
-  let ph_offsets =
-    let ty, off, vaddr, paddr, filesz, memsz, flags, _align = ph_sizes in
-    0,                                    (* type *)
-    ty,                                   (* offset *)
-    ty+off,                               (* vaddr *)
-    ty+off+vaddr,                         (* paddr *)
-    ty+off+vaddr+paddr,                   (* filesz *)
-    ty+off+vaddr+paddr+filesz,            (* memsz *)
-    ty+off+vaddr+paddr+filesz+memsz,      (* flags *)
-    ty+off+vaddr+paddr+filesz+memsz+flags (* align *)
+  (* program header field sizes *)
+  let type_size = word_size
+  let offset_size = off_size
+  let vaddr_size = addr_size
+  let paddr_size = addr_size
+  let filesz_size = word_size
+  let memsz_size = word_size
+  let flags_size = word_size
+  let align_size = word_size
+    
+  (* program header field offsets *)
+  let type_offset = 0
+  let offset_offset = type_offset + type_size
+  let vaddr_offset = offset_offset + offset_size
+  let paddr_offset = vaddr_offset + vaddr_size
+  let filesz_offset = paddr_offset + paddr_size
+  let memsz_offset = filesz_offset + filesz_size
+  let flags_offset = memsz_offset + memsz_size
+  let align_offset = flags_offset + flags_size
       
-  let sym_sizes =
-    word_size, (* name *)
-    addr_size, (* value *)
-    word_size, (* size *)
-    1,         (* info *)
-    1,         (* other *)
-    half_size  (* shndex *)
+  (* symbol field sizes *)
+  let name_size = word_size
+  let value_size = addr_size
+  let size_size = word_size
+  let info_size = 1
+  let other_size = 1
+  let shndex_size = half_size
     
-  let sym_offsets =
-    let name, value, size, info, other, _shndex = sym_sizes in
-    0,                         (* name *)
-    name,                      (* value *)
-    name+value,                (* size *)
-    name+value+size,           (* info *)
-    name+value+size+info,      (* other *)
-    name+value+size+info+other (* shndex *)
+  (* symbol field offsets *)
+  let name_offset = 0
+  let value_offset = name_offset + name_size
+  let size_offset = value_offset + value_size
+  let info_offset = size_offset + size_size
+  let other_offset = info_offset + info_size
+  let shndex_offset = other_offset + other_size
 
   let modes = [Capstone.CS_MODE_32]
 end;;
@@ -87,43 +113,41 @@ struct
   let xword_size = 8
   let off_size = 8
     
-  let ph_sizes =
-    word_size,  (* type *)
-    off_size,   (* offset *)
-    addr_size,  (* vaddr *)
-    addr_size,  (* paddr *)
-    xword_size, (* filesz *)
-    xword_size, (* memsz *)
-    word_size,  (* flags *)
-    xword_size  (* align *)
-      
-  let ph_offsets =
-    let ty, off, vaddr, paddr, filesz, memsz, flags, _align = ph_sizes in
-    0,                                    (* type *)
-    ty+flags,                             (* offset *)
-    ty+flags+off,                         (* vaddr *)
-    ty+flags+off+vaddr,                   (* paddr *)
-    ty+flags+off+vaddr+paddr,             (* filesz *)
-    ty+flags+off+vaddr+paddr+filesz,      (* memsz *)
-    ty,                                   (* flags *)
-    ty+flags+off+vaddr+paddr+filesz+memsz (* align *)
-      
-  let sym_sizes =
-    word_size,  (* name *)
-    addr_size,  (* value *)
-    xword_size, (* size *)
-    1,          (* info *)
-    1,          (* other *)
-    half_size   (* shndex *)
+  (* program header field sizes *)
+  let type_size = word_size
+  let offset_size = off_size
+  let vaddr_size = addr_size
+  let paddr_size = addr_size
+  let filesz_size = xword_size
+  let memsz_size = xword_size
+  let flags_size = word_size
+  let align_size = xword_size
 
-  let sym_offsets =
-    let name, value, _size, info, other, shndex = sym_sizes in
-    0,                            (* name *)
-    name+info+other+shndex,       (* value *)
-    name+info+other+shndex+value, (* size *)
-    name,                         (* info *)
-    name+info,                    (* other *)
-    name+info+other               (* shndex *)
+  (* program header field offsets *)
+  let type_offset = 0
+  let flags_offset = type_offset + type_size
+  let offset_offset = flags_offset + flags_size
+  let vaddr_offset = offset_offset + offset_size
+  let paddr_offset = vaddr_offset + vaddr_size
+  let filesz_offset = paddr_offset + paddr_size
+  let memsz_offset = filesz_offset + filesz_size
+  let align_offset = memsz_offset + memsz_size
+      
+  (* symbol field sizes *)
+  let name_size = word_size
+  let value_size = addr_size
+  let size_size = xword_size
+  let info_size = 1
+  let other_size = 1
+  let shndex_size = half_size
+    
+  (* symbol field offsets *)
+  let name_offset = 0
+  let info_offset = name_offset + name_size
+  let other_offset = info_offset + info_size
+  let shndex_offset = other_offset + other_size
+  let value_offset = shndex_offset + shndex_size
+  let size_offset = value_offset + value_size
       
   let modes = [Capstone.CS_MODE_64]
 end;;
