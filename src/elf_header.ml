@@ -146,11 +146,9 @@ module Make (A : Elf_types.Addr) (E : Elf_types.Endianness) = struct
     ;;
   end;;
 
-  module Sh = struct
-    let get name = List.find (fun x -> x.sh_name = name);;
-    
+  module Sh = struct    
     let strtab ~filename ~tablename sections =
-      let strtab = get tablename sections in
+      let strtab = List.find (fun x -> x.sh_name = tablename) sections in
       let off = strtab.sh_off in
       let size = strtab.sh_size in
       Strtab.parse filename ~off ~size
@@ -207,7 +205,7 @@ module Make (A : Elf_types.Addr) (E : Elf_types.Endianness) = struct
     
   module Symtbl = struct
     let parse ~filename ~tablename ~strtab sections =
-      let section = Sh.get tablename sections in
+      let section = List.find (fun x -> x.sh_name = tablename) sections in
       let offset = section.sh_off in
       let size = section.sh_size in
       let entry_size = section.sh_entsize in
@@ -249,17 +247,15 @@ module Make (A : Elf_types.Addr) (E : Elf_types.Endianness) = struct
 	Format.printf "%s" (Printexc.to_string exn);
 	raise Invalid_Elf
     ;;
-
-    let get s = List.find (fun x -> x.name = s);;
   end;;
 
   module Decode = struct
     let decode ~filename ~secname ei_machine sections symbols =
-      let section = Sh.get secname sections in
+      let section = List.find (fun x -> x.sh_name = secname) sections in
       let offset = section.sh_off in
       let _size = section.sh_size in
       let start_addr = section.sh_addr in
-      let main = Symtbl.get "main" symbols in
+      let main = List.find (fun x -> x.name = "main") symbols in
       let main_value = main.value in
       let main_size = main.size in
       let chan = open_in_bin filename in
