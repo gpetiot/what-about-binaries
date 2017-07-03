@@ -67,7 +67,7 @@ MemSiz  Flg Align\n";
 	begin
 	  try
             let instrs =
-	      FH.Decode.decode ~filename ~secname:".text" fh.ei_machine shl symtab in
+	      FH.Decode.decode ~filename ~secname:".text" fh shl symtab in
 	    if instrs <> [] then
 	      begin
 		Format.printf "\nInstructions:\n";

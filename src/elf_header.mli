@@ -23,7 +23,7 @@ module Make (A : Elf_types.Addr) (E : Elf_types.Endianness) :
 	Elf_types.sh_entry list -> Elf_types.symtbl_entry list
     end
     module Decode : sig
-      val decode : filename:string -> secname:string -> Elf_types.emachine ->
+      val decode : filename:string -> secname:string -> Elf_types.elf_header ->
 	Elf_types.sh_entry list -> Elf_types.symtbl_entry list ->
 	Elf_types.instr list
     end

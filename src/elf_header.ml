@@ -250,7 +250,7 @@ module Make (A : Elf_types.Addr) (E : Elf_types.Endianness) = struct
   end;;
 
   module Decode = struct
-    let decode ~filename ~secname ei_machine sections symbols =
+    let decode ~filename ~secname {ei_machine} sections symbols =
       let section = List.find (fun x -> x.sh_name = secname) sections in
       let offset = section.sh_off in
       let _size = section.sh_size in
