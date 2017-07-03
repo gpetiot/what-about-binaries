@@ -8,13 +8,11 @@ CAPSTONE_OBJ=\
 	$(CAPSTONE)/x86.cmx \
 	$(CAPSTONE)/capstone.cmx
 
-SOURCES=src/hexa.ml \
+SOURCES=src/print.ml \
+	src/decode.ml \
 	src/archi.ml \
 	src/endian.ml \
 	src/machine.ml \
-	src/program_header_type.ml \
-	src/section_header_type.ml \
-	src/symbol.ml \
 	src/decode_arm.ml \
 	src/decode_x86.ml \
 	src/elf_header.ml
@@ -32,7 +30,7 @@ WITHDBM=dbm.cma -cclib -lmldbm -cclib -lndbm
 WITHCAPSTONE=-I $(CAPSTONE) $(CAPSTONE)/ocaml.o -cclib -lcapstone -cclib -L$(CAPSTONE_PATH)
 LIBS=$(WITHCAPSTONE)
 OPTOBJS=$(SOURCES:.ml=.cmx)
-HEADERS=$(SOURCES:.ml=.mli)
+HEADERS=src/elf_types.mli $(SOURCES:.ml=.mli)
 
 .PHONY: all
 all: $(EXEC_OPT)

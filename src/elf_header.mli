@@ -1,45 +1,33 @@
 
 exception Invalid_Elf;;
 
-val parse_class_endianness : string -> Archi.eclass * Endian.t;;
+val parse_class_endianness : string -> Elf_types.eclass * Elf_types.endianness;;
 
-module Make (A : Archi.Addr) (E : Endian.T) :
+module Make (A : Elf_types.Addr) (E : Elf_types.Endianness) :
 (sig
-    type t
-    val pretty : Format.formatter -> t -> unit
-    val parse : string -> t
+  val parse : Elf_types.eclass -> Elf_types.endianness -> string ->
+    Elf_types.elf_header
     module Strtab : sig
       val parse : string -> off:int -> size:int -> string
       val get : string -> int -> string
     end
     module Sh : sig
-      type entry
-      val pretty : Format.formatter -> entry -> unit
-      val parse : t -> string -> entry list
-      val get : string -> entry list -> entry
-      val offset : entry -> int
-      val size : entry -> int
-      val entry_size : entry -> int
-      val strtab : filename:string -> tablename:string -> entry list
-	-> string
+      val parse : Elf_types.elf_header -> string -> Elf_types.sh_entry list
+      val get : string -> Elf_types.sh_entry list -> Elf_types.sh_entry
+      val strtab : filename:string -> tablename:string ->
+	Elf_types.sh_entry list	-> string
     end
     module Ph : sig
-      type entry
-      val pretty : Format.formatter -> entry -> unit
-      val parse : t -> string -> entry list
+      val parse : Elf_types.elf_header -> string -> Elf_types.ph_entry list
     end
     module Symtbl : sig
-      type entry
-      val pretty : Format.formatter -> entry -> unit
       val parse : filename:string -> tablename:string -> strtab:string ->
-	Sh.entry list -> entry list
-      val get : string -> entry list -> entry
-      val value : entry -> int
-      val size : entry -> int
+	Elf_types.sh_entry list -> Elf_types.symtbl_entry list
+      val get : string -> Elf_types.symtbl_entry list -> Elf_types.symtbl_entry
     end
-    val machine : t -> Machine.t
     module Decode : sig
-      val decode : filename:string -> secname:string -> Machine.t ->
-	Sh.entry list -> Symtbl.entry list -> Machine.instr list
+      val decode : filename:string -> secname:string -> Elf_types.emachine ->
+	Elf_types.sh_entry list -> Elf_types.symtbl_entry list ->
+	Elf_types.instr list
     end
 end);;

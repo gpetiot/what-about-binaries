@@ -11,8 +11,8 @@ let () =
 	let module FH = Elf_header.Make(A)(E) in
 
 	(* file header *)
-	let fh = FH.parse filename in
-	Format.printf "ELF Header:\n%a" FH.pretty fh;
+	let fh = FH.parse eclass edata filename in
+	Format.printf "ELF Header:\n%a" Print.elf_header fh;
 
 	(* section header *)
 	let shl = FH.Sh.parse fh filename in
@@ -20,8 +20,7 @@ let () =
 	Format.printf
 	  "  [Nr] Name              Type            Addr     Off    Size   ES \
 Flg Lk Inf Al\n";
-	List.iteri (fun i x -> Format.printf "  [%2i] %a" i FH.Sh.pretty x)
-	  shl;
+	List.iteri (fun i x -> Format.printf "  [%2i] %a" i Print.sh_entry x) shl;
 	Format.printf "\
 Key to Flags:\n\
 \  W (write), A (alloc), X (execute), M (merge), S (strings)\n\
@@ -33,7 +32,7 @@ Key to Flags:\n\
 	Format.printf "\nProgram Headers:\n";
 	Format.printf "  Type           Offset   VirtAddr   PhysAddr   FileSiz \
 MemSiz  Flg Align\n";
-	List.iter (fun x -> Format.printf "%a" FH.Ph.pretty x) phl;
+	List.iter (fun x -> Format.printf "%a" Print.ph_entry x) phl;
 	
 	(* dynamic symbol table *)
 	begin
@@ -47,7 +46,7 @@ MemSiz  Flg Align\n";
 	    Format.printf
 	      "   Num:    Value  Size Type    Bind   Vis      Ndx Name\n";
 	    List.iteri
-	      (fun i x -> Format.printf "%6i: %a" i FH.Symtbl.pretty x)
+	      (fun i x -> Format.printf "%6i: %a" i Print.symtbl_entry x)
 	      dsymtab
 	  with Not_found -> ()
 	end;
@@ -61,20 +60,19 @@ MemSiz  Flg Align\n";
 	Format.printf
 	  "   Num:    Value  Size Type    Bind   Vis      Ndx Name\n";
 	List.iteri
-	  (fun i x -> Format.printf "%6i: %a" i FH.Symtbl.pretty x)
+	  (fun i x -> Format.printf "%6i: %a" i Print.symtbl_entry x)
 	  symtab;
 
 	(* instructions *)
 	begin
 	  try
-	    let machine = FH.machine fh in
             let instrs =
-	      FH.Decode.decode ~filename ~secname:".text" machine shl symtab in
+	      FH.Decode.decode ~filename ~secname:".text" fh.ei_machine shl symtab in
 	    if instrs <> [] then
 	      begin
 		Format.printf "\nInstructions:\n";
 		List.iter
-		  (fun i -> Format.printf "%a" Machine.pretty_instr i) instrs
+		  (fun i -> Format.printf "%a" Print.instr i) instrs
 	      end
 	  with Not_found -> ()
 	end
