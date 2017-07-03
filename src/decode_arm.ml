@@ -79,3 +79,5 @@ let print_arch arch mode code =
     | 0 -> ();
     | _ -> printf "Failed to close handle";
 ;;
+
+let decode _ _ = let _arch = Capstone.CS_ARCH_ARM in [];;

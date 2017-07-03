@@ -271,8 +271,12 @@ module Make (A : Elf_types.Addr) (E : Elf_types.Endianness) = struct
 	      let buf = Buffer.create main_size in
 	      Buffer.add_channel buf chan main_size;
 	      let buf_str = Buffer.contents buf in
-	      let module I = (val (Machine.instr ei_machine)) in
-	      I.decode A.modes buf_str
+	      let decode_instrs = match ei_machine with
+		| ARM -> Decode_arm.decode
+		| X86 | X86_64 -> Decode_x86.decode
+		| _ -> failwith (Format.sprintf "Unsupported instruction set")
+	      in
+	      decode_instrs A.modes buf_str
 	    end
 	  else
 	    assert false; (* unreachable *)

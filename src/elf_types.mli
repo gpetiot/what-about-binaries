@@ -58,11 +58,6 @@ type emachine =
 
 type instr = Capstone.cs_insn0;;
 
-module type Instr =
-sig
-  val decode : Capstone.mode list -> string -> instr list
-end;;
-
 type endianness = LittleEndian | BigEndian;;
 
 module type Endianness =

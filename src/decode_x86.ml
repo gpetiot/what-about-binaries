@@ -99,3 +99,14 @@ let print_arch arch mode code syntax =
       | _ -> printf "Failed to close handle";
   )
 ;;
+
+let decode modes str =
+  let handle = Capstone.cs_open Capstone.CS_ARCH_X86 modes in
+  let _=
+    Capstone.cs_option handle Capstone.CS_OPT_DETAIL Capstone._CS_OPT_ON in
+  let instr = Capstone.cs_disasm handle str 0x1000L 0L in
+  (match Capstone.cs_close handle with
+  | 0 -> ()
+  | _ -> failwith "Failed to close handle");
+  instr
+;;

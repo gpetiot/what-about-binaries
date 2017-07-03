@@ -12,7 +12,6 @@ SOURCES=src/print.ml \
 	src/decode.ml \
 	src/archi.ml \
 	src/endian.ml \
-	src/machine.ml \
 	src/decode_arm.ml \
 	src/decode_x86.ml \
 	src/elf_header.ml
