@@ -10,7 +10,7 @@ CAPSTONE_OBJ=\
 
 SOURCES=src/print.ml \
 	src/decode.ml \
-	src/archi.ml \
+	src/eclass_conf.ml \
 	src/decode_arm.ml \
 	src/decode_x86.ml \
 	src/elf_header.ml

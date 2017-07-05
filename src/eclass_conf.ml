@@ -47,7 +47,7 @@ let shndex_offset = other_offset + other_size
 
 let modes = [Capstone.CS_MODE_32]
     
-let eclass_32_conf = {
+let conf_32 = {
   eclass; modes;
   header_size; addr_size; type_size; offset_size; vaddr_size; paddr_size;
   filesz_size; memsz_size; flags_size; align_size; name_size; value_size;
@@ -103,7 +103,7 @@ let size_offset = value_offset + value_size
   
 let modes = [Capstone.CS_MODE_64]
     
-let eclass_64_conf = {
+let conf_64 = {
   eclass; modes;
   header_size; addr_size; type_size; offset_size; vaddr_size; paddr_size;
   filesz_size; memsz_size; flags_size; align_size; name_size; value_size;

@@ -7,8 +7,8 @@ let () =
       try
 	let eclass, edata = Elf_header.parse_class_endianness filename in
 	let eclass_conf = match eclass with
-	  | Elf_types.C32 -> Archi.eclass_32_conf
-	  | Elf_types.C64 -> Archi.eclass_64_conf
+	  | Elf_types.C32 -> eclass_conf.conf_32
+	  | Elf_types.C64 -> eclass_conf.conf_64
 	in
 
 	(* file header *)
