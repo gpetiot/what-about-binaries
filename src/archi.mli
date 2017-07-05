@@ -1,2 +1,3 @@
 
-val addr: Elf_types.eclass -> (module Elf_types.Addr);;
+val eclass_32_conf : Elf_types.eclass_conf;;
+val eclass_64_conf : Elf_types.eclass_conf;;

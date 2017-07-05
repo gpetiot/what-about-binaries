@@ -3,10 +3,49 @@ type etype = TNone | Relocatable | Executable | Shared | Core | Loproc | Hiproc;
 
 type eclass = C32 | C64;;
 
+type eclass_conf = {
+  eclass : eclass;
+  addr_size : int;
+  header_size : int;
+  modes : Capstone.mode list;
+  (* program header field sizes *)
+  type_size : int;
+  offset_size : int;
+  vaddr_size : int;
+  paddr_size : int;
+  filesz_size : int;
+  memsz_size : int;
+  flags_size : int;
+  align_size : int;
+  (* program header field offsets *)
+  type_offset : int;
+  offset_offset : int;
+  vaddr_offset : int;
+  paddr_offset : int;
+  filesz_offset : int;
+  memsz_offset : int;
+  flags_offset : int;
+  align_offset : int;
+  (* symbol field sizes *)
+  name_size : int;
+  value_size : int;
+  size_size : int;
+  info_size : int;
+  other_size : int;
+  shndex_size : int;
+  (* symbol field offsets *)
+  name_offset : int;
+  info_offset : int;
+  other_offset : int;
+  shndex_offset : int;
+  value_offset : int;
+  size_offset : int;
+};;
+
 module type Addr =
 sig
   val eclass : eclass
-  val size : int
+  val addr_size : int
   val header_size : int
   val modes : Capstone.mode list
   (* program header field sizes *)
@@ -59,12 +98,6 @@ type emachine =
 type instr = Capstone.cs_insn0;;
 
 type endianness = LittleEndian | BigEndian;;
-
-module type Endianness =
-sig
-  val edata : endianness
-  val order : 'a list -> 'a list
-end;;
 
 type sym_visibility = Default | Hidden
 type sym_ndx = Abs | Und | Int of int

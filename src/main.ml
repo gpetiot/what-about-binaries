@@ -6,16 +6,17 @@ let () =
     if Sys.file_exists filename then
       try
 	let eclass, edata = Elf_header.parse_class_endianness filename in
-	let module A = (val (Archi.addr eclass)) in
-	let module E = (val (Endian.endianness edata)) in
-	let module FH = Elf_header.Make(A)(E) in
+	let eclass_conf = match eclass with
+	  | Elf_types.C32 -> Archi.eclass_32_conf
+	  | Elf_types.C64 -> Archi.eclass_64_conf
+	in
 
 	(* file header *)
-	let fh = FH.parse eclass edata filename in
+	let fh = Elf_header.parse_elf_header eclass_conf edata filename in
 	Format.printf "ELF Header:\n%a" Print.elf_header fh;
 
 	(* section header *)
-	let shl = FH.Sh.parse fh filename in
+	let shl = Elf_header.parse_section_header edata eclass_conf fh filename in
 	Format.printf "\nSection Headers:\n";
 	Format.printf
 	  "  [Nr] Name              Type            Addr     Off    Size   ES \
@@ -28,7 +29,7 @@ Key to Flags:\n\
 \  O (extra OS processing required) o (OS specific), p (processor specific)\n";
 
 	(* program header *)
-	let phl = FH.Ph.parse fh filename in
+	let phl = Elf_header.parse_program_header edata eclass_conf fh filename in
 	Format.printf "\nProgram Headers:\n";
 	Format.printf "  Type           Offset   VirtAddr   PhysAddr   FileSiz \
 MemSiz  Flg Align\n";
@@ -37,9 +38,12 @@ MemSiz  Flg Align\n";
 	(* dynamic symbol table *)
 	begin
 	  try
-	    let dstrtab = FH.Sh.strtab ~filename ~tablename:".dynstr" shl in
+	    let dstrtab =
+	      Elf_header.strtab ~filename ~tablename:".dynstr" shl edata in
 	    let dsymtab =
-	      FH.Symtbl.parse ~filename ~tablename:".dynsym" ~strtab:dstrtab shl
+	      Elf_header.parse_symtbl
+		~filename ~tablename:".dynsym" ~strtab:dstrtab
+		shl edata eclass_conf
 	    in
 	    Format.printf "\nSymbol table '.dynsym' contains %i entries:\n"
 	      (List.length dsymtab);
@@ -52,9 +56,11 @@ MemSiz  Flg Align\n";
 	end;
 
 	(* symbol table *)
-	let strtab = FH.Sh.strtab ~filename ~tablename:".strtab" shl in
+	let strtab =
+	  Elf_header.strtab ~filename ~tablename:".strtab" shl edata in
 	let symtab =
-	  FH.Symtbl.parse ~filename ~tablename:".symtab" ~strtab shl in
+	  Elf_header.parse_symtbl ~filename ~tablename:".symtab" ~strtab
+	    shl edata eclass_conf in
 	Format.printf "\nSymbol table '.symtab' contains %i entries:\n"
 	  (List.length symtab);
 	Format.printf
@@ -67,7 +73,9 @@ MemSiz  Flg Align\n";
 	begin
 	  try
             let instrs =
-	      FH.Decode.decode ~filename ~secname:".text" fh shl symtab in
+	      Elf_header.decode_instr
+		~filename ~secname:".text" fh eclass_conf shl symtab
+	    in
 	    if instrs <> [] then
 	      begin
 		Format.printf "\nInstructions:\n";
