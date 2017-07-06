@@ -13,7 +13,7 @@ SOURCES=src/print.ml \
 	src/eclass_conf.ml \
 	src/decode_arm.ml \
 	src/decode_x86.ml \
-	src/elf_header.ml
+	src/parse.ml
 
 EXEC_OPT=wab
 CAMLC=ocamlc

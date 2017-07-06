@@ -4,7 +4,7 @@ exception Invalid_Elf
 open Elf_types
 
 
-let parse_class_endianness filename =
+let class_endianness filename =
   let chan = open_in_bin filename in
   let buf = Buffer.create 6 in
   try
@@ -28,7 +28,7 @@ let multi_bytes endianness buf off nb =
     | x ->
        try aux ((Buffer.nth buf (off+x))::ret) (x+1)
        with Invalid_argument _ ->
-	 failwith (Printf.sprintf "Elf_header.multi_bytes %i %i" off nb)
+	 failwith (Printf.sprintf "Parse.multi_bytes %i %i" off nb)
   in
   let l = List.rev_map int_of_char (aux [] 0) in
   order l
@@ -43,12 +43,7 @@ let multi_bytes_int endianness buf off nb =
   aux 0 0 (multi_bytes endianness buf off nb)
 ;;
 
-let get_strtab snames index =
-  let end_index = String.index_from snames index (char_of_int 0) in
-  String.sub snames index (end_index - index)
-;;
-    
-let parse_elf_header eclass_conf ei_endian filename =
+let elf_header eclass_conf ei_endian filename =
   let multi_bytes_int = multi_bytes_int ei_endian in
   let chan = open_in_bin filename in
   let buf = Buffer.create eclass_conf.header_size in
@@ -83,7 +78,7 @@ let parse_elf_header eclass_conf ei_endian filename =
     raise Invalid_Elf
 ;;
   
-let parse_strtab filename ~off ~size endianness =
+let get_strtab_content filename ~off ~size endianness =
   let chan = open_in_bin filename in
   let rec aux chan i =
     if i < off then
@@ -104,7 +99,7 @@ let parse_strtab filename ~off ~size endianness =
     raise Invalid_Elf
 ;;
 
-let parse_program_header endianness eclass_conf header filename =
+let program_header endianness eclass_conf header filename =
   let multi_bytes_int = multi_bytes_int endianness in
   let chan = open_in_bin filename in
   let rec aux chan i ret =
@@ -145,14 +140,7 @@ let parse_program_header endianness eclass_conf header filename =
     raise Invalid_Elf
 ;;
 
-let strtab ~filename ~tablename sections endianness =
-  let strtab = List.find (fun x -> x.sh_name = tablename) sections in
-  let off = strtab.sh_off in
-  let size = strtab.sh_size in
-  parse_strtab filename ~off ~size endianness
-;;
-
-let parse_section_header endianness eclass_conf header filename =
+let section_header endianness eclass_conf header filename =
   let multi_bytes_int = multi_bytes_int endianness in
   let chan = open_in_bin filename in
   let rec aux chan i ret =
@@ -187,10 +175,11 @@ let parse_section_header endianness eclass_conf header filename =
     let r = List.rev (aux chan 0 []) in
     close_in chan;
     let _,_,_,_,off,size,_,_,_,_ = List.nth r header.ei_shstrndx in
-    let shnames = parse_strtab filename ~off ~size endianness in
+    let shnames = get_strtab_content filename ~off ~size endianness in
     let name_section (id,sh_type,sh_flags,sh_addr,sh_off,sh_size,sh_link,
 		      sh_info,sh_addralign,sh_entsize) =
-      let sh_name = get_strtab shnames id in
+      let end_index = String.index_from shnames id (char_of_int 0) in
+      let sh_name = String.sub shnames id (end_index - id) in
       { sh_name; sh_type; sh_flags; sh_addr; sh_off; sh_size; sh_link;
 	sh_info; sh_addralign; sh_entsize }
     in
@@ -201,12 +190,16 @@ let parse_section_header endianness eclass_conf header filename =
     raise Invalid_Elf
 ;;
     
-let parse_symtbl ~filename ~tablename ~strtab sections endianness eclass_conf =
+let symtbl ~filename ~symtbl_name ~strtab_name sections endianness eclass_conf =
+  let strtab_section = List.find (fun x -> x.sh_name = strtab_name) sections in
+  let off = strtab_section.sh_off in
+  let size = strtab_section.sh_size in
+  let strtab_content = get_strtab_content filename ~off ~size endianness in
   let multi_bytes_int = multi_bytes_int endianness in
-  let section = List.find (fun x -> x.sh_name = tablename) sections in
-  let offset = section.sh_off in
-  let size = section.sh_size in
-  let entry_size = section.sh_entsize in
+  let symtbl_section = List.find (fun x -> x.sh_name = symtbl_name) sections in
+  let offset = symtbl_section.sh_off in
+  let size = symtbl_section.sh_size in
+  let entry_size = symtbl_section.sh_entsize in
   let chan = open_in_bin filename in
   let rec aux chan i ret =
     let sbeg = offset in
@@ -225,7 +218,8 @@ let parse_symtbl ~filename ~tablename ~strtab sections endianness eclass_conf =
 	  let info = multi_bytes_int buf eclass_conf.info_offset eclass_conf.info_size in
 	  let other = multi_bytes_int buf eclass_conf.other_offset eclass_conf.other_size in
 	  let shndex = multi_bytes_int buf eclass_conf.shndex_offset eclass_conf.shndex_size in
-	  let name = get_strtab strtab name_id in
+	  let end_index = String.index_from strtab_content name_id (char_of_int 0) in
+	  let name = String.sub strtab_content name_id (end_index - name_id) in
 	  let bind = Decode.sym_binding (info lsr 4) in
 	  let symtype = Decode.sym_type (info land 15) in
 	  let vis = Decode.sym_visibility other in
@@ -246,7 +240,7 @@ let parse_symtbl ~filename ~tablename ~strtab sections endianness eclass_conf =
     raise Invalid_Elf
 ;;
 
-let decode_instr ~filename ~secname {ei_machine} eclass_conf sections symbols =
+let instr ~filename ~secname {ei_machine} eclass_conf sections symbols =
   let section = List.find (fun x -> x.sh_name = secname) sections in
   let offset = section.sh_off in
   let _size = section.sh_size in
