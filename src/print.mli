@@ -27,6 +27,12 @@ val eclass : Format.formatter -> Elf_types.eclass -> unit;;
 
 val ph_entry : Format.formatter -> Elf_types.ph_entry -> unit;;
 
+val ph : Format.formatter -> Elf_types.ph_entry list -> unit;;
+
 val sh_entry : Format.formatter -> Elf_types.sh_entry -> unit;;
 
+val sh : Format.formatter -> Elf_types.sh_entry list -> unit;;
+
 val symtbl_entry : Format.formatter -> Elf_types.symtbl_entry -> unit;;
+
+val symtbl : string -> Format.formatter -> Elf_types.symtbl_entry list -> unit;;

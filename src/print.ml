@@ -213,6 +213,13 @@ let ph_entry fmt e =
     e.ph_align
 ;;
 
+let ph fmt x =
+  Format.printf "\nProgram Headers:\n";
+  Format.printf "  Type           Offset   VirtAddr   PhysAddr   FileSiz \
+MemSiz  Flg Align\n";
+  List.iter (fun e -> Format.printf "%a" ph_entry e) x
+;;
+
 let sh_entry fmt e =
   Format.fprintf
     fmt
@@ -229,6 +236,14 @@ let sh_entry fmt e =
     e.sh_addralign
 ;;
 
+let sh fmt x =
+  Format.printf "\nSection Headers:\n";
+  Format.printf
+    "  [Nr] Name              Type            Addr     Off    Size   ES \
+Flg Lk Inf Al\n";
+  List.iteri (fun i e -> Format.printf "  [%2i] %a" i sh_entry e) x
+;;
+
 let symtbl_entry fmt x =
   Format.fprintf
     fmt "%08x  %4i %a %a %a %a %s\n"
@@ -239,4 +254,10 @@ let symtbl_entry fmt x =
     sym_visibility x.vis
     sym_ndx x.ndx
     x.name
+;;
+
+let symtbl name fmt x =
+  Format.printf"\nSymbol table '%s' contains %i entries:\n"name (List.length x);
+  Format.printf "   Num:    Value  Size Type    Bind   Vis      Ndx Name\n";
+  List.iteri (fun i e -> Format.printf "%6i: %a" i symtbl_entry e) x
 ;;
