@@ -234,6 +234,17 @@ let symtbl ~filename ~symtbl_name ~strtab_name sections endianness conf =
     raise Invalid_Elf
 ;;
 
+let x86_instr modes str =
+  let handle = Capstone.cs_open Capstone.CS_ARCH_X86 modes in
+  let _ =
+    Capstone.cs_option
+      handle Capstone.CS_OPT_DETAIL Capstone._CS_OPT_ON in
+  let instr = Capstone.cs_disasm handle str 0x1000L 0L in
+  if Capstone.cs_close handle <> 0 then
+    failwith "Failed to close handle";
+  instr
+;;
+
 let instr ~filename ~secname {ei_machine} eclass_conf sections symbols =
   let section = List.find (fun x -> x.sh_name = secname) sections in
   let main = List.find (fun x -> x.name = "main") symbols in
@@ -245,17 +256,12 @@ let instr ~filename ~secname {ei_machine} eclass_conf sections symbols =
       aux chan (i+1)
     else
       if i < beg + main.size then
-	begin
-	  let buf = Buffer.create main.size in
-	  Buffer.add_channel buf chan main.size;
-	  let buf_str = Buffer.contents buf in
-	  let decode_instrs = match ei_machine with
-	    | ARM -> Decode_arm.decode
-	    | X86 | X86_64 -> Decode_x86.decode
-	    | _ -> failwith (Format.sprintf "Unsupported instruction set")
-	  in
-	  decode_instrs eclass_conf.modes buf_str
-	end
+	let buf = Buffer.create main.size in
+	Buffer.add_channel buf chan main.size;
+	let buf_str = Buffer.contents buf in
+	match ei_machine with
+	| X86 | X86_64 -> x86_instr eclass_conf.modes buf_str
+	| _ -> failwith "Unsupported instruction set"
       else
 	assert false; (* unreachable *)
   in

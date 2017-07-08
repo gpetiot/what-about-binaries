@@ -11,8 +11,6 @@ CAPSTONE_OBJ=\
 SOURCES=src/print.ml \
 	src/decode.ml \
 	src/eclass_conf.ml \
-	src/decode_arm.ml \
-	src/decode_x86.ml \
 	src/parse.ml
 
 EXEC_OPT=wab
