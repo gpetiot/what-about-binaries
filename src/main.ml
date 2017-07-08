@@ -45,7 +45,7 @@ Key to Flags:\n\
 	begin
 	  try
             let instrs =
-	      Parse.instr ~filename ~secname:".text" fh eclass_conf shl symtab
+	      Parse.instrs ~filename ~secname:".text" fh eclass_conf shl symtab
 	    in
 	    if instrs <> [] then
 	      begin

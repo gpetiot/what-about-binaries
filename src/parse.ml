@@ -234,7 +234,7 @@ let symtbl ~filename ~symtbl_name ~strtab_name sections endianness conf =
     raise Invalid_Elf
 ;;
 
-let x86_instr modes str =
+let x86_instrs modes str =
   let handle = Capstone.cs_open Capstone.CS_ARCH_X86 modes in
   let _ =
     Capstone.cs_option
@@ -245,7 +245,7 @@ let x86_instr modes str =
   instr
 ;;
 
-let instr ~filename ~secname {ei_machine} eclass_conf sections symbols =
+let instrs ~filename ~secname {ei_machine} eclass_conf sections symbols =
   let section = List.find (fun x -> x.sh_name = secname) sections in
   let main = List.find (fun x -> x.name = "main") symbols in
   let chan = open_in_bin filename in
@@ -260,7 +260,7 @@ let instr ~filename ~secname {ei_machine} eclass_conf sections symbols =
 	Buffer.add_channel buf chan main.size;
 	let buf_str = Buffer.contents buf in
 	match ei_machine with
-	| X86 | X86_64 -> x86_instr eclass_conf.modes buf_str
+	| X86 | X86_64 -> x86_instrs eclass_conf.modes buf_str
 	| _ -> failwith "Unsupported instruction set"
       else
 	assert false; (* unreachable *)
