@@ -1,6 +1,4 @@
 
-exception Invalid_Elf
-
 open Elf_types
 
 
@@ -17,8 +15,7 @@ let class_endianness filename =
     Decode.endianness (int_of_char (Buffer.nth buf 5))
   with exn ->
     close_in chan;
-    Format.printf "%s" (Printexc.to_string exn);
-    raise Invalid_Elf
+    raise exn
 ;;
 
 let bytes endianness buf off nb =
@@ -28,7 +25,7 @@ let bytes endianness buf off nb =
     | x ->
        try aux ((Buffer.nth buf (off+x))::ret) (x+1)
        with Invalid_argument _ ->
-	 failwith (Printf.sprintf "Parse.bytes %i %i" off nb)
+	 failwith (Printf.sprintf "Parse.bytes %i %i is invalid" off nb)
   in
   let l = List.rev_map int_of_char (aux [] 0) in
   order l
@@ -76,8 +73,7 @@ let elf_header eclass_conf ei_endian filename =
       ei_phentsize; ei_phnum;	ei_shentsize; ei_shnum; ei_shstrndx }
   with exn ->
     close_in chan;
-    Format.printf "%s" (Printexc.to_string exn);
-    raise Invalid_Elf
+    raise exn
 ;;
 
 let get_strtab_content filename ~off ~size endianness =
@@ -97,8 +93,7 @@ let get_strtab_content filename ~off ~size endianness =
     r
   with exn ->
     close_in chan;
-    Format.printf "%s" (Printexc.to_string exn);
-    raise Invalid_Elf
+    raise exn
 ;;
 
 let program_header endianness conf header filename =
@@ -134,8 +129,7 @@ let program_header endianness conf header filename =
     r
   with exn ->
     close_in chan;
-    Format.printf "%s" (Printexc.to_string exn);
-    raise Invalid_Elf
+    raise exn
 ;;
 
 let section_header endianness conf header filename =
@@ -183,8 +177,7 @@ let section_header endianness conf header filename =
     List.map name_section r
   with exn ->
     close_in chan;
-    Format.printf "%s" (Printexc.to_string exn);
-    raise Invalid_Elf
+    raise exn
 ;;
 
 let symtbl ~filename ~symtbl_name ~strtab_name sections endianness conf =
@@ -230,8 +223,7 @@ let symtbl ~filename ~symtbl_name ~strtab_name sections endianness conf =
     r
   with exn ->
     close_in chan;
-    Format.printf "%s" (Printexc.to_string exn);
-    raise Invalid_Elf
+    raise exn
 ;;
 
 let x86_instrs modes str =
@@ -241,7 +233,7 @@ let x86_instrs modes str =
       handle Capstone.CS_OPT_DETAIL Capstone._CS_OPT_ON in
   let instr = Capstone.cs_disasm handle str 0x1000L 0L in
   if Capstone.cs_close handle <> 0 then
-    failwith "Failed to close handle";
+    failwith "Decoding x86 instructions with Capstone: Failed to close handle";
   instr
 ;;
 
@@ -271,6 +263,5 @@ let instrs ~filename ~secname {ei_machine} eclass_conf sections symbols =
     instrs
   with exn ->
     close_in chan;
-    Format.printf "%s" (Printexc.to_string exn);
-    raise Invalid_Elf
+    raise exn
 ;;

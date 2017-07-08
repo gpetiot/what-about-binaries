@@ -55,7 +55,8 @@ Key to Flags:\n\
 	  with Not_found -> ()
 	end
       with
-	Parse.Invalid_Elf -> Format.printf "invalid ELF file !\n"
+      | Failure msg -> Format.printf "[wab] error: %s\n" msg
+      | exn -> Format.printf "[wab] error: %s\n" (Printexc.to_string exn)
     else
       Format.printf "%s does not exist !\n" filename
   else

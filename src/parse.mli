@@ -1,6 +1,4 @@
 
-exception Invalid_Elf;;
-
 val class_endianness : string -> Elf_types.eclass * Elf_types.endianness;;
 
 val elf_header : Elf_types.eclass_conf -> Elf_types.endianness ->

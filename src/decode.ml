@@ -9,13 +9,13 @@ let etype = function
   | 4 -> Core
   | 65280 -> Loproc
   | 65535 -> Hiproc
-  | x -> failwith (Format.sprintf "Decode.etype %i" x)
+  | x -> failwith (Format.sprintf "Decode.etype %i is invalid" x)
 ;;
 
 let eclass = function
   | 1 -> C32
   | 2 -> C64
-  | x -> failwith (Format.sprintf "Decode.eclass %i" x)
+  | x -> failwith (Format.sprintf "Decode.eclass %i is invalid" x)
 ;;
 
 let ph_type = function
@@ -41,7 +41,7 @@ let ph_type = function
   | 1879048194 -> Mips_options
   | 1879048195 -> Mips_abiflags
   | 2147483647 -> Hiproc
-  | x -> failwith (Format.sprintf "Decode.ph_type %i" x)
+  | x -> failwith (Format.sprintf "Decode.ph_type %i is invalid" x)
 ;;
 
 let sh_type = function
@@ -80,13 +80,13 @@ let sh_type = function
   | 2147483647 -> Hiproc
   | 2147483648 -> Louser
   | 4294967295 -> Hiuser
-  | x -> failwith (Format.sprintf "Decode.sh_type %i" x)
+  | x -> failwith (Format.sprintf "Decode.sh_type %i is invalid" x)
 ;;
 
 let sym_visibility = function
   | 0 -> Default
   | 2 -> Hidden
-  | x -> failwith (Format.sprintf "Decode.sym_visibility %i" x)
+  | x -> failwith (Format.sprintf "Decode.sym_visibility %i is invalid" x)
 ;;
 
 let sym_ndx = function
@@ -99,7 +99,7 @@ let sym_binding = function
   | 0 -> Local
   | 1 -> Global
   | 2 -> Weak
-  | x -> failwith (Format.sprintf "Decode.sym_binding %i" x)
+  | x -> failwith (Format.sprintf "Decode.sym_binding %i is invalid" x)
 ;;
 
 let sym_type = function
@@ -108,13 +108,13 @@ let sym_type = function
   | 2 -> Func
   | 3 -> Section
   | 4 -> File
-  | x -> failwith (Format.sprintf "Decode.sym_type %i" x)
+  | x -> failwith (Format.sprintf "Decode.sym_type %i is invalid" x)
 ;;
 
 let endianness = function
   | 1 -> LittleEndian
   | 2 -> BigEndian
-  | x -> failwith (Format.sprintf "Decode.endianness %i" x)
+  | x -> failwith (Format.sprintf "Decode.endianness %i is invalid" x)
 ;;
 
 let emachine i =
@@ -128,5 +128,5 @@ let emachine i =
   else if i = int_of_string "0x32" then IA64
   else if i = int_of_string "0x3E" then X86_64
   else if i = int_of_string "0xB7" then AArch64
-  else failwith (Format.sprintf "Decode.emachine %i" i)
+  else failwith (Format.sprintf "Decode.emachine %i is invalid" i)
 ;;

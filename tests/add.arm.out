@@ -180,3 +180,4 @@ Symbol table '.symtab' contains 105 entries:
    102: 00000000     0 NOTYPE  WEAK   DEFAULT  UND _ITM_registerTMCloneTable
    103: 00000000     0 FUNC    GLOBAL DEFAULT  UND abort@@GLIBC_2.4
    104: 0001029c     0 FUNC    GLOBAL DEFAULT   11 _init
+[wab] error: Unsupported instruction set
