@@ -44,13 +44,14 @@ Key to Flags:\n\
 
 	begin
 	  try
-            let instrs =
-	      Parse.instrs ~filename ~secname:".text" fh eclass_conf shl symtab
+            let functions =
+	      Parse.functions
+		~filename ~secname:".text" fh eclass_conf shl symtab
 	    in
-	    if instrs <> [] then
+	    if functions <> [] then
 	      begin
 		Format.printf "\nInstructions:\n";
-		List.iter (fun i -> Format.printf "%a" Print.instr i) instrs
+		List.iter (fun i -> Format.printf "%a" Print.funct i) functions
 	      end
 	  with Not_found -> ()
 	end

@@ -220,3 +220,5 @@ type symtbl_entry = {
   ndx : sym_ndx;
   name : string;
 };;
+
+type funct = symtbl_entry * instr list;;

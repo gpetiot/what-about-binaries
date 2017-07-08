@@ -142,10 +142,11 @@ Symbol table '.symtab' contains 65 entries:
     64: 004003e0     0 FUNC    GLOBAL DEFAULT   11 _init
 
 Instructions:
-0x1000	push	rbp
-0x1001	mov	rbp, rsp
-0x1004	mov	edi, 0x4005d4
-0x1009	call	0xeda
-0x100e	mov	eax, 0
-0x1013	pop	rbp
-0x1014	ret	
+main:
+  0x400536	push	rbp
+  0x400537	mov	rbp, rsp
+  0x40053a	mov	edi, 0x4005d4
+  0x40053f	call	0x400410
+  0x400544	mov	eax, 0
+  0x400549	pop	rbp
+  0x40054a	ret	

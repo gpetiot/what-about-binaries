@@ -226,42 +226,63 @@ let symtbl ~filename ~symtbl_name ~strtab_name sections endianness conf =
     raise exn
 ;;
 
-let x86_instrs modes str =
+let x86_instrs modes str off =
   let handle = Capstone.cs_open Capstone.CS_ARCH_X86 modes in
   let _ =
     Capstone.cs_option
       handle Capstone.CS_OPT_DETAIL Capstone._CS_OPT_ON in
-  let instr = Capstone.cs_disasm handle str 0x1000L 0L in
+  let instr = Capstone.cs_disasm handle str (Int64.of_int off) 0L in
   if Capstone.cs_close handle <> 0 then
     failwith "Decoding x86 instructions with Capstone: Failed to close handle";
   instr
 ;;
 
-let instrs ~filename ~secname {ei_machine} eclass_conf sections symbols =
+let functions ~filename ~secname elf_header eclass_conf sections symbols =
   let section = List.find (fun x -> x.sh_name = secname) sections in
-  let main = List.find (fun x -> x.name = "main") symbols in
-  let chan = open_in_bin filename in
-  let rec aux chan i =
-    let beg = main.value - section.sh_addr + section.sh_off in
-    if i < beg then
-      let _ = input_byte chan in
-      aux chan (i+1)
-    else
-      if i < beg + main.size then
-	let buf = Buffer.create main.size in
-	Buffer.add_channel buf chan main.size;
-	let buf_str = Buffer.contents buf in
-	match ei_machine with
-	| X86 | X86_64 -> x86_instrs eclass_conf.modes buf_str
-	| _ -> failwith "Unsupported instruction set"
-      else
-	assert false; (* unreachable *)
+  let symbol_starts_at addr x = x.value = addr && x.name <> "" in
+  let entry_symbol = List.find (fun s -> s.name = "main") symbols in
+  let rec aux_functions todo_functions done_functions =
+    match todo_functions with
+    | [] -> done_functions
+    | (symb :: t)
+	when List.exists (fun (s,_) -> s.value = symb.value) done_functions ->
+       aux_functions t done_functions
+    | symb :: t ->
+       let chan = open_in_bin filename in
+       let rec aux chan i =
+	 let beg = symb.value - section.sh_addr + section.sh_off in
+	 if i < beg then
+	   let _ = input_byte chan in
+	   aux chan (i+1)
+	 else
+	   if i < beg + symb.size then
+	     let buf = Buffer.create symb.size in
+	     Buffer.add_channel buf chan symb.size;
+	     let buf_str = Buffer.contents buf in
+	     let instrs = match elf_header.ei_machine with
+	       | X86 | X86_64 -> x86_instrs eclass_conf.modes buf_str symb.value
+	       | _ -> failwith "Unsupported instruction set"
+	     in
+	     let next_symbols = List.fold_left (fun acc instr ->
+	       if instr.Capstone.mnemonic = "call" then
+		 let off = int_of_string instr.Capstone.op_str in
+		 if List.exists (symbol_starts_at off) symbols then
+		   (List.find (symbol_starts_at off) symbols) :: acc
+		 else acc
+	       else acc
+	     ) [] instrs in
+	     instrs, next_symbols
+	   else
+	     assert false (* unreachable *)
+       in
+       try
+	 let instrs, next_symbols = aux chan 0 in
+	 let next_symbols = List.rev_append next_symbols t in
+	 close_in chan;
+	 aux_functions next_symbols ((symb, instrs) :: done_functions)
+       with exn ->
+	 close_in chan;
+	 raise exn
   in
-  try
-    let instrs = aux chan 0 in
-    close_in chan;
-    instrs
-  with exn ->
-    close_in chan;
-    raise exn
+  aux_functions [entry_symbol] []
 ;;

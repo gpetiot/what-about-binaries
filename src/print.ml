@@ -261,3 +261,8 @@ let symtbl name fmt x =
   Format.printf "   Num:    Value  Size Type    Bind   Vis      Ndx Name\n";
   List.iteri (fun i e -> Format.printf "%6i: %a" i symtbl_entry e) x
 ;;
+
+let funct fmt (symb, instrs) =
+  Format.fprintf fmt "%s:\n" symb.name;
+  List.iter (fun i -> Format.fprintf fmt "  %a" instr i) instrs
+;;
