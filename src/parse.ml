@@ -21,30 +21,30 @@ let class_endianness filename =
     raise Invalid_Elf
 ;;
 
-let multi_bytes endianness buf off nb =
+let bytes endianness buf off nb =
   let order = match endianness with BigEndian -> (fun x -> x) | _ -> List.rev in
   let rec aux ret = function
     | x when x = nb -> ret
     | x ->
        try aux ((Buffer.nth buf (off+x))::ret) (x+1)
        with Invalid_argument _ ->
-	 failwith (Printf.sprintf "Parse.multi_bytes %i %i" off nb)
+	 failwith (Printf.sprintf "Parse.bytes %i %i" off nb)
   in
   let l = List.rev_map int_of_char (aux [] 0) in
   order l
 ;;
 
-let multi_bytes_int endianness buf off nb =
+let int_bytes endianness buf off nb =
   let rec aux ret i = function
     | [] -> ret
     | h :: t ->
        aux (ret lor (h lsl (8*(nb-i-1)))) (i+1) t
   in
-  aux 0 0 (multi_bytes endianness buf off nb)
+  aux 0 0 (bytes endianness buf off nb)
 ;;
 
 let elf_header eclass_conf ei_endian filename =
-  let multi_bytes_int = multi_bytes_int ei_endian in
+  let int_bytes = int_bytes ei_endian in
   let chan = open_in_bin filename in
   let buf = Buffer.create eclass_conf.header_size in
   try
@@ -53,21 +53,23 @@ let elf_header eclass_conf ei_endian filename =
     let ei_version = int_of_char (Buffer.nth buf 6) in
     let ei_osabi = int_of_char (Buffer.nth buf 7) in
     let ei_abiversion = int_of_char (Buffer.nth buf 8) in
-    let ei_type = Decode.etype (multi_bytes_int buf 16 2) in
-    let ei_machine = Decode.emachine (multi_bytes_int buf 18 2) in
-    let version' = multi_bytes_int buf 20 4 in
+    let ei_type = Decode.etype (int_bytes buf 16 2) in
+    let ei_machine = Decode.emachine (int_bytes buf 18 2) in
+    let version' = int_bytes buf 20 4 in
     assert (ei_version = version');
-    let ei_entry = multi_bytes_int buf 24 eclass_conf.addr_size in
-    let ei_phoff = multi_bytes_int buf (24+eclass_conf.addr_size) eclass_conf.addr_size in
-    let ei_shoff = multi_bytes_int buf (24+eclass_conf.addr_size*2) eclass_conf.addr_size in
-    let ei_flags = multi_bytes_int buf (24+eclass_conf.addr_size*3) 4 in
-    let ei_ehsize = multi_bytes_int buf (28+eclass_conf.addr_size*3) 2 in
+    let ei_entry = int_bytes buf 24 eclass_conf.addr_size in
+    let ei_phoff =
+      int_bytes buf (24+eclass_conf.addr_size) eclass_conf.addr_size in
+    let ei_shoff =
+      int_bytes buf (24+eclass_conf.addr_size*2) eclass_conf.addr_size in
+    let ei_flags = int_bytes buf (24+eclass_conf.addr_size*3) 4 in
+    let ei_ehsize = int_bytes buf (28+eclass_conf.addr_size*3) 2 in
     assert (ei_ehsize = eclass_conf.header_size);
-    let ei_phentsize = multi_bytes_int buf (30+eclass_conf.addr_size*3) 2 in
-    let ei_phnum = multi_bytes_int buf (32+eclass_conf.addr_size*3) 2 in
-    let ei_shentsize = multi_bytes_int buf (34+eclass_conf.addr_size*3) 2 in
-    let ei_shnum = multi_bytes_int buf (36+eclass_conf.addr_size*3) 2 in
-    let ei_shstrndx = multi_bytes_int buf (38+eclass_conf.addr_size*3) 2 in
+    let ei_phentsize = int_bytes buf (30+eclass_conf.addr_size*3) 2 in
+    let ei_phnum = int_bytes buf (32+eclass_conf.addr_size*3) 2 in
+    let ei_shentsize = int_bytes buf (34+eclass_conf.addr_size*3) 2 in
+    let ei_shnum = int_bytes buf (36+eclass_conf.addr_size*3) 2 in
+    let ei_shstrndx = int_bytes buf (38+eclass_conf.addr_size*3) 2 in
     close_in chan;
     { ei_class; ei_endian; ei_version; ei_osabi; ei_abiversion; ei_type;
       ei_machine; ei_entry; ei_phoff; ei_shoff; ei_flags; ei_ehsize;
@@ -77,7 +79,7 @@ let elf_header eclass_conf ei_endian filename =
     Format.printf "%s" (Printexc.to_string exn);
     raise Invalid_Elf
 ;;
-  
+
 let get_strtab_content filename ~off ~size endianness =
   let chan = open_in_bin filename in
   let rec aux chan i =
@@ -99,32 +101,28 @@ let get_strtab_content filename ~off ~size endianness =
     raise Invalid_Elf
 ;;
 
-let program_header endianness eclass_conf header filename =
-  let multi_bytes_int = multi_bytes_int endianness in
+let program_header endianness conf header filename =
+  let int_bytes = int_bytes endianness in
   let chan = open_in_bin filename in
   let rec aux chan i ret =
-    let pbeg = header.ei_phoff in
-    let pend = header.ei_phoff + header.ei_phentsize * header.ei_phnum in
-    if i < pbeg then
+    if i < header.ei_phoff then
       let _ = input_byte chan in
       aux chan (i+1) ret
     else
-      if i < pend then
+      if i < header.ei_phoff + header.ei_phentsize * header.ei_phnum then
 	begin
 	  let buf = Buffer.create header.ei_phentsize in
 	  Buffer.add_channel buf chan header.ei_phentsize;
-	  let ph_type =
-	    Decode.ph_type
-	      (multi_bytes_int buf eclass_conf.type_offset eclass_conf.type_size) in
-	  let ph_off = multi_bytes_int buf eclass_conf.offset_offset eclass_conf.offset_size in
-	  let ph_vaddr = multi_bytes_int buf eclass_conf.vaddr_offset eclass_conf.vaddr_size in
-	  let ph_addr = multi_bytes_int buf eclass_conf.paddr_offset eclass_conf.paddr_size in
-	  let ph_filesz = multi_bytes_int buf eclass_conf.filesz_offset eclass_conf.filesz_size in
-	  let ph_memsz = multi_bytes_int buf eclass_conf.memsz_offset eclass_conf.memsz_size in
-	  let ph_flags = multi_bytes_int buf eclass_conf.flags_offset eclass_conf.flags_size in
-	  let ph_align = multi_bytes_int buf eclass_conf.align_offset eclass_conf.align_size in
-	  let ph = { ph_type; ph_off; ph_vaddr; ph_addr; ph_filesz;
-		     ph_memsz; ph_flags; ph_align } in
+	  let ph_type_int = int_bytes buf conf.type_offset conf.type_size in
+	  let ph = {
+	    ph_type = Decode.ph_type ph_type_int;
+	    ph_off = int_bytes buf conf.offset_offset conf.offset_size;
+	    ph_vaddr = int_bytes buf conf.vaddr_offset conf.vaddr_size;
+	    ph_addr = int_bytes buf conf.paddr_offset conf.paddr_size;
+	    ph_filesz = int_bytes buf conf.filesz_offset conf.filesz_size;
+	    ph_memsz = int_bytes buf conf.memsz_offset conf.memsz_size;
+	    ph_flags = int_bytes buf conf.flags_offset conf.flags_size;
+	    ph_align = int_bytes buf conf.align_offset conf.align_size } in
 	  aux chan (i+header.ei_phentsize) (ph::ret)
 	end
       else
@@ -140,30 +138,29 @@ let program_header endianness eclass_conf header filename =
     raise Invalid_Elf
 ;;
 
-let section_header endianness eclass_conf header filename =
-  let multi_bytes_int = multi_bytes_int endianness in
+let section_header endianness conf header filename =
+  let int_bytes = int_bytes endianness in
   let chan = open_in_bin filename in
   let rec aux chan i ret =
-    let sbeg = header.ei_shoff in
-    let send = header.ei_shoff + header.ei_shentsize * header.ei_shnum in
-    if i < sbeg then
+    if i < header.ei_shoff then
       let _ = input_byte chan in
       aux chan (i+1) ret
     else
-      if i < send then
+      if i < header.ei_shoff + header.ei_shentsize * header.ei_shnum then
 	begin
 	  let buf = Buffer.create header.ei_shentsize in
 	  Buffer.add_channel buf chan header.ei_shentsize;
-	  let sh_name = multi_bytes_int buf 0 4 in
-	  let sh_type = Decode.sh_type (multi_bytes_int buf 4 4) in
-	  let sh_flags = multi_bytes_int buf 8 eclass_conf.addr_size in
-	  let sh_addr = multi_bytes_int buf (8+eclass_conf.addr_size) eclass_conf.addr_size in
-	  let sh_off = multi_bytes_int buf (8+eclass_conf.addr_size*2) eclass_conf.addr_size in
-	  let sh_size = multi_bytes_int buf (8+eclass_conf.addr_size*3) eclass_conf.addr_size in
-	  let sh_link = multi_bytes_int buf (8+eclass_conf.addr_size*4) 4 in
-	  let sh_info = multi_bytes_int buf (12+eclass_conf.addr_size*4) 4 in
-	  let sh_addralign = multi_bytes_int buf (16+eclass_conf.addr_size*4) eclass_conf.addr_size in
-	  let sh_entsize = multi_bytes_int buf (16+eclass_conf.addr_size*5) eclass_conf.addr_size in
+	  let sh_name = int_bytes buf 0 4 in
+	  let sh_type = Decode.sh_type (int_bytes buf 4 4) in
+	  let sh_flags = int_bytes buf 8 conf.addr_size in
+	  let sh_addr = int_bytes buf (8+conf.addr_size) conf.addr_size in
+	  let sh_off = int_bytes buf (8+conf.addr_size*2) conf.addr_size in
+	  let sh_size = int_bytes buf (8+conf.addr_size*3) conf.addr_size in
+	  let sh_link = int_bytes buf (8+conf.addr_size*4) 4 in
+	  let sh_info = int_bytes buf (12+conf.addr_size*4) 4 in
+	  let sh_addralign =
+	    int_bytes buf (16+conf.addr_size*4) conf.addr_size in
+	  let sh_entsize = int_bytes buf (16+conf.addr_size*5) conf.addr_size in
 	  let sh = sh_name, sh_type, sh_flags, sh_addr, sh_off, sh_size,
 	    sh_link, sh_info, sh_addralign, sh_entsize in
 	  aux chan (i+header.ei_shentsize) (sh::ret)
@@ -189,42 +186,39 @@ let section_header endianness eclass_conf header filename =
     Format.printf "%s" (Printexc.to_string exn);
     raise Invalid_Elf
 ;;
-    
-let symtbl ~filename ~symtbl_name ~strtab_name sections endianness eclass_conf =
+
+let symtbl ~filename ~symtbl_name ~strtab_name sections endianness conf =
   let strtab_section = List.find (fun x -> x.sh_name = strtab_name) sections in
   let off = strtab_section.sh_off in
   let size = strtab_section.sh_size in
   let strtab_content = get_strtab_content filename ~off ~size endianness in
-  let multi_bytes_int = multi_bytes_int endianness in
+  let int_bytes = int_bytes endianness in
   let symtbl_section = List.find (fun x -> x.sh_name = symtbl_name) sections in
-  let offset = symtbl_section.sh_off in
-  let size = symtbl_section.sh_size in
   let entry_size = symtbl_section.sh_entsize in
   let chan = open_in_bin filename in
   let rec aux chan i ret =
-    let sbeg = offset in
-    let send = offset+size in
-    if i < sbeg then
+    if i < symtbl_section.sh_off then
       let _ = input_byte chan in
       aux chan (i+1) ret
     else
-      if i < send then
+      if i < symtbl_section.sh_off + symtbl_section.sh_size then
 	begin
 	  let buf = Buffer.create entry_size in
 	  Buffer.add_channel buf chan entry_size;
-	  let name_id = multi_bytes_int buf eclass_conf.name_offset eclass_conf.name_size in
-	  let value = multi_bytes_int buf eclass_conf.value_offset eclass_conf.value_size in
-	  let size = multi_bytes_int buf eclass_conf.size_offset eclass_conf.size_size in
-	  let info = multi_bytes_int buf eclass_conf.info_offset eclass_conf.info_size in
-	  let other = multi_bytes_int buf eclass_conf.other_offset eclass_conf.other_size in
-	  let shndex = multi_bytes_int buf eclass_conf.shndex_offset eclass_conf.shndex_size in
-	  let end_index = String.index_from strtab_content name_id (char_of_int 0) in
-	  let name = String.sub strtab_content name_id (end_index - name_id) in
-	  let bind = Decode.sym_binding (info lsr 4) in
-	  let symtype = Decode.sym_type (info land 15) in
-	  let vis = Decode.sym_visibility other in
-	  let ndx = Decode.sym_ndx shndex in
-	  let symbol = {value; size; symtype; bind; vis; ndx; name} in
+	  let name_id = int_bytes buf conf.name_offset conf.name_size in
+	  let end_index =
+	    String.index_from strtab_content name_id (char_of_int 0) in
+	  let info = int_bytes buf conf.info_offset conf.info_size in
+	  let other = int_bytes buf conf.other_offset conf.other_size in
+	  let shndex = int_bytes buf conf.shndex_offset conf.shndex_size in
+	  let symbol = {
+	    name = String.sub strtab_content name_id (end_index - name_id);
+	    value = int_bytes buf conf.value_offset conf.value_size;
+	    size = int_bytes buf conf.size_offset conf.size_size;
+	    bind = Decode.sym_binding (info lsr 4);
+	    symtype = Decode.sym_type (info land 15);
+	    vis = Decode.sym_visibility other;
+	    ndx = Decode.sym_ndx shndex } in
 	  aux chan (i+entry_size) (symbol::ret)
 	end
       else
@@ -242,24 +236,18 @@ let symtbl ~filename ~symtbl_name ~strtab_name sections endianness eclass_conf =
 
 let instr ~filename ~secname {ei_machine} eclass_conf sections symbols =
   let section = List.find (fun x -> x.sh_name = secname) sections in
-  let offset = section.sh_off in
-  let _size = section.sh_size in
-  let start_addr = section.sh_addr in
   let main = List.find (fun x -> x.name = "main") symbols in
-  let main_value = main.value in
-  let main_size = main.size in
   let chan = open_in_bin filename in
   let rec aux chan i =
-    let sbeg = main_value - start_addr + offset in
-    let send = sbeg + main_size in
-    if i < sbeg then
+    let beg = main.value - section.sh_addr + section.sh_off in
+    if i < beg then
       let _ = input_byte chan in
       aux chan (i+1)
     else
-      if i < send then
+      if i < beg + main.size then
 	begin
-	  let buf = Buffer.create main_size in
-	  Buffer.add_channel buf chan main_size;
+	  let buf = Buffer.create main.size in
+	  Buffer.add_channel buf chan main.size;
 	  let buf_str = Buffer.contents buf in
 	  let decode_instrs = match ei_machine with
 	    | ARM -> Decode_arm.decode
