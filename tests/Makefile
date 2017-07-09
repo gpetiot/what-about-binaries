@@ -4,7 +4,8 @@ FILES=\
 	hello.x86_64 \
 	verifyPIN_A.axf \
 	add.arm \
-	add.x86_64
+	add.x86_64 \
+	calls.x86_64
 
 all: tests
 
