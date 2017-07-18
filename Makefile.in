@@ -32,16 +32,16 @@ HEADERS=src/elf_types.mli $(SOURCES:.ml=.mli)
 all: $(EXEC_OPT)
 
 $(EXEC_OPT): $(HEADERS:.mli=.cmi) $(OPTOBJS) src/main.cmx $(CAPSTONE_OBJ)
-	$(CAMLOPT) -I src -o $@ $(LIBS:.cma=.cmxa) $(CAPSTONE_OBJ) $(OPTOBJS) src/main.cmx
+	@$(CAMLOPT) -I src -o $@ $(LIBS:.cma=.cmxa) $(CAPSTONE_OBJ) $(OPTOBJS) src/main.cmx
 
 src/main.cmx: src/main.ml
-	$(CAMLOPT) -I src -c -annot $(LIBS:.cma=.cmxa) $<
+	@$(CAMLOPT) -I src -c -annot $(LIBS:.cma=.cmxa) $<
 
 src/%.cmi: src/%.mli
-	$(CAMLC) -I src -c -annot $(LIBS:.cma=.cmxa) $<
+	@$(CAMLC) -I src -c -annot $(LIBS:.cma=.cmxa) $<
 
 src/%.cmx: src/%.ml src/%.cmi
-	$(CAMLOPT) -I src -c -annot $(LIBS:.cma=.cmxa) $<
+	@$(CAMLOPT) -I src -c -annot $(LIBS:.cma=.cmxa) $<
 
 .PHONY: clean
 clean:
