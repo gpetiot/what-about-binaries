@@ -286,3 +286,35 @@ let functions ~filename ~secname elf_header eclass_conf sections symbols =
   in
   aux_functions [entry_symbol] []
 ;;
+
+let progbits_section ~filename section elf_header conf =
+  let entry_size = section.sh_entsize in
+  let chan = open_in_bin filename in
+  let rec aux chan i ret =
+    if i < section.sh_off then
+      let _ = input_byte chan in
+      aux chan (i+1) ret
+    else
+      if i < section.sh_off + section.sh_size then
+	begin
+	  let buf = Buffer.create entry_size in
+	  Buffer.add_channel buf chan entry_size;
+	  let buf_str = Buffer.contents buf in
+	  let start_off = section.sh_addr - section.sh_off + i in
+	  let instrs = match elf_header.ei_machine with
+	    | X86 | X86_64 -> x86_instrs conf.modes buf_str start_off
+	    | _ -> failwith "Unsupported instruction set"
+	  in
+	  aux chan (i+entry_size) ((start_off, instrs) :: ret)
+	end
+      else
+	ret
+  in
+  try
+    let r = List.rev (aux chan 0 []) in
+    close_in chan;
+    r
+  with exn ->
+    close_in chan;
+    raise exn
+;;
