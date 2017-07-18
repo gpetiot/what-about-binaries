@@ -1,8 +1,5 @@
 
 # WAB: What About Binaries
 
-Features:
-* Reading ELF binaries
-* Decoding the instructions (using *Capstone*)
-Soon:
-* Various analyses
+Yet another binary analyzer.
+This is an educational project, do not expect too much.
