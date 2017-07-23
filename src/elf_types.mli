@@ -171,7 +171,7 @@ type sh_entry = {
   sh_entsize : int;
 };;
 
-type symtbl_entry = {
+type symbol = {
   value : int;
   size : int;
   symtype : sym_type;
@@ -181,7 +181,7 @@ type symtbl_entry = {
   name : string;
 };;
 
-type funct = symtbl_entry * capstone_instr list;;
+type funct = symbol * capstone_instr list;;
 
 type op =
   | Add

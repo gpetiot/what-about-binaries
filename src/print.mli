@@ -33,8 +33,8 @@ val sh_entry : Format.formatter -> Elf_types.sh_entry -> unit;;
 
 val sh : Format.formatter -> Elf_types.sh_entry list -> unit;;
 
-val symtbl_entry : Format.formatter -> Elf_types.symtbl_entry -> unit;;
+val symbol : Format.formatter -> Elf_types.symbol -> unit;;
 
-val symtbl : string -> Format.formatter -> Elf_types.symtbl_entry list -> unit;;
+val symtbl : string -> Format.formatter -> Elf_types.symbol list -> unit;;
 
 val funct : Format.formatter -> Elf_types.funct -> unit;;

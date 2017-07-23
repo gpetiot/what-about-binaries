@@ -244,7 +244,7 @@ Flg Lk Inf Al\n";
   List.iteri (fun i e -> Format.printf "  [%2i] %a" i sh_entry e) x
 ;;
 
-let symtbl_entry fmt x =
+let symbol fmt x =
   Format.fprintf
     fmt "%08x  %4i %a %a %a %a %s\n"
     x.value
@@ -259,7 +259,7 @@ let symtbl_entry fmt x =
 let symtbl name fmt x =
   Format.printf"\nSymbol table '%s' contains %i entries:\n"name (List.length x);
   Format.printf "   Num:    Value  Size Type    Bind   Vis      Ndx Name\n";
-  List.iteri (fun i e -> Format.printf "%6i: %a" i symtbl_entry e) x
+  List.iteri (fun i e -> Format.printf "%6i: %a" i symbol e) x
 ;;
 
 let funct fmt (symb, instrs) =
