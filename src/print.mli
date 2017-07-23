@@ -19,7 +19,7 @@ val endianness: Format.formatter -> Elf_types.endianness -> unit;;
 
 val emachine : Format.formatter -> Elf_types.emachine -> unit;;
 
-val instr : Format.formatter -> Elf_types.instr -> unit;;
+val capstone_instr : Format.formatter -> Elf_types.capstone_instr -> unit;;
 
 val elf_header : Format.formatter -> Elf_types.elf_header -> unit;;
 

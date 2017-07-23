@@ -55,7 +55,7 @@ type emachine =
   | AArch64
 ;;
 
-type instr = Capstone.cs_insn0;;
+type capstone_instr = Capstone.cs_insn0;;
 
 type endianness = LittleEndian | BigEndian;;
 
@@ -181,4 +181,38 @@ type symtbl_entry = {
   name : string;
 };;
 
-type funct = symtbl_entry * instr list;;
+type funct = symtbl_entry * capstone_instr list;;
+
+type op =
+  | Add
+  | Sub
+  | Mul
+  | Div
+  | And
+  | Or
+  | Xor
+;;
+
+type reg =
+  | Eax
+  | Edx
+  | Rbp (* base pointer, which points to the base of the current stack frame *)
+  | Rsp (* stack pointer, which points to the top of the current stack frame *)
+  | Rip (* instruction pointer, which points to the next instruction *)
+
+type mov_value =
+  | Reg of reg
+  | RegOff of reg * int
+  | Addr of int
+  | Value of int
+;;
+
+type instr =
+  | Nop      of int (* @ *)
+  | Push     of int (* @ *) * reg
+  | Pop      of int (* @ *) * reg
+  | Call     of int (* @ *) * int (* @ callee *)
+  | Op       of int (* @ *) * op * reg * reg
+  | Mov      of int (* @ *) * reg * mov_value
+  | Ret      of int (* @ *)
+;;

@@ -143,7 +143,7 @@ let to_string = function
 ;;
 let emachine fmt x = Format.fprintf fmt "%s" (to_string x);;
 
-let instr fmt insn =
+let capstone_instr fmt insn =
   Format.fprintf fmt "0x%x\t%s\t%s\n"
     insn.Capstone.address insn.Capstone.mnemonic insn.Capstone.op_str;
 ;;
@@ -264,5 +264,5 @@ let symtbl name fmt x =
 
 let funct fmt (symb, instrs) =
   Format.fprintf fmt "%s:\n" symb.name;
-  List.iter (fun i -> Format.fprintf fmt "  %a" instr i) instrs
+  List.iter (fun i -> Format.fprintf fmt "  %a" capstone_instr i) instrs
 ;;

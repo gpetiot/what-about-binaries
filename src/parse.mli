@@ -21,7 +21,7 @@ val symtbl : filename:string -> symtbl_name:string -> strtab_name:string ->
 (* unused *)
 val progbits_section : filename:string ->
   Elf_types.sh_entry -> Elf_types.elf_header -> Elf_types.eclass_conf ->
-  (int * Elf_types.instr list) list
+  (int * Elf_types.capstone_instr list) list
 ;;
   
 val functions : filename:string -> secname:string -> Elf_types.elf_header ->
