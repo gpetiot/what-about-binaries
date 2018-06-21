@@ -11,15 +11,6 @@ if test "$OCAMLOPT" = "no"; then
   AC_MSG_ERROR([You must install the OCaml compiler])
 fi
 
-if test "$OCAMLDEP" = "no"; then
-  AC_MSG_WARN([Cannot find ocamldep.])
-fi
-
-AC_PROG_CAMLP4
-if test "$CAMLP4" = "no"; then
-  AC_MSG_ERROR([Cannot find camlp4.])
-fi
-
 AC_PROG_FINDLIB
 if test "$OCAMLFIND" = "no"; then
   AC_MSG_ERROR([You must install OCaml findlib (the ocamlfind command)])
