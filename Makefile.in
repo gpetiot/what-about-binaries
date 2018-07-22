@@ -29,7 +29,7 @@ OPTOBJS=$(SOURCES:.ml=.cmx)
 HEADERS=src/elf_types.mli $(SOURCES:.ml=.mli)
 
 .PHONY: all
-all: $(EXEC_OPT)
+all: $(EXEC_OPT) .merlin
 
 $(EXEC_OPT): $(HEADERS:.mli=.cmi) $(OPTOBJS) src/main.cmx $(CAPSTONE_OBJ)
 	@$(CAMLOPT) -I src -o $@ $(LIBS:.cma=.cmxa) $(CAPSTONE_OBJ) $(OPTOBJS) src/main.cmx
@@ -43,11 +43,14 @@ src/%.cmi: src/%.mli
 src/%.cmx: src/%.ml src/%.cmi
 	@$(CAMLOPT) -I src -c -annot $(LIBS:.cma=.cmxa) $<
 
+.merlin:
+	@echo "B $(CAPSTONE)" > $@
+
 .PHONY: clean
 clean:
 	@rm -f src/*.cm[iox] src/*.o src/*.annot src/*~ *~ .*~ #*#
 	@rm -f $(EXEC_OPT)
-	@rm -f configure config.log
+	@rm -f configure config.log .merlin
 	@rm -rf autom4te.cache
 	@make clean -C tests
 
